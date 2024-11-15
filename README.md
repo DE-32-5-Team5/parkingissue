@@ -1,13 +1,38 @@
-# PlayData Encore
-# DataEngineering 32rd Course
-# 5th Team : 인생한방
-# Final Project : Parkingissue
+# PlayData Encore DataEngineering 32rd Course   5th Team : 인생한방    Final Project : Parkingissue
 
 # Introduce
-## Team Introduce
-### Role
-## Project Introduce
-### Use Technique
+- 주차장 API과 지도 API를 연계한 실시간 주차장 정보제공 네비게이션 시스템
+## Outline
+- [불법 주차에 쓰레기까지..’무법천지’ 불꽃축제](https://imnews.imbc.com/replay/2023/nwtoday/article/6531583_36207.html)
+- [‘닭장 같은 주차장’ 차 빼는데 2시간… 춘천 닭갈비 축제 교통 대란](https://www.hani.co.kr/arti/area/gangwon/1145524.html)
+- 행사나 맛집주변은 항상 주차하기 어렵다는 문제에서 착안하여 공공 주차장 API를 활용한 주차장 정보 제공 서비스를 제공하고 싶어서 제작
+## Object
+- 주차난으로 고통받는 차주들의 구세주
+    - 항상 차량 운행을 할 때마다 주차 걱정이 우선인 차주들에게 현 위치, 목적지 주변의 주차장 위치, 운영시간, 요금, 실시간 주차 가능 자리, 시간대별 혼잡도 정보를 제공해 최적의 주차장을 선택할 수 있도록 도움을 줍니다.
+- 축제, 맛집 방문 시 주차라는 하나의 걱정을 덜어주는 도우미
+    - 축제나 맛집 방문 시 주차 문제로 인해 차량 운행을 망설이거나, 주차로 인한 불쾌한 경험을 방지하여 좋은 방문 경험을 제공합니다.
+- 축제 등 지역 경제 활성화의 촉진제
+    - 축제 관계자, 맛집 사장님들이 직접 축제, 식당 운영 정보 업로드 기능을 제공합니다. 이를 통해 방문객들이 최신 정보를 놓치지 않고 참여할 수 있어, 자연스럽게 지역 홍보 효과를 극대화합니다.
+## Expection
+- 효율적인 주차 공간 이용
+    - 페스티벌을 방문하는 사람들이 주차 정보를 사전에 파악하여 혼잡을 줄이고, 가장 가까운 주차 공간을 효과적으로 이용할 수 있습니다.
+- 교통 혼잡 완화
+    - 실시간으로 주차 상황을 확인할 수 있으므로, 특정 구역의 주차 혼잡을 피하고 다른 대체 주차장으로 유도함으로써 페스티벌 주변의 교통 혼잡을 줄일 수 있습니다.
+- 사용자 편의성 증대
+    - 방문자가 페스티벌 근처 주차 가능 여부를 손쉽게 확인하고 예약할 수 있어, 현장에서의 주차 스트레스를 줄이고 행사 경험을 개선할 수 있습니다.
+- 자연스러운 마케팅 수단
+    - 주차문제를 겪고싶지 않아 방문하지 않는 잠재적인 고객들에게도 스트레스와 부담감을 줄여줄 수 있어서, 마케팅의 수단으로 활용될 가능성이 있습니다.
+
+
+# Crew Introduce
+팀원|역할|담당
+:---|:---|:---
+김원준|PM : Project Maanger|
+김태영|TL : Tech Leader|
+전준형|AA : Application Architect|
+조수진|AC : Acile Coach |
+배주영|GL : Gag Leader|
+
 
 # Installation
 
