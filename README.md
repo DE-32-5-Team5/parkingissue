@@ -25,7 +25,7 @@ Final Project : Parkingissue
 - 자연스러운 마케팅 수단
     - 주차문제를 겪고싶지 않아 방문하지 않는 잠재적인 고객들에게도 스트레스와 부담감을 줄여줄 수 있어서, 마케팅의 수단으로 활용될 가능성이 있습니다.
 ## 📖 Application Diagram
-![Application Diagram](document/images/Application%20Diagram.pngimage.png)
+![Application Diagram](document/images/Application%20Diagram.png)
 
 ## 📖 Architecture Diagram
 ![Architecture Diagram](document/images/Architecture%20Diagram.png)
