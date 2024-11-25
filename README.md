@@ -24,16 +24,43 @@ Final Project : Parkingissue
     - 방문자가 페스티벌 근처 주차 가능 여부를 손쉽게 확인하고 예약할 수 있어, 현장에서의 주차 스트레스를 줄이고 행사 경험을 개선할 수 있습니다.
 - 자연스러운 마케팅 수단
     - 주차문제를 겪고싶지 않아 방문하지 않는 잠재적인 고객들에게도 스트레스와 부담감을 줄여줄 수 있어서, 마케팅의 수단으로 활용될 가능성이 있습니다.
+## Application Diagram
+![Application Diagram](document/images/Application%20Diagram.pngimage.png)
 
+## Architecture Diagram
+![Architecture Diagram](document/images/Architecture%20Diagram.png)
 
 # Crew Introduce
 팀원|역할|담당
 :---|:---|:---
-김원준|PM : Project Maanger|
+김원준|PM : Project Manager|
 김태영|TL : Tech Leader|
 전준형|AA : Application Architect|
 조수진|AC : Acile Coach |
 배주영|GL : Gag Leader|
+
+# Used Stacks
+
+<img src="https://img.shields.io/badge/Vue.js-4FC08D?style=platic&logo=vue.js&logoColor=white"/>
+<img src="https://img.shields.io/badge/FastAPI-009688?style=platic&logo=fastapi&logoColor=white"/>
+
+
+<img src="https://img.shields.io/badge/Mysql-4479A1?style=platic&logo=mysql&logoColor=white"/>
+
+
+<img src="https://img.shields.io/badge/Docker-2496ED?style=platic&logo=docker&logoColor=white"/>
+
+
+<img src="https://img.shields.io/badge/Grafana-F46800?style=platic&logo=grafana&logoColor=white"/>
+<img src="https://img.shields.io/badge/Prometheus-E6522C?style=platic&logo=prometheus&logoColor=white"/>
+
+
+<img src="https://img.shields.io/badge/Apache Airflow-017CEE?style=platic&logo=apacheairflow&logoColor=white"/>
+<img src="https://img.shields.io/badge/Apache Spark-E25A1C?style=platic&logo=apachespark&logoColor=white"/>
+
+
+<img src="https://img.shields.io/badge/ubuntu-E95420?style=platic&logo=ubuntu&logoColor=white"/>
+<img src="https://img.shields.io/badge/linux-FCC624?style=platic&logo=linux&logoColor=white"/>
 
 
 # Installation
