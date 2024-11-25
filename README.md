@@ -1,4 +1,6 @@
-# PlayData Encore DataEngineering 32rd Course   5th Team : 인생한방    Final Project : Parkingissue
+PlayData Encore DataEngineering 32rd Course   
+5th Team : 인생한방    
+Final Project : Parkingissue
 
 # Introduce
 - 주차장 API과 지도 API를 연계한 실시간 주차장 정보제공 네비게이션 시스템
