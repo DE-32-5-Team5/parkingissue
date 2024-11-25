@@ -43,24 +43,11 @@ Final Project : Parkingissue
 
 <img src="https://img.shields.io/badge/Vue.js-4FC08D?style=platic&logo=vue.js&logoColor=white"/>
 <img src="https://img.shields.io/badge/FastAPI-009688?style=platic&logo=fastapi&logoColor=white"/>
-
-
 <img src="https://img.shields.io/badge/Mysql-4479A1?style=platic&logo=mysql&logoColor=white"/>
-
-
 <img src="https://img.shields.io/badge/Docker-2496ED?style=platic&logo=docker&logoColor=white"/>
-
-
-<img src="https://img.shields.io/badge/Grafana-F46800?style=platic&logo=grafana&logoColor=white"/>
-<img src="https://img.shields.io/badge/Prometheus-E6522C?style=platic&logo=prometheus&logoColor=white"/>
-
-
-<img src="https://img.shields.io/badge/Apache Airflow-017CEE?style=platic&logo=apacheairflow&logoColor=white"/>
-<img src="https://img.shields.io/badge/Apache Spark-E25A1C?style=platic&logo=apachespark&logoColor=white"/>
-
-
-<img src="https://img.shields.io/badge/ubuntu-E95420?style=platic&logo=ubuntu&logoColor=white"/>
-<img src="https://img.shields.io/badge/linux-FCC624?style=platic&logo=linux&logoColor=white"/>
+<img src="https://img.shields.io/badge/Grafana-F46800?style=platic&logo=grafana&logoColor=white"/><img src="https://img.shields.io/badge/Prometheus-E6522C?style=platic&logo=prometheus&logoColor=white"/>
+<img src="https://img.shields.io/badge/Apache Airflow-017CEE?style=platic&logo=apacheairflow&logoColor=white"/><img src="https://img.shields.io/badge/Apache Spark-E25A1C?style=platic&logo=apachespark&logoColor=white"/>
+<img src="https://img.shields.io/badge/ubuntu-E95420?style=platic&logo=ubuntu&logoColor=white"/><img src="https://img.shields.io/badge/linux-FCC624?style=platic&logo=linux&logoColor=white"/>
 
 
 # 🧪 Installation
