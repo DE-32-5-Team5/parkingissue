@@ -1,10 +1,27 @@
 CREATE DATABASE IF NOT EXISTS `parkingissue`;
 USE `parkingissue`;
 
+DELIMITER $$
+
+CREATE FUNCTION bcrypt(password VARCHAR(255), cost INT)
+RETURNS TEXT
+DETERMINISTIC
+BEGIN
+    DECLARE salt TEXT;
+    DECLARE hashed TEXT;
+    SET salt = gensalt(cost); -- salt 생성
+    SET hashed = crypt(password, salt); -- 비밀번호 암호화
+    RETURN hashed;
+END $$
+
+DELIMITER ;
+
 CREATE TABLE IF NOT EXISTS `user_info` (
     `userid` bigint(20) NOT NULL UNIQUE AUTO_INCREMENT,
-    `nickname` varchar(255) NOT NULL,
-	`password` varchar(255) NOT NULL,
+    `nickname` varchar(255),
+	`password` varchar(255),
+    `naver_id` varchar(255),
+    `kakao_id` varchar(255),
     PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -100,69 +117,12 @@ CREATE TABLE IF NOT EXISTS `manager_festival` (
     FOREIGN KEY (`mid`) REFERENCES `manager_info` (`managerid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-CREATE TABLE IF NOT EXISTS `log_login` (
-    `index` bigint(20),
-    `ip` varchar(20),
-    `uid` bigint(20),
-    `result` boolean,
-    `time` date,
-    PRIMARY KEY (`index`),
-    FOREIGN KEY (`uid`) REFERENCES `user_info` (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-CREATE TABLE IF NOT EXISTS `log_csignup` (
-    `index` bigint(20),
-    `ip` varchar(20),
-    `uid` bigint(20),
-    `type` int,
-    `time` date,
-    PRIMARY KEY (`index`),
-    FOREIGN KEY (`uid`) REFERENCES `user_info` (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-CREATE TABLE IF NOT EXISTS `log_msignup` (
-    `index` bigint(20),
-    `ip` varchar(20),
-    `mid` bigint(20),
-    `time` date,
-    PRIMARY KEY (`index`),
-    FOREIGN KEY (`mid`) REFERENCES `manager_info` (`managerid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-CREATE TABLE IF NOT EXISTS `log_cuser` (
-    `index` bigint(20),
-    `ip` varchar(20),
-    `uid` bigint(20),
-    `request` varchar(255),
-    `time` date,
-    PRIMARY KEY (`index`),
-    FOREIGN KEY (`uid`) REFERENCES `user_info` (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-CREATE TABLE IF NOT EXISTS `log_muser` (
-    `index` bigint(20),
-    `ip` varchar(20),
-    `mid` bigint(20),
-    `result` boolean,
-    `time` date,
-    PRIMARY KEY (`index`),
-    FOREIGN KEY (`mid`) REFERENCES `manager_info` (`managerid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-CREATE TABLE IF NOT EXISTS `log_airflow` (
-    `index` bigint(20) AUTO_INCREMENT,
-    `time` date,
-    `request` varchar(255),
-    `result` boolean,
-    PRIMARY KEY (`index`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-CREATE USER 'login'@'%' IDENTIFIED BY 'login' WITH MAX_USER_CONNECTIONS 20;
+CREATE USER 'login'@'%' IDENTIFIED BY '$(LOGIN_PASSWORD)' WITH MAX_USER_CONNECTIONS 20;
 GRANT SELECT ON parkingissue.user_info TO 'login'@'%';
 GRANT SELECT ON parkingissue.manager_info TO 'login'@'%';
 GRANT INSERT ON parkingissue.log_login TO 'login'@'%';
 
-CREATE USER 'common_user'@'%'IDENTIFIED BY 'login' WITH MAX_USER_CONNECTIONS 1000;
+CREATE USER 'common_user'@'%'IDENTIFIED BY '$(USER_PASSWORD)' WITH MAX_USER_CONNECTIONS 1000;
 GRANT SELECT ON parkingissue.parkingarea_info TO 'common_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_fee TO 'common_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_opertime TO 'common_user'@'%';
@@ -170,7 +130,7 @@ GRANT SELECT ON parkingissue.parkingarea_realtime TO 'common_user'@'%';
 GRANT SELECT, UPDATE ON parkingissue.user_info TO 'common_user'@'%';
 GRANT INSERT ON parkingissue.log_cuser TO 'login'@'%';
 
-CREATE USER 'manage_user'@'%'IDENTIFIED BY 'login' WITH MAX_USER_CONNECTIONS 1000;
+CREATE USER 'manage_user'@'%'IDENTIFIED BY '$(USER_PASSWORD)' WITH MAX_USER_CONNECTIONS 1000;
 GRANT SELECT ON parkingissue.parkingarea_info TO 'manage_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_fee TO 'manage_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_opertime TO 'manage_user'@'%';
@@ -178,15 +138,15 @@ GRANT SELECT ON parkingissue.parkingarea_realtime TO 'manage_user'@'%';
 GRANT SELECT, UPDATE ON parkingissue.user_info TO 'manage_user'@'%';
 GRANT INSERT ON parkingissue.log_muser TO 'login'@'%';
 
-CREATE USER 'signup_user'@'%' IDENTIFIED BY 'signup' WITH MAX_USER_CONNECTIONS 20;
+CREATE USER 'signup_user'@'%' IDENTIFIED BY '$(USER_PASSWORD)' WITH MAX_USER_CONNECTIONS 20;
 GRANT INSERT, SELECT ON parkingissue.user_info TO 'signup_user'@'%';
 GRANT INSERT ON parkingissue.log_csignup TO 'signup_user'@'%';
 GRANT INSERT ON parkingissue.log_msignup TO 'signup_user'@'%';
 
-CREATE USER 'exporter'@'%' IDENTIFIED BY 'five2024$' WITH MAX_USER_CONNECTIONS 3;
+CREATE USER 'exporter'@'%' IDENTIFIED BY '$(EXPORTER_PASSWORD)' WITH MAX_USER_CONNECTIONS 3;
 GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'exporter'@'%';
 
-CREATE USER 'airflow_updater'@'%' IDENTIFIED BY 'five2024$' WITH MAX_USER_CONNECTIONS 1;
+CREATE USER 'airflow_updater'@'%' IDENTIFIED BY '$(AIRFLOW_PASSWORD)' WITH MAX_USER_CONNECTIONS 1;
 GRANT INSERT ON parkingissue.log_airflow TO 'airflow_updater'@'%';
 
 
