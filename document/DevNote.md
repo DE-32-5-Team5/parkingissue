@@ -11,9 +11,27 @@
 
 ``` bash
 $ pwd
-<your>/<installation>/<dir>/parkingissue/docker/database
+<your>/<installation>/<dir>/parkingissue/docker
 
-$ docker build --build-arg MYSQL_ROOT_PASSWORD=<root_password>--build-arg MYSQL_DATABASE=parkingissue -t parkingissuedb:0.1.0 .
-
-$ docker run parkingissuedb:0.1.0
+$ docker compose -f db-compose.yml up -d
+[+] Running 2/2
+ ✔ Network docker_default           Created                                                                        0.2s
+ ✔ Container parkingissue_database  Started                                                                        0.4s
 ```
+
+### env setting
+
+``` bash
+$ pwd
+<your>/<installation>/<dir>/parkingissue/docker
+
+$ cat .db_env
+MYSQL_ROOT_PASSWORD=<password_1>
+MYSQL_DATABASE=<password_2>
+LOGIN_PASSWORD=<password_3>
+USER_PASSWORD=<password_4>
+EXPORTER_PASSWORD=<password_5>
+AIRFLOW_PASSWORD=<password_6>
+```
+
+- 비밀번호는 별도의 문서 확인바람.
