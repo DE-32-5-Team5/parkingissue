@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">  <!-- styles.css 파일을 외부 링크로 추가 -->
+    <title>행사 등록 페이지</title>
+</head>
+<body>
+    <div class="form-container">
+        <h2><img src="img/yellow.png" alt="아이콘" style="vertical-align: middle; width: 40px; height: auto; margin-top: -5px;">관리자 행사 등록</h2>
+        <form action="#" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="event-title">행사 제목</label>
+                <input type="text" id="event-title" name="event-title" placeholder="예: 서울 재즈 페스티벌" required>
+            </div>
+            <div class="form-group">
+                <label for="event-address">행사 주소</label>
+                <input type="text" id="event-address" name="event-address" placeholder="예: 강남구 서초구 효령로 335 " required>
+            </div>
+            
+            <div class="form-group">
+                <label for="event-contact">행사 연락처</label>
+                <div class="phone-group">
+                    <!-- 전화번호 선택 옵션 추가 -->
+                    <select id="phone-type" name="phone-type" required>
+                        <option value="mobile">휴대전화</option>
+                        <option value="landline">일반전화</option>
+                    </select>
+                    
+                    <!-- 휴대전화 입력란 -->
+                    <div class="mobile-phone">
+                        <select id="mobile-prefix" name="mobile-prefix" required>
+                            <option value="010">010</option>
+                            <option value="011">011</option>
+                            <option value="016">016</option>
+                            <option value="017">017</option>
+                            <option value="018">018</option>
+                            <option value="019">019</option>
+                        </select>
+                        <input type="text" id="mobile-middle" name="mobile-middle" maxlength="4" required>
+                        <input type="text" id="mobile-last" name="mobile-last" maxlength="4" required>
+                    </div>
+                    
+                    <!-- 일반전화 입력란 -->
+                    <div class="landline-phone" style="display: none;">
+                        <select id="landline-prefix" name="landline-prefix" required>
+                            <option value="02">02</option>
+                            <option value="031">031</option>
+                            <option value="032">032</option>
+                            <option value="033">033</option>
+                            <option value="041">041</option>
+                            <option value="042">042</option>
+                            <option value="043">043</option>
+                            <option value="044">044</option>
+                            <!-- 기타 지역 번호 추가 -->
+                        </select>
+                        <input type="text" id="landline-middle" name="landline-middle" maxlength="4" required>
+                        <input type="text" id="landline-last" name="landline-last" maxlength="4" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="event-start-date">행사 시작일</label>
+                <input type="date" id="event-start-date" name="event-start-date" required>
+            </div>
+            <div class="form-group">
+                <label for="event-end-date">행사 종료일</label>
+                <input type="date" id="event-end-date" name="event-end-date" required>
+            </div>
+            <div class="form-group">
+                <label for="event-main-image">대표 이미지</label>
+                <input type="file" id="event-main-image" name="event-main-image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="event-thumbnail-image">썸네일 이미지</label>
+                <input type="file" id="event-thumbnail-image" name="event-thumbnail-image" accept="image/*" required>
+            </div>
+            
+            <button type="submit">행사 등록</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('phone-type').addEventListener('change', function() {
+            const phoneType = this.value;
+            
+            if (phoneType === 'mobile') {
+                document.querySelector('.mobile-phone').style.display = 'flex';
+                document.querySelector('.landline-phone').style.display = 'none';
+            } else if (phoneType === 'landline') {
+                document.querySelector('.mobile-phone').style.display = 'none';
+                document.querySelector('.landline-phone').style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>

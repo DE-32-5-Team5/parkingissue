@@ -1,0 +1,311 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.profile-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.profile-name {
+    margin: 5px 0;
+    font-size: 1.5em;
+}
+
+.profile-email {
+    margin-bottom: 15px;
+    color: #777;
+}
+
+.edit-profile-btn {
+    background-color: #40e0d0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.information-section {
+    margin-bottom: 20px;
+}
+
+.information-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.delete-btn {
+    background-color: #ff4c4c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logout-section {
+    display: flex;
+    flex-direction: row; /* 버튼을 가로로 배치 */
+    justify-content: center; /* 가로 정렬 */
+    align-items: center; /* 세로 정렬 */
+    gap: 50px; /* 버튼 간 간격 */
+    margin: 0 auto; /* 가운데 정렬 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    margin-top: 50px;
+}
+
+.logout-btn {
+    background-color: #40e0d0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.activity-summary {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 회원 탈퇴쪽 */
+
+/* 모달 기본 스타일 */
+#openModal{
+    background-color: #40e0d0;
+    color: white;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.modal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* 배경 반투명 */
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* 너비 조정 */
+    max-width: 400px; /* 최대 너비 */
+    border-radius: 8px; /* 모서리 둥글게 */
+}
+
+/* 닫기 버튼 스타일 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* 닫기 버튼 호버 및 포커스 */
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 확인 버튼과 취소 버튼 기본 스타일 */
+.confirm,
+.cancel {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px; /* 버튼 간격 */
+}
+
+/* 확인 버튼 색상 */
+.confirm {
+    background-color: #f44336; /* 확인 버튼 색상 */
+    color: white;
+}
+
+/* 취소 버튼 색상 */
+.cancel {
+    background-color: #33CCCC; /* 취소 버튼 색상 */
+    color: white;
+}
+
+/* 확인 버튼과 취소 버튼 호버 효과 */
+.confirm:hover,
+.cancel:hover {
+    opacity: 0.8; /* 호버 시 투명도 조정 */
+}
+
+/* 로그아웃 모달의 h2 스타일 */
+#logoutModal h2 {
+    font-size: 18px; /* 원하는 크기로 설정 */
+}
+
+/* 비밀번호 수정 모달 배경 */
+#passwordModal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* 반투명 배경 */
+    padding-top: 100px; /* 모달 상단 여백 */
+}
+
+/* 비밀번호 수정 모달 내용 */
+#passwordModal .modal-content {
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    animation: fadeIn 0.3s ease-out; /* 모달 등장 애니메이션 */
+}
+
+/* 비밀번호 수정 모달 제목 */
+#passwordModal h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 입력 필드 스타일 */
+#passwordModal input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+#passwordModal input[type="password"]:focus {
+    border-color:#40e0d0;
+    background-color: #fff;
+    outline: none;
+}
+
+/* 확인 버튼 스타일 */
+#passwordModal .confirm-btn {
+    background-color: #40e0d0;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 48%;
+    transition: all 0.3s ease;
+}
+
+#passwordModal .confirm-btn:hover {
+    background-color: #32beb0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 취소 버튼 스타일 */
+#passwordModal .cancel-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 48%;
+    transition: all 0.3s ease;
+}
+
+#passwordModal .cancel-btn:hover {
+    background-color: #e53935;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 닫기 버튼 */
+#passwordModal .close {
+    color: #aaa;
+    font-size: 30px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+#passwordModal .close:hover,
+#passwordModal .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 모달 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+

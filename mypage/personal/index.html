@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>My Page</title>
+</head>
+<body>
+    <div class="container">
+        <!-- 상단 섹션: 프로필 정보 -->
+        <section class="profile-section">
+            <div class="profile-card">
+                <img src="img/profile.png" alt="프로필 사진" class="profile-image">
+                <h2 class="profile-name">홍길동</h2>
+                <!-- <p class="profile-email">example@email.com</p> -->
+                <!-- <button class="edit-profile-btn">Edit Profile</button> -->
+            </div>
+        </section>
+        
+        <!-- 중단 섹션: 내 정보 -->
+        <section class="information-section">
+            <h3>내 정보</h3>
+            <div class="information-card">
+                <p class="information-title">이름</p>
+                <p class="information-value" style="margin-right: 20px;">홍길동</p>
+                <!-- <button class="delete-btn">Delete</button> -->
+            </div>
+            <div class="information-card">
+                <p class="information-title">아이디</p>
+                <p class="information-value" style="margin-right: 20px;">abcd1234</p>
+                <!-- <button class="delete-btn">Delete</button> -->
+            </div>
+            <div class="information-card">
+                <p class="information-title">비밀번호</p>
+                <p class="information-value" style="margin-left: 380px;">*****</p>
+                <button class="delete-btn" id="editPasswordBtn">수정</button>
+                 
+            </div>
+        </section>
+        
+        <!-- 하단 섹션: 로그아웃 및 기타 -->
+        <section class="logout-section">
+            <button class="logout-btn" id="logoutBtn">Log Out</button>
+            <!-- <div class="activity-summary">
+                <p>최근 검색: 강남구 주차장</p>
+                <p>예약한 주차장: 장소명 A</p>
+            </div> -->
+            <button id="openModal">회원 탈퇴</button>
+
+            <!-- 회원 탈퇴 모달 -->
+            <div class="modal" id="unsubscribeModal">
+                <div class="modal-content">
+                    <span class="close" id="closeModal">&times;</span>
+                    <h2>회원 탈퇴</h2>
+                    <p>정말로 회원 탈퇴를 하시겠습니까?</p>
+                    <button class="confirm">탈퇴하기</button>
+                    <button class="cancel">취소</button>
+                </div>
+            </div>
+
+            <!-- 로그아웃 모달 -->
+            <div class="modal" id="logoutModal">
+                <div class="modal-content">
+                    <span class="close" id="closeLogoutModal">&times;</span>
+                    <h2>로그아웃이 완료되었습니다</h2>
+                    <button class="confirm" id="closeLogoutBtn">확인</button>
+                </div>
+            </div>
+
+            <!-- 비밀번호 수정 모달 -->
+            <div id="passwordModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="closePasswordModal">&times;</span>
+                    <h2>비밀번호 변경</h2>
+                    <input type="password" placeholder="현재 비밀번호" id="currentPassword">
+                    <input type="password" placeholder="새 비밀번호" id="newPassword">
+                    <input type="password" placeholder="새 비밀번호 확인" id="confirmPassword">
+                    <button class="confirm-btn" id="changePasswordBtn">확인</button>
+                    <button class="cancel-btn" id="cancelPasswordBtn">취소</button>
+                </div>
+            </div>
+
+
+            
+            <script>
+                // 회원 탈퇴 모달
+                const modal = document.getElementById('unsubscribeModal');
+                const closeModal = document.getElementById('closeModal');
+                const openModalButton = document.getElementById('openModal');
+        
+                // 모달 열기
+                openModalButton.addEventListener('click', () => {
+                    modal.style.display = 'block';  // 모달 표시
+                });
+        
+                // 모달 닫기
+                closeModal.addEventListener('click', () => {
+                    modal.style.display = 'none';  // 모달 숨기기
+                });
+        
+                // 배경 클릭 시 모달 닫기
+                window.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';  // 모달 숨기기
+                    }
+                });
+
+                // 로그아웃 모달
+                const logoutModal = document.getElementById('logoutModal');
+                const logoutBtn = document.getElementById('logoutBtn');
+                const closeLogoutModal = document.getElementById('closeLogoutModal');
+                const closeLogoutBtn = document.getElementById('closeLogoutBtn');
+
+                // 로그아웃 버튼 클릭 시 모달 열기
+                logoutBtn.addEventListener('click', () => {
+                    logoutModal.style.display = 'block';  // 로그아웃 모달 표시
+                });
+
+                // 로그아웃 모달 닫기
+                closeLogoutModal.addEventListener('click', () => {
+                    logoutModal.style.display = 'none';  // 모달 숨기기
+                });
+
+                // 확인 버튼 클릭 시 로그인 페이지로 이동
+                closeLogoutBtn.addEventListener('click', () => {
+                    logoutModal.style.display = 'none';  // 모달 숨기기
+                    window.location.href = '/login/index.html';  // 로그인 페이지로 리디렉션
+                });
+
+                // 배경 클릭 시 로그아웃 모달 닫기
+                window.addEventListener('click', (event) => {
+                    if (event.target === logoutModal) {
+                        logoutModal.style.display = 'none';  // 모달 숨기기
+                    }
+                });
+
+                // 비밀번호 수정 모달
+                const passwordModal = document.getElementById('passwordModal');
+                const editPasswordBtn = document.getElementById('editPasswordBtn');
+                const closePasswordModal = document.getElementById('closePasswordModal');
+
+                // 비밀번호 수정 버튼 클릭 시 모달 열기
+                editPasswordBtn.addEventListener('click', () => {
+                    passwordModal.style.display = 'block';
+                });
+
+                // 비밀번호 수정 모달 닫기
+                closePasswordModal.addEventListener('click', () => {
+                    passwordModal.style.display = 'none';
+                });
+
+                // 배경 클릭 시 비밀번호 수정 모달 닫기
+                window.addEventListener('click', (event) => {
+                    if (event.target === passwordModal) {
+                        passwordModal.style.display = 'none';
+                    }
+                });
+
+                // 비밀번호 변경 폼 제출 (확인 버튼 클릭 시)
+                document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+
+                    if (newPassword !== confirmPassword) {
+                        alert('새 비밀번호와 확인 비밀번호가 일치하지 않습니다.');
+                        return;
+                    }
+
+                    console.log('현재 비밀번호:', currentPassword);
+                    console.log('새 비밀번호:', newPassword);
+
+                    // 비밀번호 변경 로직 (서버로 보내는 등의 처리가 필요)
+                    // 예시: fetch('/change-password', { method: 'POST', body: JSON.stringify({...}) })
+                    passwordModal.style.display = 'none';  // 모달 닫기
+                });
+
+                // 취소 버튼 클릭 시 모달 닫기
+                document.getElementById('cancelPasswordBtn').addEventListener('click', () => {
+                    passwordModal.style.display = 'none';  // 모달 닫기
+                });
+
+
+                // 비밀번호 변경 폼 제출
+                document.getElementById('changePasswordForm').addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    console.log('현재 비밀번호:', currentPassword);
+                    console.log('새 비밀번호:', newPassword);
+                    
+                    // 여기서 비밀번호를 서버에 전송하여 변경 작업을 처리합니다.
+                    // 예시: fetch('/change-password', { method: 'POST', body: JSON.stringify({...}) })
+                });
+            </script>
+        </section>
+    </div>
+</body>
+</html>

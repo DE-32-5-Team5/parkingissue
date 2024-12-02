@@ -1,0 +1,109 @@
+@font-face {
+    font-family: '레코체';
+    src: url('Recipekorea 레코체 FONT.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: '레코체', Arial, sans-serif;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    margin: 0; /* 기본 여백 제거 */
+    width: 100%; /* 화면 크기 맞추기 */
+    height: 100vh; /* 화면 전체 높이 사용 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 전체 크기 계산 */
+}
+
+.form-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    box-sizing: border-box; /* padding 포함한 크기 계산 */
+    transform: scale(0.8); /* 80% 크기로 축소 */
+    transform-origin: top center; /* 축소 기준점 설정 */
+    margin-top: 150px; /* 위에 여백 추가 */
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%; /* 각 항목의 너비 100%로 설정 */
+    justify-content: center; /* 가로로 가운데 정렬 */
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="date"], input[type="file"] {
+    width: 96%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: background-color 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
+    background-color: rgba(51, 203, 202, 0.1); /* 포커스 시 배경색 강조 */
+    border: 1px solid #33cbca; /* 포커스 시 테두리 색상 변경 */
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #33cbca;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease; /* transform 속성 추가 */
+    font-weight: bold; /* 버튼 글씨 굵게 설정 */
+}
+
+button:hover {
+    background-color: #33cbca;
+    opacity: 0.9;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* 그림자를 추가하여 버튼이 떠 있는 듯한 느낌 */
+}
+
+/* 행사 연락처 가로 배치 */
+.phone-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.phone-group select, .phone-group input {
+    width: 30%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.mobile-phone, .landline-phone {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.mobile-phone input, .landline-phone input {
+    width: 30%;
+}
+
+.mobile-phone select, .landline-phone select {
+    width: 30%;
+}
