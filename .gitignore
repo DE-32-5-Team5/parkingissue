@@ -1,3 +1,10 @@
+data/
+docker/.db_env
+docker/.airflow_env
+docker/.front_env
+docker/.back_env
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
