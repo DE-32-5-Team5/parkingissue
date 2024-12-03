@@ -48,7 +48,7 @@
         const loginForm = document.querySelector('form'); // form 요소 선택
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault(); // 기본 폼 제출 동작 방지
-        const email = document.getElementById('id').value;
+        const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
         fetch('/api/login', { // Back-end API endpoint로 요청 전송
@@ -61,7 +61,7 @@
         .then(response => {
             if (response.ok) {
                 // 로그인 성공 시 처리 (예: 메인 페이지로 이동)
-                window.location.href = '/main'; 
+                window.location.href = 'index.html'; 
             } else {
                 // 로그인 실패 시 처리 (예: 에러 메시지 표시)
                 alert('로그인 실패');
