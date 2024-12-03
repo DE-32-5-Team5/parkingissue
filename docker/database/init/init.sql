@@ -120,7 +120,6 @@ CREATE TABLE IF NOT EXISTS `manager_festival` (
 CREATE USER 'login'@'%' IDENTIFIED BY '$(LOGIN_PASSWORD)' WITH MAX_USER_CONNECTIONS 20;
 GRANT SELECT ON parkingissue.user_info TO 'login'@'%';
 GRANT SELECT ON parkingissue.manager_info TO 'login'@'%';
-GRANT INSERT ON parkingissue.log_login TO 'login'@'%';
 
 CREATE USER 'common_user'@'%'IDENTIFIED BY '$(USER_PASSWORD)' WITH MAX_USER_CONNECTIONS 1000;
 GRANT SELECT ON parkingissue.parkingarea_info TO 'common_user'@'%';
@@ -128,7 +127,6 @@ GRANT SELECT ON parkingissue.parkingarea_fee TO 'common_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_opertime TO 'common_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_realtime TO 'common_user'@'%';
 GRANT SELECT, UPDATE ON parkingissue.user_info TO 'common_user'@'%';
-GRANT INSERT ON parkingissue.log_cuser TO 'login'@'%';
 
 CREATE USER 'manage_user'@'%'IDENTIFIED BY '$(USER_PASSWORD)' WITH MAX_USER_CONNECTIONS 1000;
 GRANT SELECT ON parkingissue.parkingarea_info TO 'manage_user'@'%';
@@ -136,18 +134,14 @@ GRANT SELECT ON parkingissue.parkingarea_fee TO 'manage_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_opertime TO 'manage_user'@'%';
 GRANT SELECT ON parkingissue.parkingarea_realtime TO 'manage_user'@'%';
 GRANT SELECT, UPDATE ON parkingissue.user_info TO 'manage_user'@'%';
-GRANT INSERT ON parkingissue.log_muser TO 'login'@'%';
 
 CREATE USER 'signup_user'@'%' IDENTIFIED BY '$(USER_PASSWORD)' WITH MAX_USER_CONNECTIONS 20;
 GRANT INSERT, SELECT ON parkingissue.user_info TO 'signup_user'@'%';
-GRANT INSERT ON parkingissue.log_csignup TO 'signup_user'@'%';
-GRANT INSERT ON parkingissue.log_msignup TO 'signup_user'@'%';
 
 CREATE USER 'exporter'@'%' IDENTIFIED BY '$(EXPORTER_PASSWORD)' WITH MAX_USER_CONNECTIONS 3;
 GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'exporter'@'%';
 
 CREATE USER 'airflow_updater'@'%' IDENTIFIED BY '$(AIRFLOW_PASSWORD)' WITH MAX_USER_CONNECTIONS 1;
-GRANT INSERT ON parkingissue.log_airflow TO 'airflow_updater'@'%';
 
 
 FLUSH PRIVILEGES;
