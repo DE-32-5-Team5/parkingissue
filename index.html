@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>주차잇슈</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+</head>
+<body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <div class="inner">
+                <!-- Logo and Search Bar Container -->
+                <div class="logo-container">
+                    <a href="index.html" class="logo">
+                        <span class="symbol"><img src="images/자동차.gif" alt="" /></span><span class="title">주차잇슈</span>
+                    </a>
+                    <!-- Search Bar -->
+                    <div class="search-bar-container">
+                        <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
+                        <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
+                        <button class="voice-search-btn" title="음성 검색">
+                            <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+                <!-- 지도 섹션 -->
+                <div class="parking-info-container">
+                    <div class="map-section" style="position: relative;">
+                        <!-- Leaflet 지도를 표시할 div -->
+                        <div id="map" style="position: relative; width: 100vw; height: 76vh;"></div>
+                        <button id="find-me" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; padding: 0; border: none; border-radius: 8px; z-index: 1000;">
+                            <img src="images/naver.png" style="width: 100%; height: 100%; object-fit: cover;">
+                        </button>
+                    </div>
+                </div>
+                <div id="status"></div>
+                <a id="map-link" href="" target="_blank"></a>
+            </div>
+        </div>
+        <!-- 네비게이션 자리 -->
+        <div class="navi">
+            <div class="navi-section">
+                <nav class="navbar">
+                    <ul>
+                        <!-- 홈으로 새로고침 -->
+                        <li><a href="index.html"><img src="images/sweethome.png" alt="Home" /> HOME</a></li>
+                        <!-- hot place 게시판 이동 -->
+                        <li><a href="party.html"><img src="images/hotplace.png" alt="About" /> HOT PLACE</a></li>
+                        <!-- 즐겨찾기 페이지 이동 -->
+                        <li><a href="favor/favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
+                        <!-- 개인 프로필 페이지 이동 -->
+                        <li><a href="mypage/personal/index.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    <!-- 지도 그리는 곳 -->
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- voice search -->
+    <script src="assets/js/voice-search.js"></script>
+    <!-- Initialize the Leaflet Map -->
+    <script>
+        // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
+        var map = L.map('map').setView([37.5665, 126.9780], 13);
+
+        // vworld 타일 레이어 추가
+        L.tileLayer('http://xdworld.vworld.kr:8080/2d/Base/201802/{z}/{x}/{y}.png', {
+            maxZoom: 21,
+            attribution: '© vworld'
+        }).addTo(map);
+        // 기본 지도 쓰던 버전
+        /*
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 21,
+            attribution: '© OpenStreetMap'
+        }).addTo(map); */
+
+        // GeoFindMe 함수 - 현재 위치 찾기
+        function geoFindMe() {
+            const status = document.querySelector("#status");
+            const mapLink = document.querySelector("#map-link");
+
+            mapLink.href = "";
+
+            function success(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // 상태 텍스트 초기화
+                status.textContent = "";
+                mapLink.href = `http://map.vworld.kr/map/maps.do?centerLon=${longitude}&centerLat=${latitude}&zoom=18`;
+
+                // 사용자 정의 아이콘 생성
+                var customIcon = L.icon({
+                    iconUrl: 'images/my-location.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+
+                // 지도에 커스텀 아이콘을 사용하는 마커 추가
+                // 아래처럼 marker를 변수 지정해주고
+                // 주차장 marker는 따로 parking_marker 로 변수 넣으면 될듯
+                var marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map)
+                
+                // 마커 클릭 이벤트
+                // 원하는 변수의 마커에 event 추가
+                marker.on('click', function() {
+                    // 원하는 HTML 페이지로 이동
+                    window.location.href = 'parkinginfo.html';
+                });
+
+                // 지도에서 현재 위치에 마커 추가
+                // var marker = L.marker([latitude, longitude]).addTo(map);
+                // marker에 팝업 생성
+                // marker.bindPopup("<b>내 위치</b>").openPopup();
+
+                // 지도 중심을 현재 위치로 이동
+                map.setView([latitude, longitude], 15);
+
+                map.invalidateSize(); // 지도 크기 갱신 (리사이징 문제 방지)
+            }
+
+            function error() {
+                status.textContent = "Unable to retrieve your location";
+            }
+
+            if (!navigator.geolocation) {
+                status.textContent = "Geolocation is not supported by your browser";
+            } else {
+                status.textContent = "Locating…";
+                navigator.geolocation.getCurrentPosition(success, error);
+            }
+        }
+        // 웹 시작하자마자 현재 위치로 이동!
+        window.onload = geoFindMe;
+        // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
+        document.querySelector("#find-me").addEventListener("click", function() {
+            // 페이지 새로고침
+            location.reload();
+        });
+    </script>
+</body>
+</html>
