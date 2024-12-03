@@ -48,16 +48,15 @@
         const loginForm = document.querySelector('form'); // form 요소 선택
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault(); // 기본 폼 제출 동작 방지
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        fetch('/api/login', { // Back-end API endpoint로 요청 전송
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id, password }),
-        })
+            const email = document.getElementById('email').value; 
+            const password = document.getElementById('password').value;
+            fetch('/api/login', { // Back-end API endpoint로 요청 전송
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }), // id를 email로 변경
+            })
         .then(response => {
             if (response.ok) {
                 // 로그인 성공 시 처리 (예: 메인 페이지로 이동)

@@ -18,7 +18,7 @@ DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `user_info` (
     `userid` bigint(20) NOT NULL UNIQUE AUTO_INCREMENT,
-    `nickname` varchar(255),
+    `email` varchar(255),
 	`password` varchar(255),
     `naver_id` varchar(255),
     `kakao_id` varchar(255),
