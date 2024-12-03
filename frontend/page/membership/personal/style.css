@@ -1,0 +1,128 @@
+/* 전체 배경 색상 설정 */
+body {
+    background-color: #f4f7f6;  /* 연한 회색 배경으로 변경 */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 컨테이너 크기 조정 */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* 헤더 스타일 */
+.header {
+    display: flex;       
+    background-color: #ffffff; 
+    border: 1px solid #ced4da;
+    
+}
+/* 로고 스타일 */
+.logo {
+    width: 150px;
+    height: 80%; 
+    /* margin-top: 10px;    */
+    padding: 10px;
+}
+.signup-title { 
+    font-weight: bold;      
+    font-size: 25px;        
+    color: #333333;          
+}
+
+/* 회원가입 폼 컨테이너 스타일 */
+.signup-container {
+    max-width: 400px;
+    padding: 20px;
+    border: 1px solid #ced4da;  /* 연한 회색 테두리 */
+    border-radius: 8px;  /* 테두리 라운딩을 조금 더 부드럽게 */
+    background-color: #ffffff;  /* 흰색 배경 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* 더 부드러운 그림자 효과 */
+}
+
+/* 제목 스타일 */
+.signup-container h2 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333333;  /* 진한 회색으로 변경하여 부드럽고 깔끔한 느낌 */
+    margin-bottom: 30px;
+}
+
+/* 폼 그룹 스타일 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* 입력 필드 스타일 */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ced4da;  /* 연한 회색 테두리 */
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;  /* 입력 필드에 부드러운 애니메이션 추가 */
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #33CCCC;  /* 청록색으로 포커스 시 테두리 색 변경 */
+    box-shadow: 0 0 5px rgba(51, 204, 204, 0.5);  /* 청록색 그림자 추가 */
+}
+
+/* 버튼 스타일 */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: #33CCCC;  /* 대표색 사용 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;  /* 버튼 색상 변경에 애니메이션 추가 */
+}
+
+.btn-primary:hover {
+    background-color: #29b8b8;  /* 마우스를 올렸을 때 다소 어두운 청록색 */
+}
+
+/* 링크 스타일 */
+.text-center a {
+    color: #33CCCC;  /* 링크에 대표 색상 사용 */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.text-center a:hover {
+    color: #29b8b8;  /* 링크 hover 시 어두운 청록색 */
+    text-decoration: underline;
+}
+
+/* 여백 추가 */
+.mt-3 {
+    margin-top: 20px;
+}
+.footer {
+    background-color: #33cccc;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* 화면이 600px 이하일 때 로고 크기 조정 */
+@media (max-width: 600px) {
+    .logo {
+        max-width: 100px;
+    }
+    .logo-text {
+        font-size: 24px;
+    }
+}

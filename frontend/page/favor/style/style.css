@@ -1,0 +1,257 @@
+@font-face {
+    font-family: 'Yeongdo';
+    src: url('../../fonts/영도체-패밀리/TTF/Yeongdo-Heavy.ttf') format('truetype');
+}
+
+/* Header */
+#header .inner {
+    width: 100%;
+    max-width: 70%;
+    padding: 0 2.5em;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+#header .logo {
+    font-family: 'Yeongdo', sans-serif;
+    display: flex;
+    align-items: center;
+    color: inherit;
+    font-weight: 100;
+    font-size: 3.5em;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    white-space: nowrap;
+    justify-content: flex-start;
+}
+
+#header .logo .symbol {
+    margin-right: 0.25em;
+    position: relative;
+}
+
+#header .logo .symbol img {
+    display: block;
+    width: 2.2em;
+    height: 2.2em;
+}
+
+/* 모바일 및 태블릿 스타일 */
+@media (max-width: 768px) {
+    #header {
+        padding: 2em 0 0.1em 0;
+    }
+
+    .logo-container {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        gap: 5px;
+        margin-top: -60px;
+    }
+
+    #header .logo {
+        font-size: 2.5em; /* 모바일에서 로고 크기 축소 */
+    }
+}
+
+/* 즐겨찾기 리스트 스타일 */
+.favorite-list {
+    background-color: #f4f4f4; /* 배경 색 */
+    padding: 40px 0; /* 위아래 여백 */
+    text-align: center; /* 가운데 정렬 */
+}
+
+
+
+.favorite-list .inner {
+    width: 100%;
+    margin-bottom: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.favorite-header {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 5px;
+}
+
+.flag-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #B19CD9;
+    color: #333;
+    font-size: 2em;
+}
+
+.favorite-list h2 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+/* X 버튼 스타일 */
+.close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: #f44336;
+}
+
+.close-btn i {
+    font-size: 20px;
+}
+
+.bookmark-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    justify-items: center;
+}
+
+.bookmark-card {
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 250px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+}
+
+.bookmark-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.bookmark-card h3 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.bookmark-card p {
+    font-size: 1em;
+    color: #666;
+}
+
+/* 모바일 환경 */
+@media (max-width: 768px) {
+    .bookmark-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .bookmark-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* 네비게이션 스타일 */
+.navi {
+    background-color: #33cbca;
+    padding: 6px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.navi-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar ul li {
+    display: inline-block;
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2em;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar ul li a img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.navbar ul li a:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+/* 모바일 환경용 네비게이션 바 설정 */
+@media screen and (max-width: 768px) {
+    .navi-section {
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .navbar ul {
+        flex-wrap: nowrap;
+        gap: 4px;
+        justify-content: space-around;
+        padding: 0 0px;
+    }
+
+    .navbar ul li {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+
+    .navbar ul li a {
+        font-size: 0.7em;
+        padding: 7px;
+        white-space: nowrap;
+    }
+
+    .navbar ul li a img {
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+    }
+}
