@@ -1,4 +1,4 @@
-*.db_env
+docker/.db_env
 data/
 
 # Byte-compiled / optimized / DLL files
