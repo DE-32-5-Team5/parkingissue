@@ -3,7 +3,7 @@ services:
     build:
       context: ./database
       dockerfile: Dockerfile  # Dockerfile 이름
-    image: parkingissue-db  # 빌드될 이미지 이름
+    image: parkingissue/parkingissue-db:1.0.5  # 빌드될 이미지 이름
     container_name: parkingissue_database
     environment:
       - MYSQL_DATABASE=parkingissue
