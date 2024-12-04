@@ -50,7 +50,7 @@
             event.preventDefault(); // 기본 폼 제출 동작 방지
             const email = document.getElementById('email').value; 
             const password = document.getElementById('password').value;
-            fetch('http://parkingissue_be:5000/api/login', { // Back-end API endpoint로 요청 전송
+            fetch('localhost:5000/api/login', { // Back-end API endpoint로 요청 전송
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

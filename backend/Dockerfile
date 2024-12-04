@@ -12,8 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY main.py .
 
 
-ENV MYSQL_DATABASE = parkingissue
-ENV LOGIN_PASSWORD = ${LOGIN_PASSWORD}
-ENV USER_PASSWORD = ${USER_PASSWORD}
+ENV MYSQL_DATABASE=parkingissue
+ENV LOGIN_PASSWORD=${LOGIN_PASSWORD}
+ENV USER_PASSWORD=${LOGIN_PASSWORD}
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "4090"]

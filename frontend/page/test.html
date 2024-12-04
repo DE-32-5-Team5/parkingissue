@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test Page</title>
+<script>
+function sendRequest() {
+    fetch('http://parkingissue-back:5000/api/test')
+        .then(response => response.text())
+        .then(data => {
+            if (data === 'ok') {
+                window.location.href = 'clear.html';
+            } else {
+                console.error('Error:', data);
+            }
+        })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+</head>
+<body>
+    <button onclick="sendRequest()">Send Request</button>
+</body>
+</html>

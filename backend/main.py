@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from passlib.context import CryptContext
 
 # 데이터베이스 연결 설정
-DATABASE_URL = "mysql+pymysql://root:${USER_PASSWORD}@parkingissue_database:3306/parkingissue"
+DATABASE_URL = "mysql+pymysql://root:${USER_PASSWORD}@localhost:6033/parkingissue"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -66,4 +66,8 @@ async def signin(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
     email = data.get("email")
     password = data.get("password")
+
+@app.get("/api/test")
+async def test():
+    return "ok"
 
