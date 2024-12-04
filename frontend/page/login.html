@@ -3,7 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In Page</title>
     <!-- CSS 파일 연결 -->
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="assets/css/login.css">
     <script src="https://kit.fontawesome.com/eb9b7241dc.js" crossorigin="anonymous"></script>
 </head>
 
@@ -50,7 +50,7 @@
             event.preventDefault(); // 기본 폼 제출 동작 방지
             const email = document.getElementById('email').value; 
             const password = document.getElementById('password').value;
-            fetch('/api/login', { // Back-end API endpoint로 요청 전송
+            fetch('http://parkingissue_be:5000/api/login', { // Back-end API endpoint로 요청 전송
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,28 +89,9 @@
     <footer>
         <p>
         SAMDULSHOP : FINAL PROJECT
-        <!-- <i class="fa fa-heart"></i> 
-        <i class="fa fa-heart"></i> 
-        <i class="fa fa-heart"></i>  -->
         </p>
         <p>
             인생한방 :
-        <!-- <a href="https://www.facebook.com/chouaib45" >
-            <i class="fa fa-facebook"></i>
-        </a>
-        <a href="http://twitter.com/chouaibblgn45">
-            <i class="fa fa-twitter"></i> 
-        </a>
-        <a href="http://instagram.com/chouaib_blgn">
-            <i class="fa fa-instagram"></i> 
-        </a>
-        <a href="http://linkedin.com/in/chouaibblgn/">
-            <i class="fa fa-linkedin"></i>
-        </a>
-        <a href="https://www.behance.net/geek30">
-            <i class="fa fa-behance"></i>
-        </a> -->
-
             <i class="fa fa-github"></i>
         </a>
         </p>
