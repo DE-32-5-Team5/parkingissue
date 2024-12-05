@@ -44,8 +44,10 @@ def fun_api_call():
 def fun_branch(*args, **kwargs):
     dir_path = f"/opt/airflow/data/"
     filename = kwargs.get('filename')
+    file_path = os.path.join(dir_path, filename)
 
-    if os.path.exists(dir_path): #폴더가 존재하면
+    print(f"*****************  {file_path}")
+    if os.path.exists(file_path): #폴더가 존재하면
         if filename=='edata.json':
             return 'remove_extract_log'  
         else:
