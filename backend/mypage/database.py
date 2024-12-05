@@ -7,6 +7,8 @@ from sqlalchemy.orm import sessionmaker, Session
 # .env 파일에서 환경 변수 로드
 load_dotenv()
 
+print("DB_PORT:", os.getenv('DB_PORT'))
+
 # 데이터베이스 연결 URL을 환경 변수에서 가져오기
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
