@@ -159,6 +159,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    # deploy:
+    #   replicas: 3  # 워커 수 3개로 설정
 
   airflow-triggerer:
     <<: *airflow-common
