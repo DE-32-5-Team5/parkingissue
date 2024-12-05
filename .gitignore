@@ -1,5 +1,7 @@
-*.db_env
+docker/.db_env
+docker/.env
 data/
+docekr/airflow/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
