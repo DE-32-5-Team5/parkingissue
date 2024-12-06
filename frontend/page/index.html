@@ -112,11 +112,23 @@
         }
         // fastapi로 값 보내기
         function fetchParkingData(latitude, longitude) {
-            const url = `http://localhost:8000/location?latitude=${latitude}&longitude=${longitude}`;
-            fetch(url, {  // FastAPI 엔드포인트 URL / fetch는 비동기 방식
-                method: 'GET'
+            const url = 'http://localhost:8000/location';
+            fetch(url, {  // FastAPI 엔드포인트 URL
+                method: 'POST', // POST 요청
+                headers: {
+                    'Content-Type': 'application/json', // JSON 형식
+                },
+                body: JSON.stringify({ // 요청 바디에 데이터를 JSON으로 변환하여 포함
+                    latitude: latitude,
+                    longitude: longitude
+                }),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('Success:', data);
                 addParkingMarkers(data);
@@ -152,7 +164,8 @@
                 // 서울이 없는 관계로 잠시 수원시청 기준으로 시작
                 // const latitude = 37.2635846787744;
                 // const longitude = 127.028715898311;
-
+                
+                // 울산
                 const latitude = 35.5444169723408;
                 const longitude = 129.331864527424;
 
