@@ -2,15 +2,21 @@ import os
 import json
 import csv
 import pandas as pd
+import json
+import time
+import requests
+import re
+import shutil
+import xml.etree.ElementTree as ET
+from datetime import datetime 
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+
 
 def fun_api_call():
-    import json
-    import requests
-    import xml.etree.ElementTree as ET
-
     API_KEY = os.getenv('API_KEY')
    
-
     if not API_KEY:
         print("API_KEY is not set or is empty. Please check your environment variables.")
 
@@ -43,42 +49,43 @@ def fun_api_call():
 
     
 def fun_branch(*args, **kwargs):
-    dir_path = f"/opt/airflow/data/"
-    filename = kwargs.get('filename')
-    file_path = os.path.join(dir_path, filename)
+    dir_path = f"/opt/airflow"
+    dir = kwargs.get('dir')
+    path = os.path.join(dir_path, dir)
     
 
-    print(f"*****************  {file_path}")
-    if os.path.exists(file_path):
-        print("파일이 존재합니다.") 
-        if filename=='edata.json':
+    print(f"*****************  {path}")
+    if os.path.exists(path):
+        if "Edata" in path:
+            print(f"{path} 폴더가 존재합니다.") 
             return 'remove_extract_log'  
         else:
+            print(f"{path} 폴더가 존재합니다.") 
             return 'remove_transform_log'
         
-    else: #파일이 없음
-        print("파일이 존재하지 않습니다.")
-        if filename=='edata.json':
+    else: #폴더가 없음
+        if "Edata" in path:
+            print(f"{path} 폴더가 존재하지 않습니다.")
             return 'extract_empty'  
         else:
+            print(f"{path} 폴더가 존재하지 않습니다.")
             return 'transform_empty'
 
 
-def fun_remove_log(filename):
-    dir_path = "/opt/airflow/data/"
-    file_path = os.path.join(dir_path, filename)
-  
+def fun_remove_log(**kwargs):
+    dir_path = "/opt/airflow"
+    dirname = kwargs['dir']
+    path = f"{dir_path}/{dirname}"
     try:
-        os.remove(file_path)
-        print(f"{file_path} 파일이 삭제되었습니다.")
+        shutil.rmtree(path)
+        print(f"{path} 폴더가 삭제되었습니다.")
     except OSError as e:
         print(f"오류 발생: {e}")
 
 
 def fun_save_log():
-    
-    dir_path = "/opt/airflow/data/"
-    filename = "edata.json"
+    dir_path = "/opt/airflow/Edata/"
+    # filename = "edata.json"
 
     try:
         if not os.path.exists(dir_path):
@@ -90,140 +97,135 @@ def fun_save_log():
         print(f"디렉토리 생성 중 오류 발생: {e}")
     
     # 파일 경로 설정
-    file_path = os.path.join(dir_path, filename)
+    # file_path = os.path.join(dir_path, filename)
 
     API_KEY = os.getenv('API_KEY')
 
-    totalcnt=1
-    currentcnt=0
+    totalcnt = 1
+    currentcnt = 0
     pagenum = 1
     First = True
-    json_data=[]
+    
 
     while currentcnt < totalcnt:
-        data = call(pagenum,API_KEY)
+        # json_data = []
+        filename = f"page_{pagenum}.json"
+        file_path = os.path.join(dir_path, filename)
 
-        print("*" * 100)
-        print(data)
-        json_data.append(data)
+        data = call(pagenum, API_KEY)
 
-
+        print(f" #### PAGE {data['pageNo']}")
+        # print(data)
+        # json_data.append(data)
 
         if First:
-            # totalcnt = data['totalCount'] 
-            totalcnt= 30
-            First=False
-   
-        currentcnt+=int(data['numOfRows'])
-        pagenum+=1
+            totalcnt = int(data['totalCount']) 
+            # totalcnt = 10
+            First = False
 
-    try:
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(json_data, f, ensure_ascii=False, indent=4)
-        print("파일에 내용이 성공적으로 작성되었습니다.")
-    except Exception as e:
-        print(f"파일 작성 중 오류가 발생했습니다: {e}")
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            print("파일에 내용이 성공적으로 작성되었습니다.")
+        except Exception as e:
+            print(f"파일 작성 중 오류가 발생했습니다: {e}")
+   
+        currentcnt += int(data['numOfRows'])
+        pagenum += 1
+        time.sleep(1) 
+
 
 
 def fun_trans():
-    # log 읽기
-    dir_path = "/opt/airflow/data/"
-    json_filename = "edata.json"
-    csv_filename = "tdata.csv"
-    json_file_path = os.path.join(dir_path, json_filename)
-    csv_file_path = os.path.join(dir_path,csv_filename)
-
+    csv_dir_path = "/opt/airflow/Tdata"
     try:
-        if os.path.exists(json_file_path):
-            with open(json_file_path, 'r', encoding='utf-8') as file:
-                data = json.load(file)         
+        if not os.path.exists(csv_dir_path):
+            os.makedirs(csv_dir_path)
+            print(f"{csv_dir_path} 디렉토리가 생성되었습니다.")
         else:
-            print(f"경로에 파일이 존재하지 않습니다.")
+            print(f"{csv_dir_path} 디렉토리가 이미 존재합니다.")
     except Exception as e:
-        print(f"파읽 읽는 중 오류 발생: {e}")
+        print(f"디렉토리 생성 중 오류 발생: {e}")
     
 
-
-    header = ['park_id', 'park_nm', 'park_addr', 'park_la', 'park_lo', 'page_no']
-    if (not os.path.exists(csv_file_path)) or (os.path.getsize(csv_file_path) == 0):
-        with open(csv_file_path, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(header) 
-            print("헤더가 추가되었습니다.")
-
-
-    for d in data:
-        print("*"*30)
-        print(d)
-        pagenum = d['pageNo']
-        for prk_data in d['PrkSttusInfo'] :
+    json_dir_path = "/opt/airflow/Edata/"
+    try:
+        if os.path.exists(json_dir_path):
+            files = os.listdir(json_dir_path)
+            files.sort(key=lambda x: int(re.search(r'(\d+)', x).group()) if re.search(r'(\d+)', x) else float('inf'))
             
-            parkid = prk_data['prk_center_id']
-            parknm = prk_data['prk_plce_nm']
-            parkaddr = prk_data['prk_plce_adres']
-            parkla = prk_data['prk_plce_entrc_la']
-            parklo = prk_data['prk_plce_entrc_lo']
-            
+            for file in files:
+                file_path = os.path.join(json_dir_path, file)
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
 
-            row = f"{parkid},{parknm},{parkaddr},{parkla},{parklo},{pagenum}\n"
-        
-            with open(csv_file_path, mode='a', encoding='utf-8') as file:
-                file.write(row)
+                flattened_data = []
+                page_no = data['pageNo']
+                for prk_data in data['PrkSttusInfo']:
+                    print(prk_data)
+                    flattened_data.append({
+                        'park_id': prk_data.get('prk_center_id', ' ') ,
+                        'park_nm': prk_data.get('prk_plce_nm', ' '),
+                        'park_addr': prk_data.get('prk_plce_adres', ' '),
+                        'park_la': prk_data.get('prk_plce_entrc_la', ' '),
+                        'park_lo': prk_data.get('prk_plce_entrc_lo', ' '),
+                        'page_no': page_no
+                    })
 
+                # pandas DataFrame으로 변환
+                df = pd.DataFrame(flattened_data)
+                csv_file_path = os.path.join(csv_dir_path, f"page_{page_no}.csv")       
+                # CSV 파일로 저장
+                df.to_csv(csv_file_path, index=False, encoding='utf-8', sep=';')
+                print(f"CSV 파일이 성공적으로 저장되었습니다: {csv_file_path}")
+        else:
+            print(f"경로에 파일이 존재하지 않습니다.")
+            return
+    except Exception as e:
+        print(f"파일 읽는 중 오류 발생: {e}")
+        return
 
 
 def fun_2parquet():
-    import shutil
+    p_dir_path = "/opt/airflow/Pdata"
 
-    dir_path = "/opt/airflow/data/"
-    file_name = "tdata.csv"
-    path = os.path.join(dir_path, file_name)
-    df = pd.read_csv(path)
-    print("^"*1000)
-    print(df.isnull().sum())
-    df = df.fillna('')
-    grouped = df.groupby('page_no')
-
-    p_dir_path = f"{dir_path}parquet"
-    #이미 존재하면 먼저 삭제하고
+    # 디렉토리 삭제
     try:
-        if os.path.exists(p_dir_path): 
+        if os.path.exists(p_dir_path):
             shutil.rmtree(p_dir_path)
+            print("Pdata 디렉토리 삭제 완료")
+        else:
+            print("Pdata 디렉토리가 존재하지 않습니다.")
     except Exception as e:
-        print(f"디렉토리 생성 중 오류 발생: {e}")
+        print(f"디렉토리 삭제 중 오류 발생: {e}")
 
-    # parquet 폴더 생성
+    # 디렉토리 생성
     try:
         os.makedirs(p_dir_path)
+        print("Pdata 디렉토리 생성 완료")
     except Exception as e:
         print(f"디렉토리 생성 중 오류 발생: {e}")
+
+    dir_path = "/opt/airflow/Tdata/"
+    files = os.listdir(dir_path)
+    files.sort(key=lambda x: int(re.search(r'(\d+)', x).group()) if re.search(r'(\d+)', x) else float('inf'))
     
-
-    print(df['park_id'][2:-1])
-    print(df['park_nm'][1:-1])
-    print(df['park_addr'][1:-1])
-    print(df['park_la'][1:-1])
-    print(df['park_lo'][1:-1])
-    print(df['page_no'].astype('int'))
-
-
-    # 각 page_no별로 데이터를 Parquet로 저장
-    for page_no, group in grouped:
-        # 각 page_no에 대해 parquet 파일로 저장    
-        output_file = f"{dir_path}/parquet/parkinginfo_{page_no}.parquet"
-        group.to_parquet(output_file, index=False)
-        print(f"Page {page_no} 데이터가 {output_file}로 저장되었습니다.")
+    for file in files:
+        path = os.path.join(dir_path, file)
+        df = pd.read_csv(path, delimiter=';')
+        output_file = f"{p_dir_path}/{file.split('.')[0]}.parquet"
+        df.to_parquet(output_file, index=False)
+        print(f"Page {file.split('.')[0]} 데이터가 {output_file}로 저장되었습니다.")
+        
 
 
-
-def fun_load():
+def fun_load(**kwargs):
     import glob
     from mysql.connector import Error
     import mysql.connector
 
     try:
-        # MySQL 연결 설정
-        passwd = os.getenv('DB_PW')  # 환경 변수에서 DB 비밀번호 가져오기
+        passwd = os.getenv('DB_PW')
 
         conn = mysql.connector.connect(
             host="parkingissue_database",
@@ -233,66 +235,117 @@ def fun_load():
             database="parkingissue"
         )
 
-        # 연결 성공 여부 확인
         if conn.is_connected():
             print("MySQL 데이터베이스에 성공적으로 연결되었습니다.")
             
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
         return None
-    
-    try: 
+
+    try:
         cursor = conn.cursor()
-        # DELETE 쿼리 실행
         delete_query = "DELETE FROM parkingarea_info;"
         cursor.execute(delete_query)
-        print("데이터가 삭제되었습니다.")
-        
-        # AUTO_INCREMENT 초기화 쿼리 실행
         alter_query = "ALTER TABLE parkingarea_info AUTO_INCREMENT = 1;"
         cursor.execute(alter_query)
-        print("AUTO_INCREMENT가 초기화되었습니다.")
 
     except Error as e:
-        print(f"테이블 초기화 오류 발생!!  {e}")
+        print(f"테이블 초기화 오류 발생!! {e}")
 
-    folder_path = '/opt/airflow/data/parquet'
+    folder_path = '/opt/airflow/Pdata'
     parquet_files = glob.glob(os.path.join(folder_path, "*.parquet"))
-    parquet_files.sort(key=lambda x: int(os.path.basename(x).split('_')[1].split('.')[0]))
+    parquet_files.sort(key=lambda x: int(re.search(r'(\d+)', os.path.basename(x)).group()))
 
     for file in parquet_files:
         try:
-            # 파일 존재 여부 확인
             if os.path.exists(file) and os.path.isfile(file):
-                # parquet 파일 읽기
                 df = pd.read_parquet(file)
-                print(f"파일명: {os.path.basename(file)}")
-                print(df)  
-                print("-" * 50)
-
-                # 한 번에 INSERT 하기
                 if not df.empty:
                     insert_query = """
                     INSERT INTO parkingarea_info (park_id, park_nm, park_addr, park_la, park_lo, page_no) VALUES (%s, %s, %s, %s, %s, %s)
                     """
-                    # DataFrame을 리스트로 변환
                     data = [tuple(x) for x in df[['park_id', 'park_nm', 'park_addr', 'park_la', 'park_lo', 'page_no']].values]
                     cursor = conn.cursor()
-                    cursor.executemany(insert_query, data)  # 여러 행을 한 번에 삽입
+                    cursor.executemany(insert_query, data)
                     conn.commit()
                     print(f"{len(data)}개의 데이터가 삽입되었습니다.")
-                else:
-                    print("DataFrame이 비어 있습니다.")
-            else:
-                print(f"파일이 존재하지 않거나 잘못된 경로입니다: {file}")
+            kwargs['ti'].xcom_push(key='final', value='Success')
         except Exception as e:
-            # 오류 발생 시 처리
             print(f"파일 {os.path.basename(file)}을(를) 읽는 중 오류 발생: {e}")
+            kwargs['ti'].xcom_push(key='final', value='Fail')
 
     if conn.is_connected():
         cursor.close()
         conn.close()
         print("DB connection closed.")
+
+
+def fun_final(**kwargs):
+    ti = kwargs['ti']
+    final_result = ti.xcom_pull(key='final', task_ids='load_data')
+    print("-" * 50)
+    print(f"최종 실행 결과는 !! {final_result}")
+
+    dir_path = "/opt/airflow/Result"
+    file_path = f"{dir_path}/result.csv"
+
+    try:
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+            print(f"{dir_path} 디렉토리가 생성되었습니다.")
+        else:
+            print(f"{dir_path} 디렉토리가 이미 존재합니다.")
+    except Exception as e:
+        print(f"디렉토리 생성 중 오류 발생: {e}")
+
+    header = ['date', 'result']
+  
+    if not os.path.exists(file_path):
+        with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(header)  
+        print(f"새로운 파일 생성 및 헤더 추가됨: {file_path}")
+
+    airflow_execution_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    new_data = [airflow_execution_date, final_result]
+
+    with open(file_path, mode='r+', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        rows = list(reader)
+
+        # 파일이 비어있거나 헤더만 있는 경우, 데이터 추가
+        if len(rows) == 1:  # 헤더만 있는 경우
+            with open(file_path, mode='a', newline='', encoding='utf-8') as file_append:
+                writer = csv.writer(file_append)
+                writer.writerow(new_data)  
+            print(f"헤더만 존재, 새로운 행이 추가되었습니다: {new_data}")
+        
+        # 파일에 마지막 행이 있는 경우
+        elif len(rows) > 1:
+            last_row = rows[-1]
+            if last_row[0] <= airflow_execution_date:  # 마지막 행의 'date'가 에어플로우 실행 날짜보다 같거나 이전인 경우
+                with open(file_path, mode='a', newline='', encoding='utf-8') as file_append:
+                    writer = csv.writer(file_append)
+                    writer.writerow(new_data)  # 새로운 데이터 추가
+                print(f"새로운 행이 추가되었습니다: {new_data}")
+            else:
+                print(f"에러: 'date' 값이 에어플로우 실행 날짜({airflow_execution_date})보다 미래입니다.")
+
+        
+
+session = requests.Session()
+
+# Retry 설정 (최대 5번 재시도, 백오프 시간 1초)
+retry = Retry(
+    total=5,  # 재시도 횟수
+    backoff_factor=1,  # 재시도 간의 대기 시간 (1초, 2초, 4초, 8초, ...)
+    status_forcelist=[500, 502, 503, 504, 408],  # 재시도할 상태 코드
+    method_whitelist=["GET"]  # GET 요청에만 적용
+)
+    # 세션에 어댑터 설정
+adapter = HTTPAdapter(max_retries=retry)
+session.mount('http://', adapter)
+session.mount('https://', adapter)
 
 
 def call(pagenum,API_KEY):
@@ -302,14 +355,46 @@ def call(pagenum,API_KEY):
     url = 'http://apis.data.go.kr/B553881/Parking/PrkSttusInfo'
     params ={'serviceKey' : API_KEY, 
              'pageNo' : pagenum, 
-            #  'numOfRows' : '10000', 
-             'numOfRows' : '2', 
+             'numOfRows' : '1000', 
+            #  'numOfRows' : '3', 
              'format' : '2'
              }
-    
-    response = requests.get(url, params=params)
-    decoded_data = response.content.decode('utf-8')
-    data = json.loads(decoded_data)
-    return data
-    
 
+    attempt = 0  # 시도 횟수
+
+    while attempt < 10:
+        try:
+            # 요청 보내기
+            response = session.get(url, params=params)
+
+            # 응답 상태 코드 확인
+            if response.status_code == 200:
+                # 응답 본문이 비어 있는지 확인
+                if not response.text.strip():  # 공백이나 빈 문자열인 경우
+                    print("응답 본문이 비어있습니다. 재시도 중...")
+                    attempt += 1
+                    continue  # 본문이 비어 있으면 재시도
+
+                # JSON 파싱 시도
+                try:
+                    data = response.json()  # JSON 파싱
+                    return data
+                except json.decoder.JSONDecodeError as e:
+                    print(f"JSON 파싱 오류: {e}")
+                    print("응답 본문:", response.text)  # 디버깅을 위한 응답 출력
+                    attempt += 1
+                    continue  # JSON 파싱 오류 발생 시 재시도
+
+            else:
+                print(f"응답 상태 코드 오류: {response.status_code}")
+                attempt += 1
+                continue  # 상태 코드가 200이 아니면 재시도
+
+        except requests.exceptions.RequestException as e:
+            print(f"요청 예외 발생: {e}")
+            attempt += 1
+            continue  # 요청 오류 발생 시 재시도
+
+    # 재시도 후에도 실패하면 None 반환
+    print("최대 재시도 횟수를 초과하였습니다. 실패.")
+    return None
