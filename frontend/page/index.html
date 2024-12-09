@@ -90,14 +90,14 @@
     <!-- Initialize the Leaflet Map -->
     <script>
         // var markers = L.markerClusterGroup();
-
-        function addParkingMarkers(parkingData) {  // 주변 주차장 데이터 가져와서
-            var parkIcon = L.icon({
+        var parkIcon = L.icon({
                     iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
                     iconSize: [42, 42], // 아이콘 크기 (픽셀)
                     iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
                     popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
                 });
+        // 주차장 마커 찍기
+        function addParkingMarkers(parkingData) {  // 주변 주차장 데이터 가져와서
             parkingData.forEach(function(parking) {  // for 반복문
                 var marker = L.marker([parking.park_la, parking.park_lo], { icon: parkIcon }).addTo(map); 
                 // marker.bindPopup(`<b>${parking.park_nm}</b><br>${parking.park_addr}`); 
@@ -114,7 +114,8 @@
         }
         // fastapi로 값 보내기
         function fetchParkingData(latitude, longitude) {
-            const url = 'http://localhost:8000/location';
+            //const url = 'http://localhost:8000/location'; // fastapi post url
+            const url = 'https://10.0.4.74:8000/api/location';
             fetch(url, {  // FastAPI 엔드포인트 URL
                 method: 'POST', // POST 요청
                 headers: {
@@ -127,15 +128,29 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    throw new Error(`POST Request failed: ${response.status}`);
                 }
-                return response.json();
+                console.log('POST 요청 성공');
             })
-            .then(data => {
-                console.log('Success:', data);
-                addParkingMarkers(data);
-            })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('POST 요청 중 오류 발생:', error));
+            // .then(data => {
+            //     console.log('Success:', data);
+            //     addParkingMarkers(data);
+            // })
+            // .catch(error => console.error('Error:', error));
+        }
+        // 데이터 받아오기
+        function fetchParkingDataFromFastAPI() {
+            const url = 'https://10.0.4.74:8000/parking'; // FastAPI GET 엔드포인트
+            return fetch(url, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error(`GET Request failed: ${response.status}`);
+                }
+                return response.json(); // GET 요청 후 응답 데이터를 반환
+            });
         }
         // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
         var map = L.map('map').setView([37.5665, 126.9780], 15);
@@ -153,7 +168,6 @@
             mapLink.href = "";
 
             let currentMarker = null; // 내 위치 마커 저장
-            let isFirstUpdate = true; // 지도 이동 여부 플래그
 
             function success(position) {
                 const latitude = position.coords.latitude;
@@ -180,11 +194,18 @@
                 });
 
                 // 위도와 경도를 FastAPI로 전송
-                fetchParkingData(latitude, longitude);
+                fetchParkingData(latitude, longitude)
+                    .then(() => {
+                        // POST 성공 후 주차장 데이터 GET 요청
+                        return fetchParkingDataFromFastAPI();
+                    })
+                    .then(parkingData => {
+                        console.log("주차장 데이터:", parkingData);
+                        addParkingMarkers(parkingData); // 지도에 마커 추가
+                    })
+                    .catch(error => console.error("Error:", error));
 
                 // 지도에 커스텀 아이콘을 사용하는 마커 추가
-                // 아래처럼 marker를 변수 지정해주고
-                // 주차장 marker는 따로 parking_marker 로 변수 넣으면 될듯
                 // 내 위치 마커 처리
                 if (!currentMarker) {
                     // 최초 마커 생성
@@ -195,10 +216,7 @@
                 }
 
                 // 지도 중심을 현재 위치로 이동
-                if (isFirstUpdate) {
-                    map.setView([latitude, longitude], 16);
-                    isFirstUpdate = false;
-                }
+                map.setView([latitude, longitude], 16);
 
                 map.invalidateSize(); // 지도 크기 갱신 (리사이징 문제 방지)
             }
