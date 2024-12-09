@@ -103,8 +103,10 @@
                 // marker.bindPopup(`<b>${parking.park_nm}</b><br>${parking.park_addr}`); 
                 // 클릭이 일어날 경우 주차장 상세 페이지로 이동
                 marker.on('click', function() {
+                    const parkla = encodeURIComponent(parking.park_la);
+                    const parklo = encodeURIComponent(parking.park_lo);
                     // 원하는 HTML 페이지로 이동
-                    window.location.href = 'parkinginfo.html';
+                    window.location.href = `parkinginfo.html?lat=${parkla}&lon=${parklo}`;
                 });
                 // markers.addLayer(marker);
             });
@@ -138,17 +140,16 @@
         // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
         var map = L.map('map').setView([37.5665, 126.9780], 15);
 
-        // vworld 타일 레이어 추가
-        L.tileLayer('http://xdworld.vworld.kr:8080/2d/Base/202002/{z}/{x}/{y}.png', {
+        L.tileLayer('https://xdworld.vworld.kr/2d/Base/202002/{z}/{x}/{y}.png', {
             maxZoom: 21,
             attribution: '© VWorld'
         }).addTo(map);
-        // 기본 지도 쓰던 버전
-        /*
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 21,
-            attribution: '© OpenStreetMap'
-        }).addTo(map); */
+
+        // vworld 타일 레이어 추가
+        // L.tileLayer('http://xdworld.vworld.kr:8080/2d/Base/202002/{z}/{x}/{y}.png', {
+        //     maxZoom: 21,
+        //     attribution: '© VWorld'
+        // }).addTo(map);
 
         // GeoFindMe 함수 - 현재 위치 찾기
         function geoFindMe() {
@@ -171,7 +172,7 @@
 
                 // 상태 텍스트 초기화
                 status.textContent = "";
-                mapLink.href = `http://map.vworld.kr/map/maps.do?centerLon=${longitude}&centerLat=${latitude}&zoom=18`;
+                mapLink.href = `https://map.vworld.kr/map/maps.do?centerLon=${longitude}&centerLat=${latitude}&zoom=18`;
 
                 // 내 위치 아이콘
                 var customIcon = L.icon({
