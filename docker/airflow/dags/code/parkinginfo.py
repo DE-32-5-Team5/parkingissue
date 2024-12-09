@@ -101,9 +101,16 @@ def fun_save_log():
 
     API_KEY = os.getenv('API_KEY')
 
-    totalcnt = 1
-    currentcnt = 0
-    pagenum = 1
+    # totalcnt = 1
+    # currentcnt = 0
+    # pagenum = 1
+
+
+    
+    currentcnt = 84000
+    totalcnt = currentcnt+1
+    pagenum = 85
+
     First = True
     
 
@@ -362,39 +369,42 @@ def call(pagenum,API_KEY):
 
     attempt = 0  # 시도 횟수
 
-    while attempt < 10:
+    while True:
+        if attempt==10:
+            print("최대 재시도 횟수를 초과하였습니다. 10분 후 다시 시도합니다.")
+            time.sleep(600)
+            attempt=0
+            session = requests.Session()
+
         try:
-            # 요청 보내기
             response = session.get(url, params=params)
 
             # 응답 상태 코드 확인
             if response.status_code == 200:
-                # 응답 본문이 비어 있는지 확인
-                if not response.text.strip():  # 공백이나 빈 문자열인 경우
+
+                # 본문이 비어 있으면 재시도
+                if not response.text.strip(): 
                     print("응답 본문이 비어있습니다. 재시도 중...")
                     attempt += 1
-                    continue  # 본문이 비어 있으면 재시도
 
-                # JSON 파싱 시도
+                # JSON 파싱 오류 발생 시 재시도
                 try:
-                    data = response.json()  # JSON 파싱
+                    data = response.json() 
                     return data
                 except json.decoder.JSONDecodeError as e:
                     print(f"JSON 파싱 오류: {e}")
-                    print("응답 본문:", response.text)  # 디버깅을 위한 응답 출력
+                    print("응답 본문:", response.text) 
                     attempt += 1
-                    continue  # JSON 파싱 오류 발생 시 재시도
+                    continue  
 
+            # 상태 코드가 200이 아니면 재시도
             else:
                 print(f"응답 상태 코드 오류: {response.status_code}")
                 attempt += 1
-                continue  # 상태 코드가 200이 아니면 재시도
+                continue  
 
+        # 요청 오류 발생 시 재시도
         except requests.exceptions.RequestException as e:
             print(f"요청 예외 발생: {e}")
             attempt += 1
-            continue  # 요청 오류 발생 시 재시도
-
-    # 재시도 후에도 실패하면 None 반환
-    print("최대 재시도 횟수를 초과하였습니다. 실패.")
-    return None
+            continue  
