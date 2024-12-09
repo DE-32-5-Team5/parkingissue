@@ -1,0 +1,36 @@
+name: spark
+services:
+  master:
+    build:
+      context: ./docker/spark/master-spark  # 빌드 경로 지정
+      dockerfile: Dockerfile
+    container_name: spark-master
+    image: spark-master-image:latest  # 빌드된 이미지 이름과 태그 지정
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+      - "4040:4040"
+    networks:
+      - sparknet
+
+  worker:
+    build:
+      context: ./docker/spark/worker-spark  # 빌드 경로 지정
+      dockerfile: Dockerfile
+    image: spark-worker-image:latest  # 빌드된 이미지 이름과 태그 지정
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+    depends_on:
+      - master
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - sparknet
+
+networks:
+  sparknet:
+    driver: bridge
