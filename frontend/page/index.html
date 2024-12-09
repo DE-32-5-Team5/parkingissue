@@ -1,4 +1,5 @@
 <!DOCTYPE HTML>
+<!-- html 이동 되는 곳은 주차장 팝업, 네비게이션 바 -->
 <html>
 <head>
     <title>주차잇슈</title>
@@ -6,10 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/main.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- marker cluster css -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- marker cluster -->
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 </head>
 <body class="is-preload">
     <!-- Wrapper -->
@@ -26,11 +33,18 @@
                     <!-- Search Bar -->
                     <div class="search-bar-container">
                         <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
-                        <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
-                        <button class="voice-search-btn" title="음성 검색">
-                            <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
-                        </button>
+                        <form class="search-form" onsubmit="return false;"> 
+                            <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
+                            <div class="search-buttons">
+                                <button type="button" class="voice-search-btn" title="음성 검색">
+                                    <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
+                                </button>
+                                <button type="button" class="search-button" title="검색">🔍</button>    
+                            </div>
+                        </form>
+                        <div class="suggestions"></div>
                     </div>
+                    <div class="trending-searches">
                 </div>
             </div>
         </header>
@@ -64,34 +78,78 @@
                         <!-- 즐겨찾기 페이지 이동 -->
                         <li><a href="favor/favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
                         <!-- 개인 프로필 페이지 이동 -->
-                        <li><a href="mypage/personal/index.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                        <li><a href="./mypage/personal/index.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
                     </ul>
                 </nav>
             </div>
         </div>
-
-    <!-- 지도 그리는 곳 -->
-
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- 검색창 기능 -->
+    <script src="assets/js/form.js"></script>
     <!-- voice search -->
     <script src="assets/js/voice-search.js"></script>
     <!-- Initialize the Leaflet Map -->
     <script>
+        // var markers = L.markerClusterGroup();
+
+        function addParkingMarkers(parkingData) {  // 주변 주차장 데이터 가져와서
+            var parkIcon = L.icon({
+                    iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+            parkingData.forEach(function(parking) {  // for 반복문
+                var marker = L.marker([parking.park_la, parking.park_lo], { icon: parkIcon }).addTo(map); 
+                // marker.bindPopup(`<b>${parking.park_nm}</b><br>${parking.park_addr}`); 
+                // 클릭이 일어날 경우 주차장 상세 페이지로 이동
+                marker.on('click', function() {
+                    const parkla = encodeURIComponent(parking.park_la);
+                    const parklo = encodeURIComponent(parking.park_lo);
+                    // 원하는 HTML 페이지로 이동
+                    window.location.href = `parkinginfo.html?lat=${parkla}&lon=${parklo}`;
+                });
+                // markers.addLayer(marker);
+            });
+            // map.addLayer(markers);
+        }
+        // fastapi로 값 보내기
+        function fetchParkingData(latitude, longitude) {
+            const url = 'http://localhost:8000/location';
+            fetch(url, {  // FastAPI 엔드포인트 URL
+                method: 'POST', // POST 요청
+                headers: {
+                    'Content-Type': 'application/json', // JSON 형식
+                },
+                body: JSON.stringify({ // 요청 바디에 데이터를 JSON으로 변환하여 포함
+                    latitude: latitude,
+                    longitude: longitude
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                addParkingMarkers(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
         // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
-        var map = L.map('map').setView([37.5665, 126.9780], 13);
+        var map = L.map('map').setView([37.5665, 126.9780], 15);
+
+        L.tileLayer('https://xdworld.vworld.kr/2d/Base/202002/{z}/{x}/{y}.png', {
+            maxZoom: 21,
+            attribution: '© VWorld'
+        }).addTo(map);
 
         // vworld 타일 레이어 추가
-        L.tileLayer('http://xdworld.vworld.kr:8080/2d/Base/201802/{z}/{x}/{y}.png', {
-            maxZoom: 21,
-            attribution: '© vworld'
-        }).addTo(map);
-        // 기본 지도 쓰던 버전
-        /*
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 21,
-            attribution: '© OpenStreetMap'
-        }).addTo(map); */
+        // L.tileLayer('http://xdworld.vworld.kr:8080/2d/Base/202002/{z}/{x}/{y}.png', {
+        //     maxZoom: 21,
+        //     attribution: '© VWorld'
+        // }).addTo(map);
 
         // GeoFindMe 함수 - 현재 위치 찾기
         function geoFindMe() {
@@ -101,14 +159,22 @@
             mapLink.href = "";
 
             function success(position) {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
+                // const latitude = position.coords.latitude;
+                // const longitude = position.coords.longitude;
+
+                // 서울이 없는 관계로 잠시 수원시청 기준으로 시작
+                // const latitude = 37.2635846787744;
+                // const longitude = 127.028715898311;
+                
+                // 울산
+                const latitude = 35.5444169723408;
+                const longitude = 129.331864527424;
 
                 // 상태 텍스트 초기화
                 status.textContent = "";
-                mapLink.href = `http://map.vworld.kr/map/maps.do?centerLon=${longitude}&centerLat=${latitude}&zoom=18`;
+                mapLink.href = `https://map.vworld.kr/map/maps.do?centerLon=${longitude}&centerLat=${latitude}&zoom=18`;
 
-                // 사용자 정의 아이콘 생성
+                // 내 위치 아이콘
                 var customIcon = L.icon({
                     iconUrl: 'images/my-location.png', // 사용할 이미지 파일 경로
                     iconSize: [42, 42], // 아이콘 크기 (픽셀)
@@ -116,17 +182,13 @@
                     popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
                 });
 
+                // 위도와 경도를 FastAPI로 전송
+                fetchParkingData(latitude, longitude);
+
                 // 지도에 커스텀 아이콘을 사용하는 마커 추가
                 // 아래처럼 marker를 변수 지정해주고
                 // 주차장 marker는 따로 parking_marker 로 변수 넣으면 될듯
                 var marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map)
-                
-                // 마커 클릭 이벤트
-                // 원하는 변수의 마커에 event 추가
-                marker.on('click', function() {
-                    // 원하는 HTML 페이지로 이동
-                    window.location.href = 'parkinginfo.html';
-                });
 
                 // 지도에서 현재 위치에 마커 추가
                 // var marker = L.marker([latitude, longitude]).addTo(map);
@@ -134,7 +196,7 @@
                 // marker.bindPopup("<b>내 위치</b>").openPopup();
 
                 // 지도 중심을 현재 위치로 이동
-                map.setView([latitude, longitude], 15);
+                map.setView([latitude, longitude], 16);
 
                 map.invalidateSize(); // 지도 크기 갱신 (리사이징 문제 방지)
             }
@@ -143,13 +205,22 @@
                 status.textContent = "Unable to retrieve your location";
             }
 
+            var options = {
+                enableHighAccuracy: true, // 모바일에서는 gps
+                maximumAge: 0, // 항상 최신 위치 정보 요청
+                timeout: 5000 // 위치 정보를 가져오는 최대 시간 5초 넘으면 오류메시지
+            }
+
             if (!navigator.geolocation) {
                 status.textContent = "Geolocation is not supported by your browser";
             } else {
                 status.textContent = "Locating…";
-                navigator.geolocation.getCurrentPosition(success, error);
+                // 위치변경될때마다 함수호출해서 내 위치 최신화
+                navigator.geolocation.watchPosition(success, error, options);
+                // navigator.geolocation.getCurrentPosition(success, error, options);
             }
         }
+
         // 웹 시작하자마자 현재 위치로 이동!
         window.onload = geoFindMe;
         // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침

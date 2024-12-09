@@ -1,8 +1,10 @@
-FROM nginx:latest
+FROM httpd:2.4
 
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-COPY html /usr/share/nginx/html
+# docker build --build-arg REPO_URL=.....
+COPY ./my-httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY ./page /usr/local/apache2/blog/
 
-EXPOSE 80
+RUN ["apt-get", "update"]
+RUN ["apt-get", "install", "-y", "vim"]
 
-CMD ["nginx", "-g", "daemon off;"]
+# /usr/local/apache2/blog
