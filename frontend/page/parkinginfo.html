@@ -13,12 +13,15 @@
 <body>
     <div class="parking-info-container">
         <div class="map-section">
+            <!-- 지도 leafletjs로 수정해야함 해당 주차장 위치에 아이콘 찍힌 느낌으로 -->
             <iframe src="https://www.google.com/maps/embed?pb=!1m18..." width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
         <div class="info-section">
+            <!-- 주차장 이름 DB에서 주차장 ID 통해서 조회 -->
             <h2 class="parking-title"><i class="fas fa-map-marker-alt" style="color: #ff0000; margin-right: 10px;"></i>나이스파크 서초 민강남 클리닉 주차장</h2>
             <!-- <h2 class="parking-title">나이스파크 서초 민강남 클리닉 주차장</h2> -->
             <ul class="details-list">
+                <!-- 여기도 전부 DB에서 가져와야함 -->
                 <li><strong>운영 시간</strong>: 00:00 ~ 24:00</li>
                 <li><strong>현재 요금</strong>: 1시간 기준 7,000원</li>
                 <li><strong>주소</strong>: 서울특별시 서초구 혹려로 410</li>
@@ -27,12 +30,14 @@
         <div class="availability-bar">
             <div class="availability-fill" style="width: 50%;"></div>
             <div style="margin-bottom: 5px;"></div>
+            <!-- 여기에서 남은 자리 계산에서 넣어야함 -->
             <i class="fas fa-car" style="color: #28a745; font-size: 1.5em;"></i> <span class="availability-text">주차 가능: 15면</span>
         </div>
 
         <div style="margin-bottom: 40px;"></div>
         <div class="reservation-section">
             <div class="reservation-item">
+                <!-- 여기도 주차장 운영 시간 DB 조회 -->
                 <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-clock" style="margin-right: 7px;"></i><strong>운영 시간</strong></div><br>
                 <span>월요일 09:00 ~ 18:00 </span><br>
                 <span>화요일 09:00 ~ 18:00 </span><br>
@@ -49,6 +54,7 @@
         <div class="reservation-section">
             <div class="reservation-item">
                 <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-wallet" style="margin-right: 5px;"></i><strong>요금</strong></div><br>
+                <!-- 여기도 DB에서 조회해서 값 넣어야 함 -->
                 <span>기본 무료 시간</span><br>
                 <span>추가 단위 시간(요금)</span><br>
                 <span>1일 요금</span><br>
@@ -59,6 +65,7 @@
         </div>
         <div class="reservation-section">
             <div class="reservation-item">
+                <!-- 아마 여기가 구현된다면 Spark로 계산 -->
                 <strong>시간 별 혼잡도</strong><br>
                 <canvas id="congestionChart" width="400" height="200"></canvas>
             </div>
@@ -77,6 +84,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // 여기가 지금 혼잡도 bargraph 예시인듯
     const ctx = document.getElementById('congestionChart').getContext('2d');
     const congestionChart = new Chart(ctx, {
         type: 'bar',

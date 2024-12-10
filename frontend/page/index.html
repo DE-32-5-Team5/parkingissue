@@ -167,7 +167,8 @@
 
             mapLink.href = "";
 
-            let currentMarker = null; // 내 위치 마커 저장
+            let currentMarker = null;
+            let isFirstUpdate = true;
 
             function success(position) {
                 const latitude = position.coords.latitude;
@@ -194,16 +195,16 @@
                 });
 
                 // 위도와 경도를 FastAPI로 전송
-                fetchParkingData(latitude, longitude)
-                    .then(() => {
-                        // POST 성공 후 주차장 데이터 GET 요청
-                        return fetchParkingDataFromFastAPI();
-                    })
-                    .then(parkingData => {
-                        console.log("주차장 데이터:", parkingData);
-                        addParkingMarkers(parkingData); // 지도에 마커 추가
-                    })
-                    .catch(error => console.error("Error:", error));
+                // fetchParkingData(latitude, longitude)
+                    // .then(() => {
+                    //     // POST 성공 후 주차장 데이터 GET 요청
+                    //     return fetchParkingDataFromFastAPI();
+                    // })
+                    // .then(parkingData => {
+                    //     console.log("주차장 데이터:", parkingData);
+                    //     addParkingMarkers(parkingData); // 지도에 마커 추가
+                    // })
+                    // .catch(error => console.error("Error:", error));
 
                 // 지도에 커스텀 아이콘을 사용하는 마커 추가
                 // 내 위치 마커 처리
@@ -215,8 +216,21 @@
                     currentMarker.setLatLng([latitude, longitude]);
                 }
 
+                // if (isManual || isButtonClick) {
+                //     // 버튼 클릭 시 고정 줌 레벨로 지도 이동
+                //     map.setView([latitude, longitude], 16);
+                //     isButtonClick = false; // **한 번 처리 후 초기화**
+                // } else {
+                //     // 위치 변경 시 현재 줌 레벨 유지하며 지도 이동
+                //     currentZoomLevel = map.getZoom(); // 현재 줌 레벨 저장
+                //     map.setView([latitude, longitude], currentZoomLevel);
+                // }
+
                 // 지도 중심을 현재 위치로 이동
-                map.setView([latitude, longitude], 16);
+                if (isFirstUpdate) {
+                    map.setView([latitude, longitude], map.getZoom());
+                    isFirstUpdate = false;
+                }
 
                 map.invalidateSize(); // 지도 크기 갱신 (리사이징 문제 방지)
             }
@@ -245,6 +259,8 @@
         window.onload = geoFindMe;
         // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
         document.querySelector("#find-me").addEventListener("click", function() {
+            // isButtonClick = true;
+            // navigator.geolocation.getCurrentPosition(success, error);
             // 페이지 새로고침
             location.reload();
         });
