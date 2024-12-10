@@ -129,7 +129,7 @@
         // fastapi로 값 보내기
         function fetchParkingData(latitude, longitude) {
             //const url = 'http://localhost:8000/location'; // fastapi post url
-            const url = 'https://10.0.4.74:8000/api/location';
+            const url = 'https://10.0.4.74:8000/api/location'; // 서버에서는 https://parkingissue.online/api/location
             fetch(url, {  // FastAPI 엔드포인트 URL
                 method: 'POST', // POST 요청
                 headers: {
@@ -175,8 +175,14 @@
         }).addTo(map);
         // 현 위치 재검색 버튼
         const researchButton = document.getElementById("research");
+
         // 초기 중심 좌표
+        // 이거 이용해서 내 위치 주변 500m 할때도 처음 한번만 조회하게 하고
+        // 그 다음부터는 이동 거리랑 비교해서 멀어졌을때 재검색하게 하면 될듯
         let initialCenter = null;
+        
+        // watchPosition의 ID
+        let watchId = null;
 
         // GeoFindMe 함수 - 현재 위치 찾기
         function geoFindMe() {
@@ -233,13 +239,7 @@
                     // 마커 위치만 업데이트
                     currentMarker.setLatLng([latitude, longitude]);
                 }
-                // 만약 버튼이 클릭됐다면
-                // if (isButtonClick) {
-                //     map.setView([latitude, longitude], 16);
-                //     isButtonClick = false;
-                // } else {
-                //     map.setView([latitude, longitude], map.getZoom());
-                // }
+
                 // 지도 중심을 현재 위치로 이동
                 if (isFirstUpdate) {
                     map.setView([latitude, longitude], map.getZoom());
@@ -265,11 +265,12 @@
             } else {
                 status.textContent = "Locating…";
                 // 위치변경될때마다 함수호출해서 내 위치 최신화
-                navigator.geolocation.watchPosition(success, error, options);
+                watchId = navigator.geolocation.watchPosition(success, error, options);
                 // navigator.geolocation.getCurrentPosition(success, error, options);
             }
         }
-
+        
+        // 지도 이동 시 일어나는 이벤트
         map.on('moveend', function () {
             const currentCenter = map.getCenter(); // 현재 지도 중심 좌표
             if (initialCenter && !initialCenter.equals(currentCenter)) {
@@ -278,8 +279,12 @@
                 researchButton.style.display = "none"; // 이동하지 않으면 버튼 숨기기
             }
         });
-
+        // 현위치 검색을 눌렀을때 발생하는 이벤트
         researchButton.addEventListener("click", function () {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                watchId = null; // ID 초기화
+            }
             const center = map.getCenter(); // 현재 지도 중심 가져오기
             // fetchParkingData(center.lat, center.lng); // FastAPI로 데이터 전송
             initialCenter = map.getCenter(); // 현재 중심을 초기 중심으로 갱신
