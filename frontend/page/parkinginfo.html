@@ -149,8 +149,13 @@
 <!-- url에서 값 가져오기 -->
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const parkla = urlParams.get('parkla');
-    const parklo = urlParams.get('parklo');
+    // 위경도
+    const parkla = parseFloat(urlParams.get('parkla'));
+    const parklo = parseFloat(urlParams.get('parklo'));
+    // id 이름 주소
+    const parkId = urlParams.get('id');
+    const parkNm = urlParams.get('name');
+    const parkAddr = urlParams.get('addr');
 
     console.log(parkName, parkAddr); // 전달된 값 확인
 </script>

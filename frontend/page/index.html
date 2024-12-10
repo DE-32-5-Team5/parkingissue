@@ -60,6 +60,10 @@
                         <button id="find-me" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; padding: 0; border: none; border-radius: 8px; z-index: 1000;">
                             <img src="images/naver.png" style="width: 100%; height: 100%; object-fit: cover;">
                         </button>
+                        <button id="research" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border: none; border-radius: 25px; background-color: #4285F4; color: white; font-size: 14px; font-weight: bold; letter-spacing: 0px; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000; cursor: pointer; width: 170px;">
+                            <img src="images/research_icon.png" alt="reload-icon" style="width: 16px; height: 16px; margin-right: 8px;">
+                            현 지도에서 검색
+                        </button>
                     </div>
                 </div>
                 <div id="status"></div>
@@ -89,13 +93,23 @@
     <script src="assets/js/voice-search.js"></script>
     <!-- Initialize the Leaflet Map -->
     <script>
-        // var markers = L.markerClusterGroup();
+        // 지도 중심의 위도, 경도를 얻는 함수
+        // 이 위치에서 주변 검색을 위한 함수
+        function getMapCenter() {
+            var center = map.getCenter();  // 현재 지도 중심 좌표 반환
+            var cen_latitude = center.lat;     // 위도
+            var cen_longitude = center.lng;    // 경도
+
+            return { cen_latitude, cen_longitude };
+        }
+        
         var parkIcon = L.icon({
                     iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
                     iconSize: [42, 42], // 아이콘 크기 (픽셀)
                     iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
                     popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
                 });
+
         // 주차장 마커 찍기
         function addParkingMarkers(parkingData) {  // 주변 주차장 데이터 가져와서
             parkingData.forEach(function(parking) {  // for 반복문
@@ -159,6 +173,10 @@
             maxZoom: 21,
             attribution: '© VWorld'
         }).addTo(map);
+        // 현 위치 재검색 버튼
+        const researchButton = document.getElementById("research");
+        // 초기 중심 좌표
+        let initialCenter = null;
 
         // GeoFindMe 함수 - 현재 위치 찾기
         function geoFindMe() {
@@ -195,7 +213,7 @@
                 });
 
                 // 위도와 경도를 FastAPI로 전송
-                // fetchParkingData(latitude, longitude)
+                fetchParkingData(latitude, longitude)
                     // .then(() => {
                     //     // POST 성공 후 주차장 데이터 GET 요청
                     //     return fetchParkingDataFromFastAPI();
@@ -215,20 +233,17 @@
                     // 마커 위치만 업데이트
                     currentMarker.setLatLng([latitude, longitude]);
                 }
-
-                // if (isManual || isButtonClick) {
-                //     // 버튼 클릭 시 고정 줌 레벨로 지도 이동
+                // 만약 버튼이 클릭됐다면
+                // if (isButtonClick) {
                 //     map.setView([latitude, longitude], 16);
-                //     isButtonClick = false; // **한 번 처리 후 초기화**
+                //     isButtonClick = false;
                 // } else {
-                //     // 위치 변경 시 현재 줌 레벨 유지하며 지도 이동
-                //     currentZoomLevel = map.getZoom(); // 현재 줌 레벨 저장
-                //     map.setView([latitude, longitude], currentZoomLevel);
+                //     map.setView([latitude, longitude], map.getZoom());
                 // }
-
                 // 지도 중심을 현재 위치로 이동
                 if (isFirstUpdate) {
                     map.setView([latitude, longitude], map.getZoom());
+                    initialCenter = map.getCenter();
                     isFirstUpdate = false;
                 }
 
@@ -255,12 +270,26 @@
             }
         }
 
+        map.on('moveend', function () {
+            const currentCenter = map.getCenter(); // 현재 지도 중심 좌표
+            if (initialCenter && !initialCenter.equals(currentCenter)) {
+                researchButton.style.display = "flex"; // 지도 이동 시 버튼 표시
+            } else {
+                researchButton.style.display = "none"; // 이동하지 않으면 버튼 숨기기
+            }
+        });
+
+        researchButton.addEventListener("click", function () {
+            const center = map.getCenter(); // 현재 지도 중심 가져오기
+            // fetchParkingData(center.lat, center.lng); // FastAPI로 데이터 전송
+            initialCenter = map.getCenter(); // 현재 중심을 초기 중심으로 갱신
+            researchButton.style.display = "none"; // 버튼 숨기기
+        });
+
         // 웹 시작하자마자 현재 위치로 이동!
         window.onload = geoFindMe;
         // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
         document.querySelector("#find-me").addEventListener("click", function() {
-            // isButtonClick = true;
-            // navigator.geolocation.getCurrentPosition(success, error);
             // 페이지 새로고침
             location.reload();
         });
