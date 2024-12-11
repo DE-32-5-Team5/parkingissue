@@ -12,7 +12,8 @@ USER root
 RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -y \
     curl \
     python3-pip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && python3 -m pip install --no-cache-dir pyspark requests pandas
 
 # 5. Spark 관련 환경 변수 설정
 ENV SPARK_HOME=/opt/spark
@@ -28,8 +29,8 @@ EXPOSE 4040 7077 8080
 # 7. Spark UI를 시작하는 스크립트 복사
 COPY start-spark.sh /app/start-spark.sh
 COPY mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar /opt/spark/jars/mysql-connector-j-9.1.0.jar
+
 RUN chmod +x /app/start-spark.sh
 
 # 8. Entrypoint 설정
 ENTRYPOINT ["/app/start-spark.sh"]
-

@@ -10,55 +10,81 @@
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, FloatType
+from pyspark.sql.types import StructType, StringType, StructField, FloatType
 import requests
+
+db_config = {
+        "url": "10.0.4.80:6033",
+        "user": "root",
+        "password": "###########",
+        "database": "parkingissue"
+    }
 
 # Kafka 스트리밍 설정
 def read_from_kafka(spark, kafka_ip):
     schema = StructType([
-        StructField("user_lo", FloatType(), True),
-        StructField("user_la", FloatType(), True)
+        StructField("latitude", StringType(), True),
+        StructField("longitude", StringType(), True)
     ])
     kafka_df = spark.readStream.format("kafka") \
-        .option("kafka.bootstrap.servers", f"{kafka_ip}:29092") \
+            .option("kafka.bootstrap.servers", f"{kafka_ip}:29091") \
         .option("subscribe", "location") \
         .option("startingOffsets", "latest") \
         .load()
-    return kafka_df.select(from_json(col("value").cast("string"), schema).alias("data")).select("data.*")
+    return kafka_df.selectExpr("cast(value as string) as value").select(from_json(col("value"), schema)).alias("json")
 
 # 거리 계산 로직
-def calculate_nearby_parkings(df, db_config):
-    # db_config: dict with keys ('url', 'user', 'password', 'table')
-    user_lo = df.select(col('user_lo'))
-    user_la = df.select(col('user_la'))
-
+def calculate_nearby_parkings(latitude, longitude, db_config):
     jdbc_url = f"jdbc:mysql://{db_config['url']}/{db_config['database']}"
     query = f"""
-        SELECT park_id, park_nm, park_addr, park_lo, park_la,
-        (6371 * acos(cos(radians({user_la})) * cos(radians({user_lo})) *
-        cos(radians({user_la}) - radians({user_lo})) + sin(radians({user_la})) *
-        sin(radians({user_lo})))) AS distance
-        FROM parkingarea_info
-        WHERE park_la BETWEEN {user_la} - 0.0057 AND {user_la} + 0.0057
-          AND park_lo BETWEEN {user_lo} - 0.0045 AND {user_lo} + 0.0045
-        ORDER BY distance ASC LIMIT 20
+    SELECT park_id, park_nm, park_addr, park_lo, park_la,
+        (6371 * acos(cos(radians({latitude})) * cos(radians(park_la)) *
+        cos(radians(park_lo) - radians({longitude})) + sin(radians({latitude})) *
+        sin(radians(park_la)))) AS distance
+    FROM parkingarea_info
+    WHERE park_la BETWEEN {latitude} - 0.0057 AND {latitude} + 0.0057
+        AND park_lo BETWEEN {longitude} - 0.0045 AND {longitude} + 0.0045
+    ORDER BY distance ASC
+    LIMIT 20
     """
-    return df.crossJoin(spark.read.format("jdbc")
-                   .option("driver", "com.mysql.cj.jdbc.Driver")
-                   .option("url", jdbc_url)
-                   .option("user", db_config['user'])
-                   .option("password", db_config['password'])
-                   .option("query", query)
-                   .load())
+    # MySQL 데이터 읽기
+    result_df = spark.read.format("jdbc") \
+        .option("driver", "com.mysql.cj.jdbc.Driver") \
+        .option("url", jdbc_url) \
+        .option("user", db_config['user']) \
+        .option("password", db_config['password']) \
+        .option("query", query) \
+        .load()
+    return result_df
 
 # FastAPI POST 요청
-def send_to_fastapi(df):
+def send_to_fastapi(batch_df):
     url = "https://parkingissue.online/api/getlocation"
-    df.foreachBatch(lambda batch_df, _: batch_df.toPandas().apply(
-        lambda row: requests.post(url, json=row.to_dict(), timeout=3), axis=1))
+    pandas_df = batch_df.toPandas()
+    for _, row in pandas_df.iterrows():
+        try:
+            response = requests.post(url, json=row.to_dict(), timeout=3)
+            if response.status_code != 200:
+                print(f"Error sending data: {response.status_code}, {response.text}")
+        except Exception as e:
+            print(f"Request failed: {e}")
+
+# 배치 처리
+def process_batch(batch_df, batch_id):
+    for row in batch_df.collect():
+        print("*"*10)
+        print(row)
+        print("*"*100)
+        latitude = row['from_json(value)'].latitude
+        longitude = row['from_json(value)'].longitude
+        print(latitude)
+        print(type(longitude))
+        print("*"*100)
+        if latitude is not None and longitude is not None:
+            nearby_parking_df = calculate_nearby_parkings(latitude, longitude, db_config)
+            send_to_fastapi(nearby_parking_df)
 
 # 메인 실행
-# jdbc driver jar파일의 위치는 /opt/spark/jars = $SPARK_HOME에 두어야 합니다.
 if __name__ == "__main__":
     spark = SparkSession.builder \
         .appName("Spark Structured Streaming") \
@@ -68,20 +94,11 @@ if __name__ == "__main__":
         .config("spark.executor.extraClassPath", "mysql-connector-j-9.1.0.jar") \
         .getOrCreate()
 
-    # 현재 같은 vpc에 db가 없기 때문에 db 연결에 장애가 있습니다. vpc 내에 db를 추가하고 config를 다시 바꿔야 합니다.
-    # 그리고 mysql 에서 읽는것이 아닌 redis를 통해서 db 읽기를 해야하기 때문에 한번더 수정이 필요합니다.
     kafka_ip = "10.0.4.172"
-    db_config = {
-        "url": "15.164.175.1",
-        "user": "root",
-        "password": "samdul2024$",
-        "database": "parkingissue"
-    }
 
     kafka_stream = read_from_kafka(spark, kafka_ip)
-    processed_stream = calculate_nearby_parkings(kafka_stream, db_config)
-
-    processed_stream.writeStream \
-        .foreachBatch(send_to_fastapi) \
-        .start() \
-        .awaitTermination()
+    query = kafka_stream.writeStream \
+        .outputMode("append") \
+        .foreachBatch(process_batch) \
+        .start()
+    query.awaitTermination()
