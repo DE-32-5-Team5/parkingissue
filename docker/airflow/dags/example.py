@@ -47,7 +47,7 @@ default_args = {
 }
 # DAG 정의
 with DAG(
-    dag_id="parking_facility_information",
+    dag_id="parking_facility_information__xxxx",
     schedule_interval='@daily',
     start_date=datetime(2024, 11, 28),
     catchup=False,  # 이전 날짜로 돌아가지 않도록 설정

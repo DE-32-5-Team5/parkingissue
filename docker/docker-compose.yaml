@@ -171,14 +171,14 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    deploy:
-      resources:
-        limits:
-          memory: 8G
-        reservations:
-          memory: 4G
     # deploy:
-    #   replicas: 3  # 워커 수 3개로 설정
+    #   resources:
+    #     limits:
+    #       memory: 8G
+    #     reservations:
+    #       memory: 4G
+    deploy:
+      replicas: 4  # 워커 수 3개로 설정
 
   airflow-triggerer:
     <<: *airflow-common

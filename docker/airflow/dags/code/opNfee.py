@@ -23,10 +23,10 @@ def call(pageno, numOfrow):
 
     attempt = 0  # 시도 횟수
     while True:
-        if attempt==10:
+        if attempt==5:
             print("최대 재시도 횟수를 초과하였습니다. 10분 후 다시 시도합니다.")
             time.sleep(600)
-            session = requests.Session()
+            # session = requests.Session()
             attempt=0
 
         try:
@@ -113,7 +113,7 @@ def fun_fetch(**kwargs):
     First = True
     total=0
     for page in range(startpage, startpage+10):
-        if page > total:
+        if page == total:
             break
         file_path = os.path.join(dir_path, f"page_{page}.json")
         data = call(page, 10)
