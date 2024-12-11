@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">  <!-- styles.css 파일을 외부 링크로 추가 -->
+    <link rel="stylesheet" href="style.css"> 
     <title>행사 등록 페이지</title>
 </head>
 <body>
@@ -24,6 +24,7 @@
                 <div class="phone-group">
                     <!-- 전화번호 선택 옵션 추가 -->
                     <select id="phone-type" name="phone-type" required>
+                        <option value="select" non selected>선택 </option>
                         <option value="mobile">휴대전화</option>
                         <option value="landline">일반전화</option>
                     </select>
@@ -81,18 +82,7 @@
         </form>
     </div>
 
-    <script>
-        document.getElementById('phone-type').addEventListener('change', function() {
-            const phoneType = this.value;
-            
-            if (phoneType === 'mobile') {
-                document.querySelector('.mobile-phone').style.display = 'flex';
-                document.querySelector('.landline-phone').style.display = 'none';
-            } else if (phoneType === 'landline') {
-                document.querySelector('.mobile-phone').style.display = 'none';
-                document.querySelector('.landline-phone').style.display = 'flex';
-            }
-        });
-    </script>
+    <script src="../js/script.js"></script>
+
 </body>
 </html>
