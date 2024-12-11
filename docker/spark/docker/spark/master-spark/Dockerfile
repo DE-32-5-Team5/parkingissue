@@ -27,6 +27,7 @@ EXPOSE 4040 7077 8080
 
 # 7. Spark UI를 시작하는 스크립트 복사
 COPY start-spark.sh /app/start-spark.sh
+COPY mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar /opt/spark/jars/mysql-connector-j-9.1.0.jar
 RUN chmod +x /app/start-spark.sh
 
 # 8. Entrypoint 설정
