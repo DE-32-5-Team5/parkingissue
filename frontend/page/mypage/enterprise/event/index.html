@@ -22,15 +22,18 @@
             <div class="form-group">
                 <label for="event-contact">행사 연락처</label>
                 <div class="phone-group">
+                    <input type="text" id="call-first" name="landline-middle" maxlength="4" placeholder="02" required>
+                    <input type="text" id="call-second" name="landline-last" maxlength="4" placeholder="123" required>
+                    <input type="text" id="call-third" name="landline-middle" maxlength="4" placeholder="4567" required>
                     <!-- 전화번호 선택 옵션 추가 -->
-                    <select id="phone-type" name="phone-type" required>
-                        <option value="select" non selected>선택 </option>
+                    <!-- <select id="phone-type" name="phone-type" required>
+                        <option value="select" nonselected>선택 </option>
                         <option value="mobile">휴대전화</option>
                         <option value="landline">일반전화</option>
-                    </select>
+                    </select> -->
                     
                     <!-- 휴대전화 입력란 -->
-                    <div class="mobile-phone">
+                    <!-- <div class="mobile-phone">
                         <select id="mobile-prefix" name="mobile-prefix" required>
                             <option value="010">010</option>
                             <option value="011">011</option>
@@ -42,9 +45,9 @@
                         <input type="text" id="mobile-middle" name="mobile-middle" maxlength="4" required>
                         <input type="text" id="mobile-last" name="mobile-last" maxlength="4" required>
                     </div>
-                    
+                     -->
                     <!-- 일반전화 입력란 -->
-                    <div class="landline-phone" style="display: none;">
+                    <!-- <div class="landline-phone" style="display: none;">
                         <select id="landline-prefix" name="landline-prefix" required>
                             <option value="02">02</option>
                             <option value="031">031</option>
@@ -53,12 +56,12 @@
                             <option value="041">041</option>
                             <option value="042">042</option>
                             <option value="043">043</option>
-                            <option value="044">044</option>
+                            <option value="044">044</option> -->
                             <!-- 기타 지역 번호 추가 -->
-                        </select>
+                        <!-- </select>
                         <input type="text" id="landline-middle" name="landline-middle" maxlength="4" required>
                         <input type="text" id="landline-last" name="landline-last" maxlength="4" required>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="form-group">
