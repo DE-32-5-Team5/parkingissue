@@ -1,3 +1,13 @@
+#######################################################################
+# easy start code                                                     #
+#                                                                     #
+# spark-submit \                                                      #
+#  --conf spark.sql.warehouse.dir=/tmp/spark-warehouse \              #
+#  --master spark://spark-master:7077 \                               #
+#  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1 \      #
+#  /app/sample.py                                                     #
+#######################################################################
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, FloatType
@@ -48,6 +58,7 @@ def send_to_fastapi(df):
         lambda row: requests.post(url, json=row.to_dict(), timeout=3), axis=1))
 
 # 메인 실행
+# jdbc driver jar파일의 위치는 /opt/spark/jars = $SPARK_HOME에 두어야 합니다.
 if __name__ == "__main__":
     spark = SparkSession.builder \
         .appName("Spark Structured Streaming") \
@@ -57,6 +68,8 @@ if __name__ == "__main__":
         .config("spark.executor.extraClassPath", "mysql-connector-j-9.1.0.jar") \
         .getOrCreate()
 
+    # 현재 같은 vpc에 db가 없기 때문에 db 연결에 장애가 있습니다. vpc 내에 db를 추가하고 config를 다시 바꿔야 합니다.
+    # 그리고 mysql 에서 읽는것이 아닌 redis를 통해서 db 읽기를 해야하기 때문에 한번더 수정이 필요합니다.
     kafka_ip = "10.0.4.172"
     db_config = {
         "url": "15.164.175.1",
