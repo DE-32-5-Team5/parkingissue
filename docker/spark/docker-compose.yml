@@ -8,6 +8,8 @@ services:
     image: spark-master-image:latest  # 빌드된 이미지 이름과 태그 지정
     environment:
       - SPARK_MODE=master
+    volumes:
+      - ./docker/spark/sample.py:/app/sample.py
     ports:
       - "7077:7077"
       - "8080:8080"
@@ -23,6 +25,8 @@ services:
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER=spark://spark-master:7077
+    volumes:
+      - ./docker/spark/sample.py:/app/sample.py
     depends_on:
       - master
     deploy:
