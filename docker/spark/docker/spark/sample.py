@@ -10,17 +10,17 @@ def read_from_kafka(spark, kafka_ip):
         StructField("user_la", FloatType(), True)
     ])
     kafka_df = spark.readStream.format("kafka") \
-        .option("kafka.bootstrap.servers", f"{kafka_ip}:9092") \
+        .option("kafka.bootstrap.servers", f"{kafka_ip}:29092") \
         .option("subscribe", "location") \
-        .option("startingOffsets", "latest") \x
+        .option("startingOffsets", "latest") \
         .load()
     return kafka_df.select(from_json(col("value").cast("string"), schema).alias("data")).select("data.*")
 
 # 거리 계산 로직
 def calculate_nearby_parkings(df, db_config):
     # db_config: dict with keys ('url', 'user', 'password', 'table')
-    user_lo = df.col('user_lo')
-    user_la = df.col('user_la')
+    user_lo = df.select(col('user_lo'))
+    user_la = df.select(col('user_la'))
 
     jdbc_url = f"jdbc:mysql://{db_config['url']}/{db_config['database']}"
     query = f"""
@@ -34,6 +34,7 @@ def calculate_nearby_parkings(df, db_config):
         ORDER BY distance ASC LIMIT 20
     """
     return df.crossJoin(spark.read.format("jdbc")
+                   .option("driver", "com.mysql.cj.jdbc.Driver")
                    .option("url", jdbc_url)
                    .option("user", db_config['user'])
                    .option("password", db_config['password'])
@@ -42,7 +43,7 @@ def calculate_nearby_parkings(df, db_config):
 
 # FastAPI POST 요청
 def send_to_fastapi(df):
-    url = "http://10.0.4.74:8000/api/getlocation"
+    url = "https://parkingissue.online/api/getlocation"
     df.foreachBatch(lambda batch_df, _: batch_df.toPandas().apply(
         lambda row: requests.post(url, json=row.to_dict(), timeout=3), axis=1))
 
@@ -50,14 +51,17 @@ def send_to_fastapi(df):
 if __name__ == "__main__":
     spark = SparkSession.builder \
         .appName("Spark Structured Streaming") \
-        .master("spark://172.19.0.2:7077") \
+        .master("spark://172.18.0.2:7077") \
+        .config("jars", "mysql-connector-j-9.1.0.jar") \
+        .config("spark.driver.extraClassPath", "mysql-connector-j-9.1.0.jar") \
+        .config("spark.executor.extraClassPath", "mysql-connector-j-9.1.0.jar") \
         .getOrCreate()
 
     kafka_ip = "10.0.4.172"
     db_config = {
-        "url": "10.0.4.80",
-        "user": "airflow",
-        "password": "zxcv0987^%",
+        "url": "15.164.175.1",
+        "user": "root",
+        "password": "samdul2024$",
         "database": "parkingissue"
     }
 
@@ -68,4 +72,3 @@ if __name__ == "__main__":
         .foreachBatch(send_to_fastapi) \
         .start() \
         .awaitTermination()
-
