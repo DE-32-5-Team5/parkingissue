@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    hostname: kafka
+    restart: "no"
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092  # Kafka 컨테이너 내부 수신 설정
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.4.172:9092  # 외부에서 접근할 브로커 IP
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: my-cluster  # 원하는 클러스터 이름
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 10.0.4.172:9092  # Kafka 브로커 외부 IP
+      KAFKA_UI_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /kafkaui
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/kafkaui" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
