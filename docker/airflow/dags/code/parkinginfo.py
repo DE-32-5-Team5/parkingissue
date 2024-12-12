@@ -80,7 +80,8 @@ def fun_rmdir(**kwargs):
             print(f" ##### '{dirname}' 폴더 삭제 후 다시 생성되었습니다.")
     else:
         # base_path가 없으면 OP 폴더를 먼저 생성하고 Edata도 생성
-        os.makedirs(base_path)  
+        # os.makedirs(base_path) 
+        os.mkdir(base_path) 
         os.mkdir(dir_path)
         print(f" #####'{base_path}'와 '{dirname}' 폴더가 생성되었습니다.")
 
@@ -107,16 +108,16 @@ def fun_conn():
 
 
 def fun_fetch(**kwargs):
-    startpage = kwargs['value']
+    startpage = kwargs['value'] #1,501,1001,1501 1708
     dir_path = "/opt/airflow/Info/Edata"
     First = True
     total=0
-    for page in range(startpage, startpage+1000):
+    for page in range(startpage, startpage+500):
         if page == total:
             break
 
-        file_path = os.path.join(dir_path, f"page_{page}.json")
-        print(f"파일경로 !!! {file_path}")
+        file_path = os.path.join(dir_path, f"page_{page}.json")  
+        print(f"파일경로 !!! {file_path}") 
         # data = call(page, 10)
         data = call(page, 1000)
         if First:
@@ -142,10 +143,13 @@ def fun_2csv(**kwargs):
         # print(files[startpage-1:startpage+500-1])
 
         for file in files:
-            page_no = prk_data.get('pageNo')
+            # file = Edata/page_1.json
+           
             file_path = os.path.join(json_dir_path, file)
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+
+            page_no = data.get('pageNo')
             
             flattened_data = []
             page_no = data['pageNo']
