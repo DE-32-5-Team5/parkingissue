@@ -180,6 +180,9 @@
         // 이거 이용해서 내 위치 주변 500m 할때도 처음 한번만 조회하게 하고
         // 그 다음부터는 이동 거리랑 비교해서 멀어졌을때 재검색하게 하면 될듯
         let initialCenter = null;
+
+        let lastFetchedTime = 0; // 마지막으로 요청을 보낸 시간
+        const FETCH_INTERVAL = 10000; // 10초 간격으로 요청 (10000ms)
         
         // watchPosition의 ID
         let watchId = null;
@@ -218,8 +221,15 @@
                     popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
                 });
 
+                // 위치 업데이트 시 FastAPI에 요청을 주기적으로 보내기
+                const currentTime = Date.now();
+                if (currentTime - lastFetchedTime >= FETCH_INTERVAL) {
+                    // 일정 시간 간격이 지난 경우에만 요청
+                    fetchParkingData(latitude, longitude);
+                    lastFetchedTime = currentTime; // 요청 보낸 시간을 현재 시간으로 갱신
+                }
                 // 위도와 경도를 FastAPI로 전송
-                fetchParkingData(latitude, longitude)
+                // fetchParkingData(latitude, longitude)
                     // .then(() => {
                     //     // POST 성공 후 주차장 데이터 GET 요청
                     //     return fetchParkingDataFromFastAPI();
@@ -292,7 +302,22 @@
         });
 
         // 웹 시작하자마자 현재 위치로 이동!
-        window.onload = geoFindMe;
+        // window.onload = geoFindMe;
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const latitude = parseFloat(urlParams.get('lat'));
+            const longitude = parseFloat(urlParams.get('lon'));
+
+            // URL에 위경도 파라미터가 있으면 해당 위치로 지도 이동
+            if (latitude && longitude) {
+                // 위경도가 있다면 해당 위치로 지도 이동
+                map.setView([latitude, longitude], 15); // 15는 줌 레벨
+                fetchParkingData(latitude, longitude); // 주차장 데이터 요청
+            } else {
+                // 위경도가 없다면 내 위치 찾기
+                geoFindMe();
+            }
+        };
         // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
         document.querySelector("#find-me").addEventListener("click", function() {
             // 페이지 새로고침

@@ -60,6 +60,10 @@
                         <button id="find-me" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; padding: 0; border: none; border-radius: 8px; z-index: 1000;">
                             <img src="images/naver.png" style="width: 100%; height: 100%; object-fit: cover;">
                         </button>
+                        <button id="research" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border: none; border-radius: 25px; background-color: #4285F4; color: white; font-size: 14px; font-weight: bold; letter-spacing: 0px; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000; cursor: pointer; width: 170px;">
+                            <img src="images/research_icon.png" alt="reload-icon" style="width: 16px; height: 16px; margin-right: 8px;">
+                            현 지도에서 검색
+                        </button>
                     </div>
                 </div>
                 <div id="status"></div>
@@ -89,13 +93,23 @@
     <script src="assets/js/voice-search.js"></script>
     <!-- Initialize the Leaflet Map -->
     <script>
-        // var markers = L.markerClusterGroup();
+        // 지도 중심의 위도, 경도를 얻는 함수
+        // 이 위치에서 주변 검색을 위한 함수
+        function getMapCenter() {
+            var center = map.getCenter();  // 현재 지도 중심 좌표 반환
+            var cen_latitude = center.lat;     // 위도
+            var cen_longitude = center.lng;    // 경도
+
+            return { cen_latitude, cen_longitude };
+        }
+        
         var parkIcon = L.icon({
                     iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
                     iconSize: [42, 42], // 아이콘 크기 (픽셀)
                     iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
                     popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
                 });
+
         // 주차장 마커 찍기
         function addParkingMarkers(parkingData) {  // 주변 주차장 데이터 가져와서
             parkingData.forEach(function(parking) {  // for 반복문
@@ -115,7 +129,7 @@
         // fastapi로 값 보내기
         function fetchParkingData(latitude, longitude) {
             //const url = 'http://localhost:8000/location'; // fastapi post url
-            const url = 'https://10.0.4.74:8000/api/location';
+            const url = 'https://10.0.4.74:8000/api/location'; // 서버에서는 https://parkingissue.online/api/location
             fetch(url, {  // FastAPI 엔드포인트 URL
                 method: 'POST', // POST 요청
                 headers: {
@@ -159,8 +173,19 @@
             maxZoom: 21,
             attribution: '© VWorld'
         }).addTo(map);
+        // 현 위치 재검색 버튼
+        const researchButton = document.getElementById("research");
 
-        let isButtonClick = false;
+        // 초기 중심 좌표
+        // 이거 이용해서 내 위치 주변 500m 할때도 처음 한번만 조회하게 하고
+        // 그 다음부터는 이동 거리랑 비교해서 멀어졌을때 재검색하게 하면 될듯
+        let initialCenter = null;
+
+        let lastFetchedTime = 0; // 마지막으로 요청을 보낸 시간
+        const FETCH_INTERVAL = 10000; // 10초 간격으로 요청 (10000ms)
+        
+        // watchPosition의 ID
+        let watchId = null;
 
         // GeoFindMe 함수 - 현재 위치 찾기
         function geoFindMe() {
@@ -170,7 +195,7 @@
             mapLink.href = "";
 
             let currentMarker = null;
-            // let isFirstUpdate = true;
+            let isFirstUpdate = true;
 
             function success(position) {
                 const latitude = position.coords.latitude;
@@ -196,6 +221,13 @@
                     popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
                 });
 
+                // 위치 업데이트 시 FastAPI에 요청을 주기적으로 보내기
+                const currentTime = Date.now();
+                if (currentTime - lastFetchedTime >= FETCH_INTERVAL) {
+                    // 일정 시간 간격이 지난 경우에만 요청
+                    fetchParkingData(latitude, longitude);
+                    lastFetchedTime = currentTime; // 요청 보낸 시간을 현재 시간으로 갱신
+                }
                 // 위도와 경도를 FastAPI로 전송
                 // fetchParkingData(latitude, longitude)
                     // .then(() => {
@@ -217,19 +249,13 @@
                     // 마커 위치만 업데이트
                     currentMarker.setLatLng([latitude, longitude]);
                 }
-                // 만약 버튼이 클릭됐다면
-                // 강제로 줌 풀리는건 해결됐는데 버튼 눌렀을때 고정 줌 값이 적용이 안됨
-                if (isButtonClick) {
-                    map.setView([latitude, longitude], 16);
-                    isButtonClick = false;
-                } else {
-                    map.setView([latitude, longitude], map.getZoom());
-                }
+
                 // 지도 중심을 현재 위치로 이동
-                // if (isFirstUpdate) {
-                //     map.setView([latitude, longitude], map.getZoom());
-                //     isFirstUpdate = false;
-                // }
+                if (isFirstUpdate) {
+                    map.setView([latitude, longitude], map.getZoom());
+                    initialCenter = map.getCenter();
+                    isFirstUpdate = false;
+                }
 
                 map.invalidateSize(); // 지도 크기 갱신 (리사이징 문제 방지)
             }
@@ -249,18 +275,36 @@
             } else {
                 status.textContent = "Locating…";
                 // 위치변경될때마다 함수호출해서 내 위치 최신화
-                navigator.geolocation.watchPosition(success, error, options);
+                watchId = navigator.geolocation.watchPosition(success, error, options);
                 // navigator.geolocation.getCurrentPosition(success, error, options);
             }
         }
+        
+        // 지도 이동 시 일어나는 이벤트
+        map.on('moveend', function () {
+            const currentCenter = map.getCenter(); // 현재 지도 중심 좌표
+            if (initialCenter && !initialCenter.equals(currentCenter)) {
+                researchButton.style.display = "flex"; // 지도 이동 시 버튼 표시
+            } else {
+                researchButton.style.display = "none"; // 이동하지 않으면 버튼 숨기기
+            }
+        });
+        // 현위치 검색을 눌렀을때 발생하는 이벤트
+        researchButton.addEventListener("click", function () {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                watchId = null; // ID 초기화
+            }
+            const center = map.getCenter(); // 현재 지도 중심 가져오기
+            // fetchParkingData(center.lat, center.lng); // FastAPI로 데이터 전송
+            initialCenter = map.getCenter(); // 현재 중심을 초기 중심으로 갱신
+            researchButton.style.display = "none"; // 버튼 숨기기
+        });
 
         // 웹 시작하자마자 현재 위치로 이동!
         window.onload = geoFindMe;
         // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
         document.querySelector("#find-me").addEventListener("click", function() {
-            isButtonClick = true;
-            // geoFindMe();
-            // navigator.geolocation.getCurrentPosition(success, error);
             // 페이지 새로고침
             location.reload();
         });
