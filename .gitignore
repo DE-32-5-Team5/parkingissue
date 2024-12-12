@@ -4,7 +4,7 @@ docker/.airflow_env
 docker/.front_env
 docker/.back_env
 docker/database/init/*.csv
-
+docker/database/init/*.sql
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
