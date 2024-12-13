@@ -16,7 +16,7 @@ import requests
 db_config = {
         "url": "10.0.4.80:6033",
         "user": "root",
-        "password": "###########",
+        "password": "samdul2024$",
         "database": "parkingissue"
     }
 
@@ -60,14 +60,25 @@ def calculate_nearby_parkings(latitude, longitude, db_config):
 # FastAPI POST 요청
 def send_to_fastapi(batch_df):
     url = "https://parkingissue.online/api/getlocation"
-    pandas_df = batch_df.toPandas()
-    for _, row in pandas_df.iterrows():
-        try:
-            response = requests.post(url, json=row.to_dict(), timeout=3)
-            if response.status_code != 200:
-                print(f"Error sending data: {response.status_code}, {response.text}")
-        except Exception as e:
-            print(f"Request failed: {e}")
+    df = batch_df.toPandas()
+    print("*"*100)
+    print(df.info())
+    print("*"*100)
+    df['park_id'] = df['park_id'].astype(str)
+    df['park_nm'] = df['park_nm'].astype(str)
+    df['park_addr'] = df['park_addr'].astype(str)
+    df['park_lo'] = df['park_lo'].astype(float)
+    df['park_la'] = df['park_la'].astype(float)
+    df['distance'] = df['distance'].astype(float)
+
+    data_list = df.to_dict(orient='records')
+
+    try:
+        response = requests.post(url, json=data_list, timeout=3)
+        if response.status_code != 200:
+            print(f"Error sending data: {response.status_code}, {response.text}")
+    except Exception as e:
+        print(f"Request failed: {e}")
 
 # 배치 처리
 def process_batch(batch_df, batch_id):
