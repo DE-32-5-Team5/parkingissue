@@ -16,7 +16,7 @@ import requests
 db_config = {
         "url": "10.0.4.80:6033",
         "user": "root",
-        "password": "samdul2024$",
+        "password": "@@@@@@@@@@",
         "database": "parkingissue"
     }
 
