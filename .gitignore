@@ -1,7 +1,9 @@
 docker/.db_env
 docker/.env
 data/
-docekr/airflow/
+docekr/airflow/logs/
+docker/airflow/Data
+docker/airflow/plugins/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

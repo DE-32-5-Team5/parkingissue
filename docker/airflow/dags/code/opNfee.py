@@ -19,11 +19,10 @@ def call(pageno, numOfrow):
              'numOfRows' : numOfrow, 
              'format' : '2'
              }
-    response = requests.get(url, params=params)
 
     attempt = 0  # 시도 횟수
     while True:
-        if attempt==5:
+        if attempt==10:
             print("최대 재시도 횟수를 초과하였습니다. 10분 후 다시 시도합니다.")
             time.sleep(600)
             # session = requests.Session()
@@ -87,7 +86,7 @@ def fun_conn():
 
 def fun_rmdir(**kwargs):
     dirname = kwargs['value'] #Edata
-    base_path = "/opt/airflow/OP"
+    base_path = "/opt/airflow/Data/OP"
     dir_path = os.path.join(base_path, dirname)
 
     if os.path.exists(base_path):
@@ -108,19 +107,19 @@ def fun_rmdir(**kwargs):
 
 def fun_fetch(**kwargs):
     startpage = kwargs['value']
-    dir_path = "/opt/airflow/OP/Edata"
+    dir_path = "/opt/airflow/Data/OP/Edata"
     
     First = True
     total=0
-    for page in range(startpage, startpage+10):
-        if page == total:
-            break
+    rownum=-1
+    for page in range(startpage, startpage+500):
         file_path = os.path.join(dir_path, f"page_{page}.json")
-        data = call(page, 10)
-        # data = call(page, 1000)
+        # data = call(page, 10)
+        data = call(page, 1000)
         print(f" ######### {page}")
         if First:
             total = int(data['totalCount'])
+            rownum=int(data['numOfRows'])
             First=False
         try:
             with open(file_path, 'w', encoding='utf-8') as f:
@@ -129,59 +128,60 @@ def fun_fetch(**kwargs):
         except Exception as e:
             print(f"파일 작성 중 오류가 발생했습니다: {e}")
 
-   
+        if page*rownum > total:
+            break
+  
 def fun_2csv(**kwargs):
     startpage = kwargs['value']
-    json_dir_path = "/opt/airflow/OP/Edata"
-    csv_dir_path = "/opt/airflow/OP/Tdata"
+    json_dir_path = "/opt/airflow/Data/OP/Edata"
+    csv_dir_path = "/opt/airflow/Data/OP/Tdata"
 
     if os.path.exists(json_dir_path):
         files = os.listdir(json_dir_path)
         files.sort(key=lambda x: int(re.search(r'(\d+)', x).group()) if re.search(r'(\d+)', x) else float('inf'))
-        print(files[startpage-1:startpage+10-1])
-        # print(files[startpage-1:startpage+500-1])
+        # print(files[startpage-1:startpage+10-1])
+        files = files[startpage-1:startpage+500-1]
 
         for file in files:
-            page_no = prk_data.get('pageNo')
             file_path = os.path.join(json_dir_path, file)
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            
+
+            page_no = data.get('pageNo')
             opertime_data = []
             fee_data =[]
+
             for prk_data in data['PrkOprInfo']:
-                print(f" ** {prk_data}")
-                opertime_data.append({
-                    'park_id': prk_data.get('prk_center_id', ' ') ,
-                    'mon_opentime' : prk_data.get('Monday', {}).get('opertn_start_time',' '),
-                    'mon_closetime' : prk_data.get('Monday', {}).get('opertn_end_time',' '),
-                    'tue_opentime' : prk_data.get('Tuesday', {}).get('opertn_start_time',' '),
-                    'tue_closetime' : prk_data.get('Tuesday', {}).get('opertn_end_time',' '),
-                    'wed_opentime' : prk_data.get('Wednesday', {}).get('opertn_start_time',' '),
-                    'wed_closetime' : prk_data.get('Wednesday', {}).get('opertn_end_time',' '),
-                    'thu_opentime' : prk_data.get('Thursday', {}).get('opertn_start_time',' '),
-                    'thu_closetime' : prk_data.get('Thursday', {}).get('opertn_end_time',' '),
-                    'fri_opentime' : prk_data.get('Friday', {}).get('opertn_start_time',' '),
-                    'fri_closetime' : prk_data.get('Friday', {}).get('opertn_end_time',' '),
-                    'sat_opentime' : prk_data.get('Saturday', {}).get('opertn_start_time',' '),
-                    'sat_closetime' : prk_data.get('Saturday', {}).get('opertn_end_time',' '),
-                    'sun_opentime' : prk_data.get('Sunday', {}).get('opertn_start_time',' '),
-                    'sun_closetime' : prk_data.get('Sunday', {}).get('opertn_end_time',' '),
-                    'holi_opentime' : prk_data.get('Holiday', {}).get('opertn_start_time',' '),
-                    'holi_closetime' : prk_data.get('Holiday', {}).get('opertn_end_time',' '),
-                    
-                })
+                    wee_orn_st = [prk_data.get('Monday', {}).get('opertn_start_time', ' ')]  
+                    wee_orn_et = [prk_data.get('Monday', {}).get('opertn_end_time', ' ')] 
 
-                fee_data.append({
-                    'park_id': prk_data.get('prk_center_id', ' ') ,
-                    'free_time': prk_data.get('basic_info',{}).get('parking_chrge_bs_time',' '),
-                    'basic_fee' : prk_data.get('basic_info',{}).get('parking_chrge_bs_chrge',' '),
-                    'adit_time' : prk_data.get('basic_info',{}).get('parking_chrge_adit_unit_time',' '),
-                    'adit_fee' : prk_data.get('basic_info',{}).get('parking_chrge_adit_unit_chrge',' '),
-                    'daily_fee' : prk_data.get('fxamt_info',{}).get('parking_chrge_one_day_chrge',' '),
-                    'monthly_fee' : prk_data.get('fxamt_info',{}).get('parking_chrge_mon_unit_chrge',' ')
+                    wk_orn_st = [prk_data.get('Saturday', {}).get('opertn_start_time', ' ')]
+                    wk_orn_et = [prk_data.get('Saturday', {}).get('opertn_end_time', ' ')]
 
-                })
+                    hol_orn_st = [prk_data.get('holiday', {}).get('opertn_start_time', ' ')]
+                    hol_orn_et = [prk_data.get('holiday', {}).get('opertn_end_time', ' ')]
+
+                    opertime_data.append({
+                        'park_id': prk_data.get('prk_center_id', ' '),
+                        'wee_orn_st': wee_orn_st,  
+                        'wee_orn_et': wee_orn_et,  
+                        'wk_orn_st': wk_orn_st,  
+                        'wk_orn_et': wk_orn_et,  
+                        'hol_orn_st': hol_orn_st,  
+                        'hol_orn_et': hol_orn_et   
+                    })
+
+
+                    fee_data.append({
+                        'park_id': prk_data.get('prk_center_id', ' ') ,
+                        'free_time': prk_data.get('basic_info',{}).get('parking_chrge_bs_time',' '),
+                        'basic_fee' : prk_data.get('basic_info',{}).get('parking_chrge_bs_chrge',' '),
+                        'adit_time' : prk_data.get('basic_info',{}).get('parking_chrge_adit_unit_time',' '),
+                        'adit_fee' : prk_data.get('basic_info',{}).get('parking_chrge_adit_unit_chrge',' '),
+                        'daily_fee' : prk_data.get('fxamt_info',{}).get('parking_chrge_one_day_chrge',' '),
+                        'monthly_fee' : prk_data.get('fxamt_info',{}).get('parking_chrge_mon_unit_chrge',' ')
+
+                    })
 
             # pandas DataFrame으로 변환
             op_df = pd.DataFrame(opertime_data)
@@ -191,17 +191,122 @@ def fun_2csv(**kwargs):
             fee_csv_path = os.path.join(csv_dir_path, f"fee_page_{page_no}.csv")     
             op_df.to_csv(op_csv_path, index=False, encoding='utf-8', sep=';')
             fee_df.to_csv(fee_csv_path, index=False, encoding='utf-8', sep=';')
-            print(f"OP_CSV 파일이 성공적으로 저장되었습니다: {op_csv_path}")
-            print(f"FEE_CSV 파일이 성공적으로 저장되었습니다: {fee_csv_path}")
+            print(f" op_page_{page_no}.csv --  OP_CSV 파일이 성공적으로 저장되었습니다")
+            print(f" fee_page_{page_no}.csv -- FEE_CSV 파일이 성공적으로 저장되었습니다")
     else:
         print(f"경로에 파일이 존재하지 않습니다.")
         return
 
+def fun_2parquet():
+    dir_path = "/opt/airflow/Data/OP/Tdata"
+    p_dir_path = "/opt/airflow/Data/OP/Pdata"
 
-def fun_2parquet(**kwargs):
-    print("fun_2parquet")
+    try:
+        os.makedirs(p_dir_path, exist_ok=True)
+        print("Pdata 디렉토리 생성 완료")
+    except Exception as e:
+        print(f"디렉토리 생성 중 오류 발생: {e}")
 
-def fun_save():
-    print("fun_save")
+    all_files = os.listdir(dir_path)
+    op_files = [file for file in all_files if file.startswith('op')]
+    fee_files = [file for file in all_files if file.startswith('fee')]
+
+    
+
+    def extract_number(file_name):
+        match = re.search(r'\d+', file_name)
+        return int(match.group()) if match else float('inf')  
+    
+    op_sorted_files = sorted(op_files, key=extract_number)
+    fee_sorted_files = sorted(fee_files, key=extract_number)
+
+    files = os.listdir(json_dir_path)
+    files.sort(key=lambda x: int(re.search(r'(\d+)', x).group()) if re.search(r'(\d+)', x) else float('inf'))
+    # print(files[startpage-1:startpage+10-1])
+    files = files[startpage-1:startpage+500-1]
 
 
+
+
+    
+    # 10개씩 묶어서 Parquet 형식으로 저장
+    for i in range(0, len(op_sorted_files), 10):
+        op_chunk_files = op_sorted_files[i:i+10]
+        df = pd.DataFrame({'file_name': op_chunk_files})
+        
+        # Parquet 파일로 저장
+        output_file = os.path.join(output_directory, f'op_files_batch_{i // 10 + 1}.parquet')
+        df.to_parquet(output_file, index=False)
+        print(f"Saved: {output_file}")
+    else:
+        print(f"경로에 파일이 존재하지 않습니다.")
+        return
+    
+def fun_save(**kwargs):
+    import glob
+    from mysql.connector import Error
+    import mysql.connector
+
+    
+    try:
+        # 환경변수에서 비밀번호 가져오기
+        passwd = os.getenv('DB_PW')
+
+        # MySQL 데이터베이스 연결
+        conn = mysql.connector.connect(
+            host="parkingissue_database",
+            port=3306,
+            user="root",
+            password=passwd,
+            database="parkingissue"
+        )
+
+        if conn.is_connected():
+            print("MySQL 데이터베이스에 성공적으로 연결되었습니다.")
+        
+        cursor = conn.cursor()
+        parquet_files = glob.glob(kwargs.get('file_path', '*.parquet'))
+
+        for file in parquet_files:
+            print(f" ////// {file} 처리 시작 ")
+
+            df = pd.read_parquet(file)
+            
+            for index, row in df.iterrows():
+                record_id = row['park_id']  
+                select_query = "SELECT id FROM your_table WHERE id = %s"
+                cursor.execute(select_query, (record_id,))
+                result = cursor.fetchone()
+
+                 # ID 값이 있으면 업데이트
+                if result:
+                    update_query = """
+                    UPDATE your_table
+                    SET 
+                        column1 = %s,
+                        column2 = %s,
+                        column3 = %s
+                    WHERE id = %s
+                    """
+                    cursor.execute(update_query, (row['column1'], row['column2'], row['column3'], record_id))
+                    print(f"ID {record_id} updated successfully.")
+                # ID 값이 없으면 새로 추가
+                else:
+                    insert_query = """
+                    INSERT INTO your_table (id, column1, column2, column3)
+                    VALUES (%s, %s, %s, %s)
+                    """
+                    cursor.execute(insert_query, (record_id, row['column1'], row['column2'], row['column3']))
+                    print(f"ID {record_id} inserted successfully.")
+
+            # 변경 사항 커밋
+            conn.commit()
+
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            print("MySQL 데이터베이스 연결이 종료되었습니다.")
