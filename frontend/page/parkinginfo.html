@@ -150,14 +150,14 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     // 위경도
-    const parkla = parseFloat(urlParams.get('parkla'));
-    const parklo = parseFloat(urlParams.get('parklo'));
+    const parkla = parseFloat(urlParams.get('lat'));
+    const parklo = parseFloat(urlParams.get('lon'));
     // id 이름 주소
-    const parkId = urlParams.get('id');
-    const parkNm = urlParams.get('name');
-    const parkAddr = urlParams.get('addr');
+    const parkId = urlParams.get('parkid');
+    const parkNm = urlParams.get('parknm');
+    const parkAddr = urlParams.get('parkaddr');
 
-    console.log(parkName, parkAddr); // 전달된 값 확인
+    console.log(parkla, parklo, parkId, parkNm, parkAddr); // 전달된 값 확인
 </script>
 </body>
 </html>
