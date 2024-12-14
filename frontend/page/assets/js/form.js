@@ -116,12 +116,12 @@ function displayTrendingSearches() {
 }
 
 // 검색 처리
-function handleSearch() {
-    const searchTerm = searchInput.value;
-    if (searchTerm) {
-        alert(`검색어 "${searchTerm}"에 대한 검색을 수행합니다.`);
-    }
-}
+// function handleSearch() {
+//     const searchTerm = searchInput.value;
+//     if (searchTerm) {
+//         alert(`검색어 "${searchTerm}"에 대한 검색을 수행합니다.`);
+//     }
+// }
 // 페이지 로드 시 실시간 검색어 표시
 displayTrendingSearches();
 

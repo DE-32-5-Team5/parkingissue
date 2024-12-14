@@ -33,13 +33,14 @@
                     <!-- Search Bar -->
                     <div class="search-bar-container">
                         <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
-                        <form class="search-form" onsubmit="return false;"> 
+                        <!-- 여기에서 이벤트 몇개 추가 search.js 에 있음 -->
+                        <form class="search-form" onsubmit="handleSearch(event); return false;"> 
                             <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
                             <div class="search-buttons">
                                 <button type="button" class="voice-search-btn" title="음성 검색">
                                     <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
                                 </button>
-                                <button type="button" class="search-button" title="검색">🔍</button>    
+                                <button type="button" class="search-button" title="검색" onclick="handleButtonSearch()">🔍</button>    
                             </div>
                         </form>
                         <div class="suggestions"></div>
@@ -89,6 +90,8 @@
         </div>
     <!-- 검색창 기능 -->
     <script src="assets/js/form.js"></script>
+    <!-- 검색어 to fastapi -->
+    <script src="assets/js/search.js"></script>
     <!-- voice search -->
     <script src="assets/js/voice-search.js"></script>
     <!-- Initialize the Leaflet Map -->
@@ -112,62 +115,124 @@
 
         // 주차장 마커 찍기
         function addParkingMarkers(parkingData) {  // 주변 주차장 데이터 가져와서
+            markers.clearLayers();
             parkingData.forEach(function(parking) {  // for 반복문
-                var marker = L.marker([parking.park_la, parking.park_lo], { icon: parkIcon }).addTo(map); 
+                var marker = L.marker([parking.park_la, parking.park_lo], { icon: parkIcon }).addTo(markers); 
                 // marker.bindPopup(`<b>${parking.park_nm}</b><br>${parking.park_addr}`); 
                 // 클릭이 일어날 경우 주차장 상세 페이지로 이동
                 marker.on('click', function() {
                     const parkla = encodeURIComponent(parking.park_la);
                     const parklo = encodeURIComponent(parking.park_lo);
+                    const parkid = encodeURIComponent(parking.park_id);
+                    const parknm = encodeURIComponent(parking.park_nm);
+                    const parkaddr = encodeURIComponent(parking.park_addr);
                     // 원하는 HTML 페이지로 이동
-                    window.location.href = `parkinginfo.html?lat=${parkla}&lon=${parklo}`;
+                    window.location.href = `parkinginfo.html?parkid=${parkid}&parknm=${parknm}&parkaddr=${parkaddr}&lat=${parkla}&lon=${parklo}`;
                 });
                 // markers.addLayer(marker);
             });
             // map.addLayer(markers);
         }
-        // fastapi로 값 보내기
-        function fetchParkingData(latitude, longitude) {
-            //const url = 'http://localhost:8000/location'; // fastapi post url
-            const url = 'https://10.0.4.74:8000/api/location'; // 서버에서는 https://parkingissue.online/api/location
-            fetch(url, {  // FastAPI 엔드포인트 URL
-                method: 'POST', // POST 요청
+        function fetchAndProcessParkingData(latitude, longitude) {
+            const postUrl = 'https://parkingissue.online/api/location'; // POST 요청 URL
+            const getUrl = 'https://parkingissue.online/api/frontget/'; // GET 요청 URL
+
+            // FastAPI에 데이터 POST 요청
+            return fetch(postUrl, {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', // JSON 형식
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ // 요청 바디에 데이터를 JSON으로 변환하여 포함
+                body: JSON.stringify({
                     latitude: latitude,
-                    longitude: longitude
+                    longitude: longitude,
                 }),
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`POST Request failed: ${response.status}`);
+            .then(postResponse => {
+                if (!postResponse.ok) {
+                    throw new Error(`POST Request failed: ${postResponse.status}`);
                 }
                 console.log('POST 요청 성공');
+                return new Promise(resolve => setTimeout(resolve, 4000));
             })
-            .catch(error => console.error('POST 요청 중 오류 발생:', error));
-            // .then(data => {
-            //     console.log('Success:', data);
-            //     addParkingMarkers(data);
-            // })
-            // .catch(error => console.error('Error:', error));
-        }
-        // 데이터 받아오기
-        function fetchParkingDataFromFastAPI() {
-            const url = 'https://10.0.4.74:8000/parking'; // FastAPI GET 엔드포인트
-            return fetch(url, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error(`GET Request failed: ${response.status}`);
+            .then(() => fetch(getUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    cache: "no-store",
+            }))  
+            .then(getResponse => {
+                if (!getResponse.ok) {
+                    throw new Error(`GET Request failed: ${getResponse.status}`);
                 }
-                return response.json(); // GET 요청 후 응답 데이터를 반환
+                return getResponse.json();
+            })
+            .then(data => {
+                if (data.stored_data) {
+                    console.log('GET 요청 성공, 데이터:', data.stored_data);
+                    return data.stored_data;
+                } else {
+                    throw new Error('No data received.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
         }
+
+        // fastapi로 값 보내기
+        // async function fetchParkingData(latitude, longitude) {
+        //     //const url = 'http://localhost:8000/location'; // fastapi post url
+        //     const url = 'https://parkingissue.online/api/location'; // 서버에서는 https://parkingissue.online/api/location
+        //     fetch(url, {  // FastAPI 엔드포인트 URL
+        //         method: 'POST', // POST 요청
+        //         headers: {
+        //             'Content-Type': 'application/json', // JSON 형식
+        //         },
+        //         body: JSON.stringify({ // 요청 바디에 데이터를 JSON으로 변환하여 포함
+        //             latitude: latitude,
+        //             longitude: longitude
+        //         }),
+        //     })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error(`POST Request failed: ${response.status}`);
+        //         }
+        //         console.log('POST 요청 성공');
+        //     })
+        //     .catch(error => console.error('POST 요청 중 오류 발생:', error));
+        // }
+        // // 데이터 받아오기
+        // async function fetchParkingDataFromFastAPI() {
+        //     const url = 'https://parkingissue.online/api/frontget/'; // FastAPI GET 엔드포인트
+        //     try {
+        //         const response = await fetch(url, {
+        //             method: 'GET',
+        //             headers: { 'Content-Type': 'application/json' }
+        //         });
+
+        //         if (!response.ok) {
+        //             throw new Error(`GET Request failed: ${response.status}`);
+        //         }
+
+        //         // 응답 데이터를 JSON 형태로 파싱
+        //         const data = await response.json();
+                
+        //         // 받은 데이터에서 stored_data를 추출
+        //         if (data.stored_data) {
+        //             return data.stored_data; // stored_data 배열 반환
+        //         } else {
+        //             throw new Error("No data received.");
+        //         }
+        //     } catch (error) {
+        //         console.error("Error:", error);
+        //     }
+        // }
         // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
-        var map = L.map('map').setView([37.5665, 126.9780], 15);
+        var map = L.map('map').setView([37.5665, 126.9780], 16);
+
+        var markers = L.layerGroup().addTo(map);
 
         L.tileLayer('https://xdworld.vworld.kr/2d/Base/202002/{z}/{x}/{y}.png', {
             maxZoom: 21,
@@ -182,7 +247,7 @@
         let initialCenter = null;
 
         let lastFetchedTime = 0; // 마지막으로 요청을 보낸 시간
-        const FETCH_INTERVAL = 10000; // 10초 간격으로 요청 (10000ms)
+        const FETCH_INTERVAL = 2000; // 10초 간격으로 요청 (10000ms)
         
         // watchPosition의 ID
         let watchId = null;
@@ -225,20 +290,28 @@
                 const currentTime = Date.now();
                 if (currentTime - lastFetchedTime >= FETCH_INTERVAL) {
                     // 일정 시간 간격이 지난 경우에만 요청
-                    fetchParkingData(latitude, longitude);
-                    lastFetchedTime = currentTime; // 요청 보낸 시간을 현재 시간으로 갱신
-                }
-                // 위도와 경도를 FastAPI로 전송
-                // fetchParkingData(latitude, longitude)
-                    // .then(() => {
-                    //     // POST 성공 후 주차장 데이터 GET 요청
-                    //     return fetchParkingDataFromFastAPI();
-                    // })
-                    // .then(parkingData => {
-                    //     console.log("주차장 데이터:", parkingData);
-                    //     addParkingMarkers(parkingData); // 지도에 마커 추가
-                    // })
-                    // .catch(error => console.error("Error:", error));
+                    fetchAndProcessParkingData(latitude, longitude)
+                        .then(parkingData => {
+                            if (parkingData) {
+                                console.log("주차장 데이터:", parkingData);
+                                addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                            } else {
+                                console.error("주차장 데이터를 가져오지 못했습니다.");
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+                    // fetchParkingData(latitude, longitude)
+                    //     .then(() => {
+                    //         // POST 성공 후 주차장 데이터 GET 요청
+                    //         return fetchParkingDataFromFastAPI();
+                    //     })
+                    //     .then(parkingData => {
+                    //         console.log("주차장 데이터:", parkingData);
+                    //         addParkingMarkers(parkingData); // 지도에 마커 추가
+                    //     })
+                    //     .catch(error => console.error("Error:", error));
+                        lastFetchedTime = currentTime; // 요청 보낸 시간을 현재 시간으로 갱신
+                    }
 
                 // 지도에 커스텀 아이콘을 사용하는 마커 추가
                 // 내 위치 마커 처리
@@ -296,13 +369,56 @@
                 watchId = null; // ID 초기화
             }
             const center = map.getCenter(); // 현재 지도 중심 가져오기
-            // fetchParkingData(center.lat, center.lng); // FastAPI로 데이터 전송
+            fetchAndProcessParkingData(center.lat, center.lng)
+                .then(parkingData => {
+                    if (parkingData) {
+                        console.log("주차장 데이터:", parkingData);
+                        addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                    } else {
+                        console.error("주차장 데이터를 가져오지 못했습니다.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            // fetchParkingData(center.lat, center.lng) // FastAPI로 데이터 전송
+            //         .then(() => {
+            //             // POST 성공 후 주차장 데이터 GET 요청
+            //             return fetchParkingDataFromFastAPI();
+            //         })
+            //         .then(parkingData => {
+            //             console.log("주차장 데이터:", parkingData);
+            //             addParkingMarkers(parkingData); // 지도에 마커 추가
+            //         })
+            //         .catch(error => console.error("Error:", error));
             initialCenter = map.getCenter(); // 현재 중심을 초기 중심으로 갱신
             researchButton.style.display = "none"; // 버튼 숨기기
         });
 
         // 웹 시작하자마자 현재 위치로 이동!
-        window.onload = geoFindMe;
+        // window.onload = geoFindMe;
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const latitude = parseFloat(urlParams.get('lat'));
+            const longitude = parseFloat(urlParams.get('lon'));
+
+            // URL에 위경도 파라미터가 있으면 해당 위치로 지도 이동
+            if (latitude && longitude) {
+                // 위경도가 있다면 해당 위치로 지도 이동
+                map.setView([latitude, longitude], 15); // 15는 줌 레벨
+                fetchAndProcessParkingData(latitude, longitude)
+                    .then(parkingData => {
+                        if (parkingData) {
+                            console.log("주차장 데이터:", parkingData);
+                            addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                        } else {
+                            console.error("주차장 데이터를 가져오지 못했습니다.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            } else {
+                // 위경도가 없다면 내 위치 찾기
+                geoFindMe();
+            }
+        };
         // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
         document.querySelector("#find-me").addEventListener("click", function() {
             // 페이지 새로고침

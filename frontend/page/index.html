@@ -33,13 +33,14 @@
                     <!-- Search Bar -->
                     <div class="search-bar-container">
                         <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
-                        <form class="search-form" onsubmit="return false;"> 
+                        <!-- 여기에서 이벤트 몇개 추가 search.js 에 있음 -->
+                        <form class="search-form" onsubmit="handleSearch(event); return false;"> 
                             <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
                             <div class="search-buttons">
                                 <button type="button" class="voice-search-btn" title="음성 검색">
                                     <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
                                 </button>
-                                <button type="button" class="search-button" title="검색">🔍</button>    
+                                <button type="button" class="search-button" title="검색" onclick="handleButtonSearch()">🔍</button>    
                             </div>
                         </form>
                         <div class="suggestions"></div>
@@ -89,6 +90,8 @@
         </div>
     <!-- 검색창 기능 -->
     <script src="assets/js/form.js"></script>
+    <!-- 검색어 to fastapi -->
+    <script src="assets/js/search.js"></script>
     <!-- voice search -->
     <script src="assets/js/voice-search.js"></script>
     <!-- Initialize the Leaflet Map -->
