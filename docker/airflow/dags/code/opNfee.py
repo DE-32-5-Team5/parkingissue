@@ -211,36 +211,22 @@ def fun_2parquet():
     op_files = [file for file in all_files if file.startswith('op')]
     fee_files = [file for file in all_files if file.startswith('fee')]
 
-    
+    op_files.sort(key=lambda x: int(re.search(r'(\d+)', x).group()) if re.search(r'(\d+)', x) else float('inf'))
+    fee_files.sort(key=lambda x: int(re.search(r'(\d+)', x).group()) if re.search(r'(\d+)', x) else float('inf'))
 
-    def extract_number(file_name):
-        match = re.search(r'\d+', file_name)
-        return int(match.group()) if match else float('inf')  
-    
-    op_sorted_files = sorted(op_files, key=extract_number)
-    fee_sorted_files = sorted(fee_files, key=extract_number)
+    # 각 파일의 데이터를 하나로 합치기
+    op_combined_df = pd.concat((pd.read_csv(f"{dir_path}/{file}") for file in op_files), ignore_index=True)
+    fee_combined_df = pd.concat((pd.read_csv(f"{dir_path}/{file}") for file in fee_files), ignore_index=True)
 
-    files = os.listdir(json_dir_path)
-    files.sort(key=lambda x: int(re.search(r'(\d+)', x).group()) if re.search(r'(\d+)', x) else float('inf'))
-    # print(files[startpage-1:startpage+10-1])
-    files = files[startpage-1:startpage+500-1]
+    # Parquet 파일로 저장 
+    op_output_file = os.path.join(p_dir_path, "optime.parquet")
+    op_combined_df.to_parquet(op_output_file, index=False)
+    fee_output_file = os.path.join(p_dir_path, "fee.parquet")
+    fee_combined_df.to_parquet(fee_output_file, index=False)
 
+    print("전체 parquet 저장 완료")
 
-
-
-    
-    # 10개씩 묶어서 Parquet 형식으로 저장
-    for i in range(0, len(op_sorted_files), 10):
-        op_chunk_files = op_sorted_files[i:i+10]
-        df = pd.DataFrame({'file_name': op_chunk_files})
-        
-        # Parquet 파일로 저장
-        output_file = os.path.join(output_directory, f'op_files_batch_{i // 10 + 1}.parquet')
-        df.to_parquet(output_file, index=False)
-        print(f"Saved: {output_file}")
-    else:
-        print(f"경로에 파일이 존재하지 않습니다.")
-        return
+       
     
 def fun_save(**kwargs):
     import glob

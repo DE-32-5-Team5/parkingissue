@@ -67,13 +67,20 @@ with DAG(
         to_csv_20 = create_python_operator("2csv.20", fun_2csv,1501)
 
     rm_Pdir = create_python_operator("rm.Pdir",fun_rmdir, "Pdata")
-    with TaskGroup("parquet_group", dag=dag) as parquet_group:
-        to_parquet_5 = create_python_operator("2parquet.5", fun_2parquet, 1)
-        to_parquet_10 = create_python_operator("2parquet.10", fun_2parquet, 501)
-        to_parquet_15 = create_python_operator("2parquet.15", fun_2parquet, 1001)
-        to_parquet_20 = create_python_operator("2parquet.20", fun_2parquet,1501)
+    # with TaskGroup("parquet_group", dag=dag) as parquet_group:
+    #     to_parquet_5 = create_python_operator("2parquet.5", fun_2parquet, 1)
+    #     to_parquet_10 = create_python_operator("2parquet.10", fun_2parquet, 501)
+    #     to_parquet_15 = create_python_operator("2parquet.15", fun_2parquet, 1001)
+    #     to_parquet_20 = create_python_operator("2parquet.20", fun_2parquet,1501)
 
-    save_task = PythonOperator(
+    to_parquet = PythonOperator(
+        task_id="save.parquet",
+        python_callable=fun_2parquet,
+        provide_context=True,
+        dag=dag,
+    )
+
+    save_DB = PythonOperator(
         task_id="save.task",
         python_callable=fun_save,
         provide_context=True,
@@ -83,9 +90,8 @@ with DAG(
     start >> connect >> rm_Edir
     rm_Edir >> fetch_group >> rm_Tdir
     rm_Tdir >> csv_group >> rm_Pdir
-    rm_Pdir >> parquet_group >> save_task 
-    save_task >> end
-    
+    rm_Pdir >> to_parquet >> save_DB >> end
+     
 
 
 

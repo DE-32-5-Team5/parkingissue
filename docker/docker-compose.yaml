@@ -68,6 +68,8 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-.}Data:/opt/airflow/Data
+    - ${AIRFLOW_PROJ_DIR:-.}FESTIVAL:/opt/airflow/FESTIVAL
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -153,7 +155,8 @@ services:
     env_file:
       - .env
     <<: *airflow-common
-    command: celery worker
+    # command: celery worker
+    command: celery worker --autoscale=10,1
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -177,8 +180,8 @@ services:
     #       memory: 8G
     #     reservations:
     #       memory: 4G
-    deploy:
-      replicas: 4  # 워커 수 3개로 설정
+    # deploy:
+      # replicas: 2  # 워커 수? 3개로 설정
 
   airflow-triggerer:
     <<: *airflow-common
