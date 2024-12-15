@@ -1,6 +1,7 @@
 
 // 연관 검색어 데이터 (예시)
 // 여기에서는 행사, 맛집 데이터 아래 형식으로 가져오는 쿼리짜면 되고
+
 const relatedSearches = {
     '개발': ['개발자 취업', '개발자 로드맵', '개발 공부 방법'],
     '여행': ['여행지 추천', '여행 준비물', '여행 계획'],
@@ -23,10 +24,9 @@ const trendingSearches = [
 ];
 
 // DOM 요소
-const searchInput = document.querySelector('.search-bar');
+const searchInput = document.querySelector(".search-bar");
 const suggestionsDiv = document.querySelector('.suggestions');
 const voiceButton = document.querySelector('.voice-search-btn');
-const searchButton = document.querySelector('.search-button');
 const trendingSearchesDiv = document.querySelector('.trending-searches')
 
 // 연관 검색어 표시
@@ -34,7 +34,8 @@ searchInput.addEventListener('input', (e) => {
     const value = e.target.value;
     suggestionsDiv.innerHTML = ''; // 기존 제안 목록 초기화
 
-    if (value.length > 0) {
+    if (value.length > 1) {
+        // 동적으로 input 이벤트가 발생할때마다 해당 단어가 포함된거 찾으면 될듯?
         Object.keys(relatedSearches).forEach(key => {
             if (key.includes(value)) {
                 relatedSearches[key].forEach(suggestion => {
@@ -115,13 +116,6 @@ function displayTrendingSearches() {
     currentIndex = (currentIndex + 1) % trendingSearches.length;
 }
 
-// 검색 처리
-// function handleSearch() {
-//     const searchTerm = searchInput.value;
-//     if (searchTerm) {
-//         alert(`검색어 "${searchTerm}"에 대한 검색을 수행합니다.`);
-//     }
-// }
 // 페이지 로드 시 실시간 검색어 표시
 displayTrendingSearches();
 
@@ -135,3 +129,55 @@ document.addEventListener('click', (e) => {
 // 실시간 검색어 업데이트 시작
 displayTrendingSearches();
 setInterval(displayTrendingSearches, 3000);
+
+// 검색어 가져오기 함수
+function getSearchValue() {
+    const searchInput = document.querySelector(".search-bar");
+    return searchInput.value.trim(); // 검색어 값 (공백 제거)
+}
+
+// Enter 키 입력 또는 검색 버튼 클릭 시 호출되는 함수
+function handleSearch(event) {
+    event.preventDefault(); // 기본 폼 제출 동작 방지
+    const searchValue = getSearchValue();
+
+    if (searchValue) {
+        console.log("검색어 (Enter 키):", searchValue);
+        // 검색 로직 실행 (예: API 호출)
+        performSearch(searchValue);
+    } else {
+        alert("검색어를 입력하세요.");
+    }
+}
+
+// 검색 버튼 클릭 시 호출되는 함수
+function handleButtonSearch() {
+    const searchValue = getSearchValue();
+
+    if (searchValue) {
+        console.log("검색어 (검색 버튼):", searchValue);
+        // 검색 로직 실행 (예: API 호출)
+        performSearch(searchValue);
+    } else {
+        alert("검색어를 입력하세요.");
+    }
+}
+
+// 실제 검색 동작 (API 호출 또는 데이터 필터링)
+function performSearch(query) {
+    console.log(`"${query}"로 검색을 실행합니다.`);
+    // 예: 서버로 검색 요청 보내기
+    fetch(`https://parkingissue.online/api/search?q=${encodeURIComponent(query)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            cache: "no-store",
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("검색 결과:", data);
+            // 검색 결과를 UI에 렌더링하거나 로직 추가
+        })
+        .catch(error => console.error("검색 요청 실패:", error));
+}
