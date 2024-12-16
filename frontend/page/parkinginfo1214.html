@@ -7,8 +7,6 @@
     <title>나이스파크 서초 민강남 클리닉 주차장</title>
     <link rel="stylesheet" href="assets/css/parkinginfo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
-    <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
     <!-- 지도 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
@@ -45,7 +43,6 @@
         <div class="reservation-section">
             <div class="reservation-item">
                 <!-- 여기도 주차장 운영 시간 DB 조회 -->
-                 <!-- 안에 내용 지워지면 알아서 페이지 줄어듬 -->
                 <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-clock" style="margin-right: 7px;"></i><strong>운영 시간</strong></div><br>
                 <span>월요일 09:00 ~ 18:00 </span><br>
                 <span>화요일 09:00 ~ 18:00 </span><br>
@@ -53,7 +50,8 @@
                 <span>목요일 09:00 ~ 18:00 </span><br>
                 <span>금요일 09:00 ~ 18:00 </span><br>
                 <span>토요일 09:00 ~ 18:00 </span><br>
-                <span>일요일 09:00 ~ 18:00 </span><br>
+                <span>일요일 09:00 ~ 18:00 </span><br><br>
+                
                 <span>공휴일 09:00 ~ 18:00 </span><br>
             </div>
             </div>
@@ -77,7 +75,7 @@
                 <canvas id="congestionChart" width="400" height="200"></canvas>
             </div>
     </div>
-</body> 
+</body>
 
 <div class="footer">
     <div class="footer-info">
@@ -99,7 +97,7 @@
             labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
             datasets: [{
                 label: '혼잡도 (%)',
-                data: [100, 50, 80, 60, 70, 90, 40],
+                data: [30, 50, 80, 60, 70, 90, 40],
                 backgroundColor: function(context) {
                     const value = context.dataset.data[context.dataIndex];
                     return value > 70 ? 'rgba(255, 99, 132, 0.6)' : 'rgba(54, 162, 235, 0.6)';
@@ -165,68 +163,6 @@
     const parkAddr = urlParams.get('parkaddr');
 
     console.log(parkla, parklo, parkId, parkNm, parkAddr); // 전달된 값 확인
-
-    // 받아온 값으로 fastapi get 요청을 통해서 해당 주차장에 대한 info 조회해오기
-    async function getParkInfo(parkId) {
-        const url = `https://parkingissue.online/api/getParkInfo?parkid=${encodeURIComponent(parkId)}`;
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                cache: 'no-store',
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP 오류! 상태: ${response.status}`);
-            }
-
-            const parkInfo = await response.json();
-            return parkInfo; // 데이터를 반환
-        } catch (error) {
-            console.error('주차장 정보 가져오기 실패:', error);
-            return null; // 에러 발생 시 null 반환
-        }
-    }
-
-    // 페이지 로드 시 주차장 정보 가져오기
-    async function loadParkInfo() {
-        if (parkId) {
-            const parkInfo = await getParkInfo(parkId);
-            updateHTMLWithParkInfo(parkInfo);
-        } else {
-            console.error("parkId가 존재하지 않습니다.");
-        }
-    }
-
-        // HTML 요소 업데이트 함수
-    function updateHTMLWithParkInfo(parkInfo) {
-        if (parkInfo) {
-            // 주차장 이름
-            if (parkInfo.name) { // 주차장 이름이 있는 경우
-                document.title = parkInfo.name;
-                document.querySelector('.parking-title').innerText = parkInfo.name;
-            } else { // 주차장 이름이 없는 경우
-
-            }
-            // 주차장 상세
-            document.querySelector('.details-list').innerHTML = `
-                <li><strong>운영 시간</strong>: ${parkInfo.hours}</li>
-                <li><strong>현재 요금</strong>: ${parkInfo.fee}</li>
-                <li><strong>주소</strong>: ${parkInfo.address}</li>
-            `;
-            // 주차장 주차 가능 면 수
-            // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
-            // document.querySelector('.availability-text').innerText = `주차 가능: ${parkInfo.availableSlots}면`;
-            // 일별 운영 시간
-
-        } else {
-            console.error("주차장 정보를 불러오지 못했습니다.");
-        }
-    }
-
-    loadParkInfo();
 </script>
 <!-- 지도 스크립트 -->
 <script>
