@@ -6,6 +6,8 @@ docker/.back_env
 docker/database/init/*.csv
 docker/database/init/*.sql
 
+backend/.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from login.routers import user_router, auth_router
 
 app = FastAPI()
+app.include_router(user_router.router)
 
 # CORS 설정
 origins = [
