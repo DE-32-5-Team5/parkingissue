@@ -191,23 +191,13 @@
         }
     }
 
-    // 페이지 로드 시 주차장 정보 가져오기
-    async function loadParkInfo() {
-        if (parkId) {
-            const parkInfo = await getParkInfo(parkId);
-            updateHTMLWithParkInfo(parkInfo);
-        } else {
-            console.error("parkId가 존재하지 않습니다.");
-        }
-    }
-
         // HTML 요소 업데이트 함수
     function updateHTMLWithParkInfo(parkInfo) {
         if (parkInfo) {
             // 주차장 이름
-            if (parkInfo.name) { // 주차장 이름이 있는 경우
-                document.title = parkInfo.name;
-                document.querySelector('.parking-title').innerText = parkInfo.name;
+            if (parkNm) { // 주차장 이름이 있는 경우
+                document.title = parkNm;
+                document.querySelector('.parking-title').innerText = parkNm;
             } else { // 주차장 이름이 없는 경우
 
             }
@@ -215,7 +205,7 @@
             document.querySelector('.details-list').innerHTML = `
                 <li><strong>운영 시간</strong>: ${parkInfo.hours}</li>
                 <li><strong>현재 요금</strong>: ${parkInfo.fee}</li>
-                <li><strong>주소</strong>: ${parkInfo.address}</li>
+                <li><strong>주소</strong>: ${parkAddr}</li>
             `;
             // 주차장 주차 가능 면 수
             // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
@@ -224,6 +214,16 @@
 
         } else {
             console.error("주차장 정보를 불러오지 못했습니다.");
+        }
+    }
+
+        // 페이지 로드 시 주차장 정보 가져오기
+    async function loadParkInfo() {
+        if (parkId) {
+            const parkInfo = await getParkInfo(parkId);
+            updateHTMLWithParkInfo(parkInfo);
+        } else {
+            console.error("parkId가 존재하지 않습니다.");
         }
     }
 
