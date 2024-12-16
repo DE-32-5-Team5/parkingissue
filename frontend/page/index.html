@@ -153,7 +153,7 @@
                     throw new Error(`POST Request failed: ${postResponse.status}`);
                 }
                 console.log('POST 요청 성공');
-                return new Promise(resolve => setTimeout(resolve, 4000));
+                return new Promise(resolve => setTimeout(resolve, 2500));
             })
             .then(() => fetch(getUrl, {
                     method: 'GET',
@@ -300,16 +300,6 @@
                             }
                         })
                         .catch(error => console.error("Error:", error));
-                    // fetchParkingData(latitude, longitude)
-                    //     .then(() => {
-                    //         // POST 성공 후 주차장 데이터 GET 요청
-                    //         return fetchParkingDataFromFastAPI();
-                    //     })
-                    //     .then(parkingData => {
-                    //         console.log("주차장 데이터:", parkingData);
-                    //         addParkingMarkers(parkingData); // 지도에 마커 추가
-                    //     })
-                    //     .catch(error => console.error("Error:", error));
                         lastFetchedTime = currentTime; // 요청 보낸 시간을 현재 시간으로 갱신
                     }
 
@@ -379,16 +369,6 @@
                     }
                 })
                 .catch(error => console.error("Error:", error));
-            // fetchParkingData(center.lat, center.lng) // FastAPI로 데이터 전송
-            //         .then(() => {
-            //             // POST 성공 후 주차장 데이터 GET 요청
-            //             return fetchParkingDataFromFastAPI();
-            //         })
-            //         .then(parkingData => {
-            //             console.log("주차장 데이터:", parkingData);
-            //             addParkingMarkers(parkingData); // 지도에 마커 추가
-            //         })
-            //         .catch(error => console.error("Error:", error));
             initialCenter = map.getCenter(); // 현재 중심을 초기 중심으로 갱신
             researchButton.style.display = "none"; // 버튼 숨기기
         });
