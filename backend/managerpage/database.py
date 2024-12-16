@@ -1,11 +1,14 @@
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
+dotenv_path = find_dotenv()
+print("Found .env at:", dotenv_path)
+
 # .env 파일에서 환경 변수 로드
-load_dotenv()
+load_dotenv(dotenv_path=dotenv_path)
 
 print("DB_HOST:", os.getenv('DB_HOST'))
 print("DB_PORT:", os.getenv('DB_PORT'))
