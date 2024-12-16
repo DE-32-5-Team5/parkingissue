@@ -11,13 +11,13 @@ from urllib3.util.retry import Retry
 session = requests.Session()
 
 def call(apiname,nor, pn, listyn, typeid, contentid='' ):
-    API_KEY = os.getenv('API_KEY')
+    API_KEY = os.getenv('API_KEY2')
     attempt = 0  # 시도 횟수
 
     if apiname.startswith('r-'):
         url = 'http://apis.data.go.kr/B551011/KorService1/areaBasedList1'
-        params ={'serviceKey' : API_KEY, 
-                'MobileOS' : 'ETC', 
+        params ={'serviceKey' : API_KEY,
+                'MobileOS' : 'ETC',
                 'MobileApp' : 'parkingissue',
                 'numOfRows' :nor,
                 'pageNo' : pn,
@@ -28,8 +28,8 @@ def call(apiname,nor, pn, listyn, typeid, contentid='' ):
                 }
     else:
         url = 'http://apis.data.go.kr/B551011/KorService1/detailIntro1'
-        params ={'serviceKey' : API_KEY, 
-                'MobileOS' : 'ETC', 
+        params ={'serviceKey' : API_KEY,
+                'MobileOS' : 'ETC',
                 'MobileApp' : 'parkingissue',
                 'numOfRows' :nor,
                 'pageNo' : pn,
@@ -37,8 +37,7 @@ def call(apiname,nor, pn, listyn, typeid, contentid='' ):
                 'contentTypeId' : typeid,  #15:축제, 39:음식점
                 'contentId' : contentid
                 }
-        print("*"*1000)
-        print(params)
+
     while True:
         if attempt==10:
             print("최대 재시도 횟수를 초과하였습니다. 10분 후 다시 시도합니다.")
@@ -52,31 +51,31 @@ def call(apiname,nor, pn, listyn, typeid, contentid='' ):
             if response.status_code == 200:
 
                 # 본문이 비어 있으면 재시도
-                if not response.text.strip(): 
+                if not response.text.strip():
                     print("응답 본문이 비어있습니다. 재시도 중...")
                     attempt += 1
 
                 # JSON 파싱 오류 발생 시 재시도
                 try:
-                    data = response.json() 
+                    data = response.json()
                     return data
                 except json.decoder.JSONDecodeError as e:
                     print(f"JSON 파싱 오류: {e}")
-                    print("응답 본문:", response.text) 
+                    print("응답 본문:", response.text)
                     attempt += 1
-                    continue  
+                    continue
 
             # 상태 코드가 200이 아니면 재시도
             else:
                 print(f"응답 상태 코드 오류: {response.status_code}")
                 attempt += 1
-                continue  
+                continue
 
         # 요청 오류 발생 시 재시도
         except requests.exceptions.RequestException as e:
             print(f"요청 예외 발생: {e}")
             attempt += 1
-            continue  
+            continue
 
 def fun_mkdir(**kwargs):
     dirname = kwargs['value']
@@ -84,7 +83,7 @@ def fun_mkdir(**kwargs):
         base_path = "/opt/airflow"
     else:
         base_path = "/opt/airflow/HP"
-    
+
     dir_path = os.path.join(base_path, dirname)
 
     if os.path.exists(dir_path):
@@ -139,8 +138,6 @@ def fun_fetch(**kwargs):
 
 def fetch_intro(fid,typeid):
     data = call('intro',1, 1, '', typeid, fid )
-    print("*" * 3000)
-    print(data)
     event_data = data['response']['body']['items']['item'][0]
     eventstartdate = event_data['eventstartdate']
     eventenddate = event_data['eventenddate']
@@ -170,7 +167,11 @@ def fun_2csv(**kwargs):
             for d in data['response']['body']['items']['item']:
                 fid = d.get('contentid', ' ')
                 typeid = d.get('contenttypeid',' ')
-                eventstartdate, eventenddate = fetch_intro(fid,typeid)
+                if content_type == "Festival":
+                    eventstartdate, eventenddate = fetch_intro(fid,typeid)
+                else:
+                    eventstartdate=""
+                    eventenddate=""
 
                 d_list.append({
                     'fid' : fid,
@@ -188,21 +189,101 @@ def fun_2csv(**kwargs):
 
             # pandas DataFrame으로 변환
             df = pd.DataFrame(d_list)
-    
-            csv_path = os.path.join(csv_dir_path, f"op_page_{page_no}.csv")     
+
+            csv_path = os.path.join(csv_dir_path, f"page_{page_no}.csv")
             df.to_csv(csv_path, index=False, encoding='utf-8', sep=';')
             print(f" page_{page_no}.csv --  CSV 파일이 성공적으로 저장되었습니다")
-          
+
     else:
         print(f"경로에 파일이 존재하지 않습니다.")
         return
 
+def fun_save(**kwargs):
+    print("fun_save")
+    import glob
+    from mysql.connector import Error
+    import mysql.connector
 
- 
+    content_type = kwargs['value']  #Festival_CSV | Food_CSV
+    csv_path = f"/opt/airflow/HP/{content_type}"
+
+    try:
+        # 환경변수에서 비밀번호 가져오기
+        passwd = os.getenv('DB_PW')
+
+        # MySQL 데이터베이스 연결
+        conn = mysql.connector.connect(
+            host="parkingissue_database",
+            port=3306,
+            user="root",
+            password=passwd,
+            database="parkingissue"
+        )
+
+        if conn.is_connected():
+            print("MySQL 데이터베이스에 성공적으로 연결되었습니다.")
+
+        cursor = conn.cursor()
+        files = [f for f in os.listdir(csv_path) if f.endswith('.csv')]
+        for file in files:
+            file_path = os.path.join(csv_path, file)
+            df = pd.read_csv(file_path, delimiter=';')
+            for index, row in df.iterrows():
+                #fid = row['fid']
+                #title = row['title']
+                #address = row['address']
+                #eventstartdate = row['eventstartdate']
+                #eventenddate = row['eventenddate']
+                #tel = row['tel']
+                #firstimage = row['firstimage']
+                #firstimage2 = row['firstimage2']
+                #mapx = row['mapx']
+                #mapy = row['mapy']
+
+                fid = "" if pd.isna(row['fid']) else row['fid']
+                title = ""  if pd.isna(row['title']) else row['title']
+                address = "" if pd.isna(row['address']) else row['address']
+                eventstartdate = None if pd.isna(row['eventstartdate']) else row['eventstartdate']
+                eventenddate = None if pd.isna(row['eventenddate']) else row['eventenddate']
+                tel = "" if pd.isna(row['tel']) else row['tel']
+                firstimage = "" if pd.isna(row['firstimage']) else row['firstimage']
+                firstimage2 = "" if pd.isna(row['firstimage2']) else row['firstimage2']
+                mapx = "" if pd.isna(row['mapx']) else row['mapx']
+                mapy = "" if pd.isna(row['mapy']) else row['mapy']
+
+                # 해당 fid가 이미 존재하는지 확인
+                cursor.execute("SELECT COUNT(*) FROM fastival_info WHERE fid = %s", (fid,))
+                result = cursor.fetchone()
+
+                if result[0] > 0:  # fid가 존재하면 업데이트
+                    update_query = """
+                        UPDATE fastival_info
+                        SET title = %s, address = %s, eventstartdate = %s, eventenddate = %s,tel = %s, firstimage = %s, firstimage2 = %s, mapx = %s, mapy = %s
+                        WHERE fid = %s
+                    """
+
+                    cursor.execute(update_query, (title, address, eventstartdate, eventenddate, tel, firstimage, firstimage2, mapx, mapy, fid))
+                    print(f"값 업데이트 완료 - id:{fid}")
+
+                else:  # fid가 존재하지 않으면 삽입
+                    insert_query = """
+                        INSERT INTO fastival_info (fid, title, address, eventstartdate, eventenddate, tel, firstimage, firstimage2, mapx, mapy)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(insert_query, (fid, title, address, eventstartdate, eventenddate, tel, firstimage, firstimage2, mapx, mapy))
+        print(f"데이터 업데이트 완료 - id: {fid}")
+
+        # 커밋하여 변경사항 저장
+        conn.commit()
 
 
 
-        
+    except Error as e:
+        print(f"에러발생 : {e}")
+        raise
 
-
-
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            print("MySQL 데이터베이스 연결이 종료되었습니다.")

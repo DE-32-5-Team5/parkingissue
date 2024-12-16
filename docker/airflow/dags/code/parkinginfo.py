@@ -106,34 +106,36 @@ def fun_conn():
 
 
 
-def fun_fetch(**kwargs):
-    startpage = kwargs['value'] #1,501,1001,1501 1708
-    # print(f" %%%%%     {startpage}")
+def fun_fetch():
     dir_path = "/opt/airflow/Data/Info/Edata"
-
+    totalcnt = 1
+    currentcnt = 0
+    pagenum = 1
     First = True
-    total=0
-    rownum=-1
 
-    for page in range(startpage, startpage+500):
+    while currentcnt < totalcnt:
+        json_data = []
+        file_path = os.path.join(dir_path, f"page_{pagenum}.json") 
+        data = call(pagenum, 1000)
+        print(f" ######### page_{pagenum}")
+        json_data.append(data)
 
-        file_path = os.path.join(dir_path, f"page_{page}.json") 
-        # data = call(page, 15)
-        data = call(page, 1000)
         if First:
-            total = int(data['totalCount'])
-            rownum = int(data['numOfRows'])
-            First=False
-        print(f" ######### page_{page}")
+            totalcnt = data['totalCount'] 
+            # totalcnt = 30
+            First = False
+
         try:
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
             print("파일에 내용이 성공적으로 작성되었습니다.")
         except Exception as e:
             print(f"파일 작성 중 오류가 발생했습니다: {e}")
-            
-        if page*rownum > total:
-            break
+
+        currentcnt += int(data['numOfRows'])
+        pagenum += 1
+
+
 
 def fun_2csv(**kwargs):
     startpage = kwargs['value']

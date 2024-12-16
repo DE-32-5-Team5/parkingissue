@@ -50,11 +50,17 @@ with DAG(
         dag=dag,
     )
     rm_Edir = create_python_operator("rm.Edir", fun_rmdir, "Edata")
-    with TaskGroup("fetch_group", dag=dag) as fetch_group:
-            fetch_5 = create_python_operator("fetch.5", fun_fetch, 1)
-            fetch_10 = create_python_operator("fetch.10", fun_fetch, 501)
-            fetch_15 = create_python_operator("fetch.15", fun_fetch, 1001)
-            fetch_20 = create_python_operator("fetch.20", fun_fetch,1501)
+    # with TaskGroup("fetch_group", dag=dag) as fetch_group:
+    #         fetch_5 = create_python_operator("fetch.5", fun_fetch, 1)
+    #         fetch_10 = create_python_operator("fetch.10", fun_fetch, 501)
+    #         fetch_15 = create_python_operator("fetch.15", fun_fetch, 1001)
+    #         fetch_20 = create_python_operator("fetch.20", fun_fetch,1501)
+    fetch_data = PythonOperator(
+        task_id="fetch.data",
+        python_callable=fun_fetch,
+        provide_context=True,
+        dag=dag,
+    )
 
     rm_Tdir = create_python_operator("rm.Tdir",fun_rmdir, "Tdata")
     with TaskGroup("csv_group", dag=dag) as csv_group:
@@ -78,7 +84,7 @@ with DAG(
     )
 
     start >> connect >> rm_Edir
-    rm_Edir >> fetch_group >> rm_Tdir
+    rm_Edir >> fetch_data >> rm_Tdir
     rm_Tdir >> csv_group >> rm_Pdir
     rm_Pdir >> parquet_group >> save_task 
     save_task >> end
