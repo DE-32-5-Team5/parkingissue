@@ -173,6 +173,7 @@
                     console.log('GET 요청 성공, 데이터:', data.stored_data);
                     return data.stored_data;
                 } else {
+                    markers.clearLayers();
                     throw new Error('No data received.');
                 }
             })

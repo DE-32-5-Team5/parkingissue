@@ -199,7 +199,8 @@
                 document.title = parkNm;
                 document.querySelector('.parking-title').innerText = parkNm;
             } else { // 주차장 이름이 없는 경우
-
+                document.title = "주차잇슈 주차장";
+                document.querySelector('.parking-title').innerText = "주차잇슈 주차장";
             }
             // 주차장 상세
             document.querySelector('.details-list').innerHTML = `
