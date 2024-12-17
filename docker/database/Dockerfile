@@ -2,6 +2,10 @@ FROM mysql:latest
 
 COPY ./config/default.conf /etc/mysql/conf.d/
 COPY ./init/initialize.sql /docker-entrypoint-initdb.d/
+COPY ./init/parkingarea_information.csv /var/lib/mysql-files/
+COPY ./init/parkingarea_operationtime.csv /var/lib/mysql-files/
+COPY ./init/parkingarea_operationcharge.csv /var/lib/mysql-files/
+COPY ./init/parkingarea_realtime.csv /var/lib/mysql-files/
 
 ARG MYSQL_ROOT_PASSWORD
 ARG MYSQL_DATABASE
