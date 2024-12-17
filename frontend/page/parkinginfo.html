@@ -29,7 +29,7 @@
             <!-- <h2 class="parking-title">나이스파크 서초 민강남 클리닉 주차장</h2> -->
             <ul class="details-list">
                 <!-- 여기도 전부 DB에서 가져와야함 -->
-                <!-- <li><strong>운영 시간</strong>: 00:00 ~ 24:00</li> -->
+                <li><strong>운영 시간</strong>: 00:00 ~ 24:00</li>
                 <li><strong>현재 요금</strong>: 1시간 기준 7,000원</li>
                 <li><strong>주소</strong>: 서울특별시 서초구 혹려로 410</li>
             </ul>
@@ -185,6 +185,12 @@
             return null; // 에러 발생 시 null 반환
         }
     }
+    // 초 단위 시간 형식으로 변경
+    function formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);  // 시간을 구함
+        const minutes = Math.floor((seconds % 3600) / 60);  // 분을 구함
+        return `${hours}:${minutes.toString().padStart(2, '0')}`;  // 2자리로 맞춰서 출력
+    }
 
         // HTML 요소 업데이트 함수
     function updateHTMLWithParkInfo(parkInfo) {
@@ -198,15 +204,49 @@
                 document.querySelector('.parking-title').innerText = "주차잇슈 주차장";
             }
             // 주차장 상세
-            document.querySelector('.details-list').innerHTML = `
-                <li><strong>현재 요금</strong>: ${parkInfo.fee}</li>
+            if (parkInfo.weekly==0 && parkInfo.weekend==0 && parkInfo.holiday==0){
+                document.querySelector('.details-list').innerHTML = `
+                <li><strong>운영 시간</strong>: 연중무휴</li>
+                <li><strong>기본 요금 시간</strong>: ${parkInfo.basic_time}분 <strong>${parkInfo.basic_charge}원</strong></li>
+                <li><strong>추가 요금</strong>: ${parkInfo.additional_time}분 당 <strong>${parkInfo.additional_charge}원</strong></li>
                 <li><strong>주소</strong>: ${parkAddr}</li>
             `;
-            // <li><strong>운영 시간</strong>: ${parkInfo.hours}</li>
+            } else {
+                const startTime = formatTime(parkInfo.wee_orn_st);
+                const endTime = formatTime(parkInfo.wee_orn_et); 
+                document.querySelector('.details-list').innerHTML = `
+                <li><strong>운영 시간</strong>: ${startTime} ~ ${endTime}</li>
+                <li><strong>기본 요금</strong>: ${parkInfo.basic_time}분 <strong>${parkInfo.basic_charge}원</strong></li>
+                <li><strong>추가 요금</strong>: ${parkInfo.additional_time}분 당 <strong>${parkInfo.additional_charge}원</strong></li>
+                <li><strong>주소</strong>: ${parkAddr}</li>
+            `;
+            }
+
             // 주차장 주차 가능 면 수
             // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
             // document.querySelector('.availability-text').innerText = `주차 가능: ${parkInfo.availableSlots}면`;
-            // 일별 운영 시간
+            // 운영시간 파트
+            const spans = document.querySelectorAll('.reservation-item span');
+            // 평일 운영 시간 업데이트
+            const weekdayStart = formatTime(parkInfo.wee_orn_st);
+            const weekdayEnd = parkInfo.wee_orn_et == 0 ? "24:00" : formatTime(parkInfo.wee_orn_et);
+            spans[0].textContent = `평일 ${weekdayStart} ~ ${weekdayEnd}`;
+            
+            // 주말 운영 시간 업데이트
+            const weekendStart = formatTime(parkInfo.wk_orn_st);
+            const weekendEnd = parkInfo.wk_orn_et == 0 ? "24:00" : formatTime(parkInfo.wk_orn_et);
+            spans[1].textContent = `주말 ${weekendStart} ~ ${weekendEnd}`;
+            
+            // 공휴일 운영 시간 업데이트
+            const holidayStart = formatTime(parkInfo.hol_orn_st);
+            const holidayEnd = parkInfo.hol_orn_et == 0 ? "24:00" : formatTime(parkInfo.hol_orn_et);
+            spans[2].textContent = `공휴일 ${holidayStart} ~ ${holidayEnd}`;
+
+            // 요금파트 시작
+            spans[3].textContent = `회차 시간 : ${parkInfo.free_time}`
+            spans[4].textContent = `추가 요금 : ${parkInfo.basic_time}분 이후 ${parkInfo.additional_time}분 당 ${parkInfo.additional_charge}원`
+            spans[5].textContent = `일일권 : ${parkInfo.daily_charge}원`
+            spans[6].textContent = `월정기권 : ${parkInfo.monthly_charge}원`
 
         } else {
             console.error("주차장 정보를 불러오지 못했습니다.");

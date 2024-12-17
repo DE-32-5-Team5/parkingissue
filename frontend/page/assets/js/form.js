@@ -13,14 +13,14 @@
 const trendingSearches = [
     "월드컵 중계",
     "날씨",
-    "코로나 현황",
-    "주식",
-    "부동산",
-    "롤드컵",
-    "추석 연휴",
+    "플레이데이터",
+    "만세력",
+    "에스파",
+    "사주풀이",
+    "MBTI",
     "태풍",
-    "방탄소년단",
-    "블랙핑크"
+    "뉴진즈",
+    "아일릿"
 ];
 
 // 연관검색어 조회용 function
@@ -94,7 +94,7 @@ searchInput.addEventListener('input', (e) => {
                 });
                 suggestionsDiv.style.display = 'block'; // 제안 목록 표시
             }
-        }, 1000); // 1초 지연
+        }, 500); // 1초 지연
     } else {
         suggestionsDiv.style.display = 'none'; // 입력값 없을 경우 숨기기
     }
