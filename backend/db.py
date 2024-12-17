@@ -25,13 +25,12 @@ async def get_db():
     except aiomysql.Error as e:
         print(f"Database connection error: {e}")
         return None
-
 async def get_user_by_id(id: str):
     conn = await get_db()
     if conn:
         try:
             async with conn.cursor() as cur:
-                await cur.execute("SELECT * FROM user_info WHERE id = %s", (email,))
+                await cur.execute("SELECT * FROM user_info WHERE user_id = %s", (id,))
                 user = await cur.fetchone()
                 return user
         except aiomysql.Error as e:
@@ -40,7 +39,6 @@ async def get_user_by_id(id: str):
         finally: # connection close 추가
             conn.close()
     return None
-
 async def get_all_users():
     conn = await get_db()
     if conn:
@@ -53,5 +51,33 @@ async def get_all_users():
             print(f"Query execution error: {e}")
             return None
         finally: # connection close 추가
+            conn.close()
+    return None
+async def get_manager_by_id(id: str):
+    conn = await get_db()
+    if conn:
+        try:
+            async with conn.cursor() as cur:
+                await cur.execute("SELECT * FROM manager_info WHERE manager_id = %s", (id,))
+                user = await cur.fetchone()
+                return user
+        except aiomysql.Error as e:
+            print(f"Query execution error: {e}")
+            return None
+        finally:
+            conn.close()
+    return None
+async def get_all_managers():
+    conn = await get_db()
+    if conn:
+        try:
+            async with conn.cursor() as cur:
+                await cur.execute("SELECT * FROM manager_info")
+                user = await cur.fetchone()
+                return user
+        except aiomysql.Error as e:
+            print(f"Query execution error: {e}")
+            return None
+        finally:
             conn.close()
     return None
