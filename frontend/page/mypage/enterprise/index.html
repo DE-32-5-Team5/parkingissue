@@ -34,7 +34,7 @@
             <div class="information-card">
                 <p class="information-title">비밀번호</p>
                 <p class="information-value" style="margin-left: 380px;">*****</p>
-                <button class="delete-btn">수정</button>
+                <button class="delete_btn" id="editPasswordBtn">수정</button>
             </div>
         </section>
 
@@ -79,6 +79,22 @@
                     <button class="cancel">취소</button>
                 </div>
             </div>
+
+        <!-- 비밀번호 수정 모달 -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <h2>비밀번호 변경</h2>
+                <input type="password" placeholder="현재 비밀번호" id="currentPassword">
+                <input type="password" placeholder="새 비밀번호" id="newPassword">
+                <input type="password" placeholder="새 비밀번호 확인" id="confirmPassword">
+                
+                <!-- 오류 메시지 -->
+                <p id="passwordError" style="color: red; display: none;"></p>
+                
+                <button class="confirm-btn" id="changePasswordBtn">확인</button>
+                <button class="cancel-btn" id="cancelPasswordBtn">취소</button>
+            </div>
+        </div>
             
             <script>
                 const modal = document.getElementById('unsubscribeModal');
@@ -99,6 +115,71 @@
                 window.addEventListener('click', (event) => {
                     if (event.target === modal) {
                         modal.style.display = 'none';  // 모달 숨기기
+                    }
+
+                });
+
+                // 비밀번호 수정 모달
+                const passwordModal = document.getElementById('passwordModal');
+                const editPasswordBtn = document.getElementById('editPasswordBtn');
+                const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+                const currentPasswordInput = document.getElementById('currentPassword');
+                const newPasswordInput = document.getElementById('newPassword');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+                const passwordError = document.getElementById("passwordError");
+                const changePasswordBtn = document.getElementById('changePasswordBtn');
+
+                // 비밀번호 수정 버튼 클릭 시 모달 열기
+                editPasswordBtn.addEventListener('click', () => {
+                    passwordModal.style.display = 'block';
+                });
+
+                // 취소 버튼 클릭 시 모달 닫기 및 입력 필드 초기화
+                cancelPasswordBtn.addEventListener('click', () => {
+                    passwordModal.style.display = 'none';  // 모달 숨기기
+                    // 입력 필드 초기화
+                    currentPasswordInput.value = '';
+                    newPasswordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    passwordError.style.display = 'none';  // 오류 메시지 숨기기
+
+                    
+                });
+
+                // 비밀번호 변경 폼 제출 (확인 버튼 클릭 시)
+                document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const errorElement = document.getElementById("passwordError");
+                
+
+                    const response = await fetch('http://localhost:8000/change-password/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_password: newPassword,
+                            confirm_password: confirmPassword
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.status !== 200) {
+                        passwordError.style.display = 'block';
+                        passwordError.textContent = data.detail || "비밀번호 변경에 실패했습니다.";  // detail에 담긴 오류 메시지 표시
+                    } else {
+                        passwordError.style.display = 'none';
+                        alert(data.message);  // 성공 메시지 처리
+                        passwordModal.style.display = 'none';  // 모달 닫기
+
+                        // 확인 버튼 클릭 시 입력 필드 초기화
+                        currentPasswordInput.value = '';
+                        newPasswordInput.value = '';
+                        confirmPasswordInput.value = '';
                     }
                 });
             </script>

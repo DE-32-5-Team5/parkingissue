@@ -18,20 +18,24 @@
             </div>
             <div class="form-group">
                 <label for="event-address">행사 주소</label>
-                <input type="text" id="event-address" name="event-address" placeholder="예: 강남구 서초구 효령로 335 " required>
+                <input type="text" id="event-address" name="event-address" placeholder="예: 서울 서초구 효령로 335 " required>
             </div>
             
             <div class="form-group">
                 <label for="event-contact">행사 연락처</label>
                 <div class="phone-group">
+                    <input type="text" id="call-first" name="landline-middle" maxlength="4" placeholder="02" required>
+                    <input type="text" id="call-second" name="landline-last" maxlength="4" placeholder="123" required>
+                    <input type="text" id="call-third" name="landline-middle" maxlength="4" placeholder="4567" required>
                     <!-- 전화번호 선택 옵션 추가 -->
-                    <select id="phone-type" name="phone-type" required>
+                    <!-- <select id="phone-type" name="phone-type" required>
+                        <option value="select" nonselected>선택 </option>
                         <option value="mobile">휴대전화</option>
                         <option value="landline">일반전화</option>
-                    </select>
+                    </select> -->
                     
                     <!-- 휴대전화 입력란 -->
-                    <div class="mobile-phone">
+                    <!-- <div class="mobile-phone">
                         <select id="mobile-prefix" name="mobile-prefix" required>
                             <option value="010">010</option>
                             <option value="011">011</option>
@@ -43,9 +47,9 @@
                         <input type="text" id="mobile-middle" name="mobile-middle" maxlength="4" required>
                         <input type="text" id="mobile-last" name="mobile-last" maxlength="4" required>
                     </div>
-                    
+                     -->
                     <!-- 일반전화 입력란 -->
-                    <div class="landline-phone" style="display: none;">
+                    <!-- <div class="landline-phone" style="display: none;">
                         <select id="landline-prefix" name="landline-prefix" required>
                             <option value="02">02</option>
                             <option value="031">031</option>
@@ -54,12 +58,12 @@
                             <option value="041">041</option>
                             <option value="042">042</option>
                             <option value="043">043</option>
-                            <option value="044">044</option>
+                            <option value="044">044</option> -->
                             <!-- 기타 지역 번호 추가 -->
-                        </select>
+                        <!-- </select>
                         <input type="text" id="landline-middle" name="landline-middle" maxlength="4" required>
                         <input type="text" id="landline-last" name="landline-last" maxlength="4" required>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="form-group">
@@ -83,16 +87,45 @@
         </form>
     </div>
 
+    <script src="../js/script.js"></script>
     <script>
-        document.getElementById('phone-type').addEventListener('change', function() {
-            const phoneType = this.value;
-            
-            if (phoneType === 'mobile') {
-                document.querySelector('.mobile-phone').style.display = 'flex';
-                document.querySelector('.landline-phone').style.display = 'none';
-            } else if (phoneType === 'landline') {
-                document.querySelector('.mobile-phone').style.display = 'none';
-                document.querySelector('.landline-phone').style.display = 'flex';
+        document.getElementById('event-form').addEventListener('submit', async function (e) {
+            e.preventDefault(); // 기본 폼 제출을 막음
+
+            const formData = new FormData(this); // 폼 데이터 가져오기
+
+            // 폼 데이터를 객체로 변환
+            const data = {
+                title: formData.get('event-title'),
+                address: formData.get('event-address'),
+                contact: `${formData.get('call-first')}-${formData.get('call-second')}-${formData.get('call-third')}`,
+                start_date: formData.get('event-start-date'),
+                end_date: formData.get('event-end-date'),
+                // main_image: formData.get('event-main-image'),
+                // thumbnail_image: formData.get('event-thumbnail-image')
+            };
+
+            // FastAPI 서버로 요청 보내기
+            try {
+                const response = await fetch('http://localhost:8000/event-registration/', {
+                    method: 'POST',
+                    body: formData
+                    // headers: {
+                    //     'Content-Type': 'application/json',
+                    // },
+                    // body: JSON.stringify(data)
+                });
+
+                const result = await response.json(); // 서버 응답 처리
+
+                if (response.ok) {
+                    alert('행사가 등록되었습니다.');
+                } else {
+                    alert('행사 등록에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('서버 연결에 문제가 발생했습니다.');
             }
         });
     </script>
