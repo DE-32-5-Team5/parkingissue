@@ -2858,7 +2858,7 @@ body {
         margin-top: 30px;
         
     }
-    .formAll {
+    .formAllC {
         display: flex;
         flex-direction: column;
         /* text-align: center; */
@@ -3014,7 +3014,7 @@ body {
             height: 100%; /* 부모 섹션에 맞게 높이 설정 */
             padding: 10px 20px 10px 20px;
         }
-        .formAll {
+        .formAllC {
             width: 100%;
         }
         .signup-container h2 {
