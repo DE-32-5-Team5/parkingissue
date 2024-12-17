@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from model import Location, FromSpark, Getdf, RequestBody
-from pymysql_module import select_park_info, related_data
-from kafka_producer import send_to_kafka
+from location.model import Location, FromSpark, Getdf, RequestBody
+from location.pymysql_module import select_park_info, related_data
+from location.kafka_producer import send_to_kafka
 import requests
 from typing import List
 
