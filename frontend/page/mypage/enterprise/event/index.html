@@ -16,7 +16,7 @@
             </div>
             <div class="form-group">
                 <label for="event-address">행사 주소</label>
-                <input type="text" id="event-address" name="event-address" placeholder="예: 강남구 서초구 효령로 335 " required>
+                <input type="text" id="event-address" name="event-address" placeholder="예: 서울 서초구 효령로 335 " required>
             </div>
             
             <div class="form-group">
@@ -86,6 +86,46 @@
     </div>
 
     <script src="../js/script.js"></script>
+    <script>
+        document.getElementById('event-form').addEventListener('submit', async function (e) {
+            e.preventDefault(); // 기본 폼 제출을 막음
 
+            const formData = new FormData(this); // 폼 데이터 가져오기
+
+            // 폼 데이터를 객체로 변환
+            const data = {
+                title: formData.get('event-title'),
+                address: formData.get('event-address'),
+                contact: `${formData.get('call-first')}-${formData.get('call-second')}-${formData.get('call-third')}`,
+                start_date: formData.get('event-start-date'),
+                end_date: formData.get('event-end-date'),
+                // main_image: formData.get('event-main-image'),
+                // thumbnail_image: formData.get('event-thumbnail-image')
+            };
+
+            // FastAPI 서버로 요청 보내기
+            try {
+                const response = await fetch('http://localhost:8000/event-registration/', {
+                    method: 'POST',
+                    body: formData
+                    // headers: {
+                    //     'Content-Type': 'application/json',
+                    // },
+                    // body: JSON.stringify(data)
+                });
+
+                const result = await response.json(); // 서버 응답 처리
+
+                if (response.ok) {
+                    alert('행사가 등록되었습니다.');
+                } else {
+                    alert('행사 등록에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('서버 연결에 문제가 발생했습니다.');
+            }
+        });
+    </script>
 </body>
 </html>
