@@ -59,6 +59,7 @@ async def get_park_info(parkid: str):
         park_info = select_park_info(parkid)
         if not park_info:
             raise HTTPException(status_code=404, detail="Park not found")
+        print(park_info)
         return park_info
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
