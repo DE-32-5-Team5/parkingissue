@@ -6,4 +6,4 @@ PyMySql
 pydantic
 passlib[bcrypt]
 aiomysql
-dotenv
+python-dotenv
