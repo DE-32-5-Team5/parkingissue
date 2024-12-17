@@ -1,49 +1,90 @@
-# from fastapi import FastAPI, HTTPException, Depends
-# from pydantic import BaseModel
-# from sqlalchemy.orm import Session
-# from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Form, File, UploadFile, Depends, HTTPException
+from sqlalchemy.orm import Session
+from datetime import datetime
+from .database import get_db
+from .models import FestivalInfo
+import os, uuid, logging
+from fastapi.middleware.cors import CORSMiddleware
 
 
-# # 데이터베이스 세션 연결 및 모델 import
-# from .database import get_db
-# from .models import FestivalInfo # type: ignore
+app = FastAPI()
 
-# app = FastAPI()
+# CORS 설정 활성화 - 프론트랑 백엔드 포트가 달라서 브라우저가 막아놓음
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"], 
+)
 
-# # CORS 설정
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # 모든 출처(origin)에서의 요청을 허용. 특정 도메인만 허용하려면 목록에 도메인 추가.
-#     allow_credentials=True,
-#     allow_methods=["*"],  # 모든 HTTP 메소드(GET, POST 등)를 허용
-#     allow_headers=["*"],  # 모든 헤더를 허용
-# )
+UPLOAD_DIR = "uploads/"
 
-# class ChangePasswordRequest(BaseModel):
-#     current_password: str
-#     new_password: str
-#     confirm_password: str
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
 
 
-# @app.post("/change-password/")
-# async def change_password(request: ChangePasswordRequest, db: Session = Depends(get_db)):
-#     # 로그인된 사용자 가져오기 (예시: 사용자 ID는 세션에서 가져온다고 가정)
-#     user = db.query(FestivalInfo).filter(FestivalInfo.managerid == 1).first()  # 예시로 userid = 1
 
-#     if not user:
-#         raise HTTPException(status_code=404, detail="User not found")
+# 이벤트 등록 엔드포인트
+@app.post("/event-registration/")
+async def register_event(
+    title: str = Form(...),
+    address: str = Form(...),
+    contact: str = Form(...), 
+    start_date: str = Form(...),
+    end_date: str = Form(...),  
+    main_image: UploadFile = File(...),  
+    thumbnail_image: UploadFile = File(...),  
+    mapx: float = Form(...),  
+    mapy: float = Form(...),  
+    db: Session = Depends(get_db)  
+):
+    main_image_filename = f"{uuid.uuid4().hex}_{main_image.filename}"
+    thumbnail_image_filename = f"{uuid.uuid4().hex}_{thumbnail_image.filename}"
     
-#     # 1. 현재 비밀번호 확인
-#     if user.password != request.current_password:
-#         raise HTTPException(status_code=400, detail="현재 비밀번호가 틀립니다.")  # 현재 비밀번호 불일치 시 오류
+    # 파일 경로 설정정
+    main_image_path = os.path.join(UPLOAD_DIR, main_image_filename)
+    thumbnail_image_path = os.path.join(UPLOAD_DIR, thumbnail_image_filename)
+
+    # 이미지 파일 저장
+    try:
+        with open(main_image_path, "wb") as f:
+            f.write(await main_image.read())
         
+        with open(thumbnail_image_path, "wb") as f:
+            f.write(await thumbnail_image.read())
+    except Exception as e:
+        logging.error(f"Error occurred: {str(e)}")
+        raise HTTPException(status_code=500, detail="이미지 저장에 실패했습니다.")
+    
+    # # 전화번호 저장 (전화번호를 '-'로 구분하여 하나의 문자열로 저장)
+    tel = contact
 
-#     # 2. 새 비밀번호와 새 비밀번호 확인이 일치하는지 확인
-#     if request.new_password != request.confirm_password:
-#         raise HTTPException(status_code=400, detail="새 비밀번호와 비밀번호 확인이 일치하지 않습니다.")  # 새 비밀번호 불일치 시 오류
+    # FestivalInfo 객체 생성 (폼 데이터와 함께)
+    event = FestivalInfo(
+        title=title,
+        address=address,
+        eventstartdate=datetime.strptime(start_date, "%Y-%m-%d").date(),
+        eventenddate=datetime.strptime(end_date, "%Y-%m-%d").date(),
+        tel=tel,
+        firstimage=main_image_path,  # 파일 경로 저장
+        firstimage2=thumbnail_image_path,  # 파일 경로 저장
+        mapx=mapx,
+        mapy=mapy
+    )
 
-#     # 3. DB에서 비밀번호 업데이트 (해시화 없이 평문으로 저장)
-#     user.password = request.new_password  # 해시화 없이 평문으로 비밀번호 업데이트
-#     db.commit()  # 변경사항 커밋
+    # 데이터베이스에 이벤트 저장
+    try:
+        db.add(event)
+        db.commit()
+        db.refresh(event)
+    except Exception as e:
+        db.rollback()  # 오류 발생 시 롤백
+        logging.error(f"Error occurred: {str(e)}")
+        raise HTTPException(status_code=500, detail="이벤트 등록에 실패했습니다.")
+    
+    
+    return {"message": "행사 등록 완료", "fid": event.fid}
 
-#     return {"message": "비밀번호 변경 완료"}
+
+

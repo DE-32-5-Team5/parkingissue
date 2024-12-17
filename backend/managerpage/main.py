@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # 데이터베이스 세션 연결 및 모델 import
 from .database import get_db
-from .models import UserInfo # type: ignore
+from .models import ManagerInfo # type: ignore
 
 app = FastAPI()
 
@@ -28,7 +28,7 @@ class ChangePasswordRequest(BaseModel):
 @app.post("/change-password/")
 async def change_password(request: ChangePasswordRequest, db: Session = Depends(get_db)):
     # 로그인된 사용자 가져오기 (예시: 사용자 ID는 세션에서 가져온다고 가정)
-    user = db.query(UserInfo).filter(UserInfo.userid == 1).first()  # 예시로 userid = 1
+    user = db.query(ManagerInfo).filter(ManagerInfo.managerid == 1).first()  # 예시로 userid = 1
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
