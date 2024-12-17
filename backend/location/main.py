@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from model import Location, FromSpark, Getdf, RequestBody
+from pymysql_module import select_park_info, related_data
 from kafka_producer import send_to_kafka
 import requests
 from typing import List
@@ -28,6 +29,7 @@ async def receive_location(sparkdata: List[FromSpark]):
     #print(f"Received location: {sparkdata}")
     global stored_data
     if not sparkdata:
+        stored_data = []
         raise HTTPException(status_code=400, detail="Empty JSON data")
     # 초기화
     stored_data = []
@@ -46,3 +48,28 @@ async def frontget():
     response = JSONResponse(content={"stored_data": encoded_data})
     response.headers["Cache-Control"] = "no-store"
     return response
+
+@app.get("/api/getParkInfo")
+async def get_park_info(parkid: str):
+    try:
+        park_info = select_park_info(parkid)
+        if not park_info:
+            raise HTTPException(status_code=404, detail="Park not found")
+        return park_info
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/getRelated")
+async def get_related_data(text: str):
+    # [{'park_nm': '무궁화주차빌딩'}, {'park_nm': '무궁화빌라'}, {'park_nm': '무궁화타운 제3동'}, {'park_nm': '무궁화타운 제4 동'}, {'park_nm': '무궁 화타운 제5동'}]
+    result = related_data(text)
+    if result:
+        dic = {}
+        for i in result:
+            for key, value in i.items():
+                if key not in dic:
+                    dic[key] = [value]
+                else:
+                    dic[key].append(value)
+        print(dic)
+    return result

@@ -29,16 +29,16 @@
             <!-- <h2 class="parking-title">나이스파크 서초 민강남 클리닉 주차장</h2> -->
             <ul class="details-list">
                 <!-- 여기도 전부 DB에서 가져와야함 -->
-                <li><strong>운영 시간</strong>: 00:00 ~ 24:00</li>
+                <!-- <li><strong>운영 시간</strong>: 00:00 ~ 24:00</li> -->
                 <li><strong>현재 요금</strong>: 1시간 기준 7,000원</li>
                 <li><strong>주소</strong>: 서울특별시 서초구 혹려로 410</li>
             </ul>
         </div>
         <div class="availability-bar">
-            <div class="availability-fill" style="width: 50%;"></div>
+            <!-- width 값이 바 채움 정도 -->
+            <div class="availability-fill" style="width: 0%;"></div>
             <div style="margin-bottom: 5px;"></div>
-            <!-- 여기에서 남은 자리 계산에서 넣어야함 -->
-            <i class="fas fa-car" style="color: #28a745; font-size: 1.5em;"></i> <span class="availability-text">주차 가능: 15면</span>
+            <i class="fas fa-car" style="color: #28a745; font-size: 1.5em;"></i> <span class="availability-text">구현중</span>
         </div>
 
         <div style="margin-bottom: 40px;"></div>
@@ -47,13 +47,8 @@
                 <!-- 여기도 주차장 운영 시간 DB 조회 -->
                  <!-- 안에 내용 지워지면 알아서 페이지 줄어듬 -->
                 <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-clock" style="margin-right: 7px;"></i><strong>운영 시간</strong></div><br>
-                <span>월요일 09:00 ~ 18:00 </span><br>
-                <span>화요일 09:00 ~ 18:00 </span><br>
-                <span>수요일 09:00 ~ 18:00 </span><br>
-                <span>목요일 09:00 ~ 18:00 </span><br>
-                <span>금요일 09:00 ~ 18:00 </span><br>
-                <span>토요일 09:00 ~ 18:00 </span><br>
-                <span>일요일 09:00 ~ 18:00 </span><br>
+                <span>평일 09:00 ~ 18:00 </span><br>
+                <span>주말 09:00 ~ 18:00 </span><br>
                 <span>공휴일 09:00 ~ 18:00 </span><br>
             </div>
             </div>
@@ -204,10 +199,10 @@
             }
             // 주차장 상세
             document.querySelector('.details-list').innerHTML = `
-                <li><strong>운영 시간</strong>: ${parkInfo.hours}</li>
                 <li><strong>현재 요금</strong>: ${parkInfo.fee}</li>
                 <li><strong>주소</strong>: ${parkAddr}</li>
             `;
+            // <li><strong>운영 시간</strong>: ${parkInfo.hours}</li>
             // 주차장 주차 가능 면 수
             // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
             // document.querySelector('.availability-text').innerText = `주차 가능: ${parkInfo.availableSlots}면`;

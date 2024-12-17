@@ -2,3 +2,4 @@ fastapi
 uvicorn
 confluent-kafka
 requests
+PyMySql
