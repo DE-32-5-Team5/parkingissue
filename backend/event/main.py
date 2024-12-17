@@ -35,8 +35,8 @@ async def register_event(
     end_date: str = Form(...),  
     main_image: UploadFile = File(...),  
     thumbnail_image: UploadFile = File(...),  
-    mapx: float = Form(...),  
-    mapy: float = Form(...),  
+    # mapx: float = Form(...),  
+    # mapy: float = Form(...),  
     db: Session = Depends(get_db)  
 ):
     main_image_filename = f"{uuid.uuid4().hex}_{main_image.filename}"

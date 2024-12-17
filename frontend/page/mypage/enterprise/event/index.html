@@ -101,8 +101,8 @@
                 contact: `${formData.get('call-first')}-${formData.get('call-second')}-${formData.get('call-third')}`,
                 start_date: formData.get('event-start-date'),
                 end_date: formData.get('event-end-date'),
-                // main_image: formData.get('event-main-image'),
-                // thumbnail_image: formData.get('event-thumbnail-image')
+                main_image: formData.get('event-main-image'),
+                thumbnail_image: formData.get('event-thumbnail-image')
             };
 
             // FastAPI 서버로 요청 보내기
