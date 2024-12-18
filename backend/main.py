@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from location.model import Location, FromSpark, Getdf, RequestBody
 from location.pymysql_module import select_park_info, related_data
-from location.kafka_producer import send_to_kafka
+from location.kafka_producer import send_to_kafka, send_to_kafka2
 import requests
 from typing import List
 
@@ -78,6 +78,12 @@ async def get_related_data(text: str):
                     dic[key].append(value)
         print(dic)
     return result
+# 검색어 로그 to Kafka
+@app.get("/api/getClickSearch")
+async def get_click_search(txt: str):
+    send_to_kafka2({'search_msg' : txt})
+    print('연관검색어 카프카 전송 완료')
+    return {'search_msg' : txt}
 
 # 회원가입 폼 - ID 체크 / 개인
 @app.post("/api/users/check")
