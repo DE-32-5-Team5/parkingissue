@@ -24,7 +24,13 @@ def select_park_info(park_id):
             sql = """
             SELECT
                 i.park_id AS park_id,
-                f.basic_charge AS fee,
+                f.free_time AS free_time,
+                f.basic_time AS basic_time,
+                f.basic_charge AS basic_charge,
+                f.additional_time AS additional_time,
+                f.additional_charge AS additional_charge,
+                f.daily_charge AS daily_charge,
+                f.monthly_charge AS monthly_charge,
                 o.wee_orn_st AS wee_orn_st,
                 o.wee_orn_et AS wee_orn_et,
                 o.wk_orn_st AS wk_orn_st,
