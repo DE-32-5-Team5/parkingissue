@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from location.model import Location, FromSpark, Getdf, RequestBody
 from location.pymysql_module import select_park_info, related_data
-from location.kafka_producer import send_to_kafka
+from location.kafka_producer import send_to_kafka, send_to_kafka2
 import requests
 from typing import List
 
@@ -78,6 +78,12 @@ async def get_related_data(text: str):
                     dic[key].append(value)
         print(dic)
     return result
+# 검색어 로그 to Kafka
+@app.get("/api/getClickSearch")
+async def get_click_search(txt: str):
+    send_to_kafka2({'search_msg' : txt})
+    print('연관검색어 카프카 전송 완료')
+    return {'search_msg' : txt}
 
 # 회원가입 폼 - ID 체크 / 개인
 @app.post("/api/users/check")
@@ -160,6 +166,3 @@ async def manager_check_id(request: RequestManagerSchema):
     if insert_manager_info(manager_company, manager_name, manager_phone, manager_id, manager_password):
         return JSONResponse(content={"status": 200, "detail": "manager_id is Unique"}, status_code=200)
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
-
-
-@app.post
