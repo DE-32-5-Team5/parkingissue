@@ -39,9 +39,17 @@ async function relatedSearch(text_value) {
             throw new Error(`HTTP 오류! 상태: ${response.status}`);
         }
 
-        const relatedSearches = await response.json();
-        // console.log(relatedSearches)
-        return relatedSearches; // 데이터를 반환
+        const data = await response.json();
+        // 데이터를 원하는 형식으로 가공
+        const relatedSearches = data.reduce((acc, item) => {
+            const [key, value] = Object.entries(item)[0];
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(value);
+            return acc;
+        }, {});
+        return relatedSearches; // 변환된 데이터를 반환
     } catch (error) {
         console.error('연관 검색어 실패:', error);
         return null; // 에러 발생 시 null 반환
@@ -55,6 +63,9 @@ const voiceButton = document.querySelector('.voice-search-btn');
 const trendingSearchesDiv = document.querySelector('.trending-searches')
 
 let timeout;
+let isComposing = false;
+
+
 
 searchInput.addEventListener('input', (e) => {
     const value = e.target.value;
@@ -64,7 +75,12 @@ searchInput.addEventListener('input', (e) => {
 
     if (value.length > 1) {
         timeout = setTimeout(async () => {
-            const relatedSearches = await relatedSearch(value);
+            // const relatedSearches = await relatedSearch(value);
+            const relatedSearches = {
+                '개발': ['개발자 취업', '개발자 로드맵', '개발 공부 방법'],
+                '여행': ['여행지 추천', '여행 준비물', '여행 계획'],
+                '음식': ['음식점 추천', '음식 배달', '음식 레시피']
+            };
             console.log(relatedSearches);
             // 동적으로 input 이벤트가 발생할때마다 해당 단어가 포함된거 찾으면 될듯?
             if (relatedSearches) {
