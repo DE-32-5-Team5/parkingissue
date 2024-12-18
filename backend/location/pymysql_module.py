@@ -18,11 +18,21 @@ def select_park_info(park_id):
     with connection:
         with connection.cursor() as cursor:
             # Prepare SQL query
+            # f = 가격
+            # o = 운영 시간
             sql = """
             SELECT
                 i.park_id AS park_id,
-                f.basic_charge AS fee ,
-                o.wee_orn_st AS hours
+                f.basic_charge AS fee,
+                o.wee_orn_st AS wee_orn_st,
+                o.wee_orn_et AS wee_orn_et,
+                o.wk_orn_st AS wk_orn_st,
+                o.wk_orn_et AS wk_orn_et,
+                o.hol_orn_st AS hol_orn_st,
+                o.hol_orn_et AS hol_orn_et,
+                TIME_TO_SEC(TIMEDIFF(o.wee_orn_et, o.wee_orn_st)) AS weekly,
+                TIME_TO_SEC(TIMEDIFF(o.wk_orn_et, o.wk_orn_st)) AS weekend,
+                TIME_TO_SEC(TIMEDIFF(o.hol_orn_et, o.hol_orn_st)) AS holiday
             FROM
                 parkingarea_info AS i
             LEFT JOIN
