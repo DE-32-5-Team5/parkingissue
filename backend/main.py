@@ -160,3 +160,6 @@ async def manager_check_id(request: RequestManagerSchema):
     if insert_manager_info(manager_company, manager_name, manager_phone, manager_id, manager_password):
         return JSONResponse(content={"status": 200, "detail": "manager_id is Unique"}, status_code=200)
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+
+
+@app.post
