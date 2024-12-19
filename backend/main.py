@@ -11,6 +11,8 @@ from typing import List
 from register.model.register_schema import RequestUserSchema, UserSchema, RequestManagerSchema, ManagerSchema
 # pip install "passlib[bcrypt]"
 from passlib.context import CryptContext
+# 핫플레이스 정보 스키마
+from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListSchema, HotplaceSchema
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
 
@@ -166,3 +168,18 @@ async def manager_check_id(request: RequestManagerSchema):
     if insert_manager_info(manager_company, manager_name, manager_phone, manager_id, manager_password):
         return JSONResponse(content={"status": 200, "detail": "manager_id is Unique"}, status_code=200)
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+
+# 핫플레이스 게시글 리스트 요청
+@app.post("/api/hotplace/list")
+async def hotplace_list(location: Location):
+
+    from hotplace.modules.hotplace import select_hotplace_list_info
+    
+    # hotplace_title = request.ContentsList.title
+    # hotplace_startdate = request.ContentsList.eventstartdate
+    # hotplace_enddate = request.ContentsList.eventenddate
+    hotplace_longitude = str(location.longitude)
+    hotplace_latitude = str(location.latitude)
+
+    return  select_hotplace_list_info(hotplace_longitude, hotplace_latitude)
+    
