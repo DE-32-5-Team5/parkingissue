@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Yeongdo';
-  src: url('fonts/Yeongdo-Heavy.ttf') format('truetype');
+  src: url('../../fonts/Yeongdo-Heavy.ttf') format('truetype');
 }
 
 body {
@@ -254,7 +254,7 @@ form {
     box-shadow: 0 15px 30px rgba(#5b90f0, .36);
     transition: .2s linear;
     /* 아이콘 이미지를 배경으로 설정 */
-    background-image: url('images/kakao-logo.png');
+    background-image: url('../../images/kakao-logo.png');
     /* 아이콘 파일 경로 */
     background-size: 50%;
     /* 배경 크기 */
@@ -274,7 +274,7 @@ form {
     box-shadow: 0 15px 30px rgba(#25282d, .36);
     transition: .2s linear;
     /* 아이콘 이미지를 배경으로 설정 */
-    background-image: url('images/naver-logo.png');
+    background-image: url('../../images/naver-logo.png');
     /* 아이콘 파일 경로 */
     background-size: 80%;
     /* 배경 크기 */

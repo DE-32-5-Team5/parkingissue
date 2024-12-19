@@ -38,6 +38,15 @@
                         <!-- 여기에서 이벤트 몇개 추가 search.js 에 있음 -->
                         <form class="search-form" onsubmit="handleSearch(event); return false;"> 
                             <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
+                            <div class="search_class">
+                                <form action="#">
+                                    <label for="parkhot">검색구분</label>
+                                    <select name="parkorhot" id="parkhot">
+                                    <option value="park">주차장</option>
+                                    <option value="hotplace">핫플</option>
+                                    </select>
+                                </form>
+                            </div>
                             <div class="search-buttons">
                                 <button type="button" class="voice-search-btn" title="음성 검색">
                                     <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
@@ -182,54 +191,6 @@
             });
         }
 
-        // fastapi로 값 보내기
-        // async function fetchParkingData(latitude, longitude) {
-        //     //const url = 'http://localhost:8000/location'; // fastapi post url
-        //     const url = 'https://parkingissue.online/api/location'; // 서버에서는 https://parkingissue.online/api/location
-        //     fetch(url, {  // FastAPI 엔드포인트 URL
-        //         method: 'POST', // POST 요청
-        //         headers: {
-        //             'Content-Type': 'application/json', // JSON 형식
-        //         },
-        //         body: JSON.stringify({ // 요청 바디에 데이터를 JSON으로 변환하여 포함
-        //             latitude: latitude,
-        //             longitude: longitude
-        //         }),
-        //     })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error(`POST Request failed: ${response.status}`);
-        //         }
-        //         console.log('POST 요청 성공');
-        //     })
-        //     .catch(error => console.error('POST 요청 중 오류 발생:', error));
-        // }
-        // // 데이터 받아오기
-        // async function fetchParkingDataFromFastAPI() {
-        //     const url = 'https://parkingissue.online/api/frontget/'; // FastAPI GET 엔드포인트
-        //     try {
-        //         const response = await fetch(url, {
-        //             method: 'GET',
-        //             headers: { 'Content-Type': 'application/json' }
-        //         });
-
-        //         if (!response.ok) {
-        //             throw new Error(`GET Request failed: ${response.status}`);
-        //         }
-
-        //         // 응답 데이터를 JSON 형태로 파싱
-        //         const data = await response.json();
-                
-        //         // 받은 데이터에서 stored_data를 추출
-        //         if (data.stored_data) {
-        //             return data.stored_data; // stored_data 배열 반환
-        //         } else {
-        //             throw new Error("No data received.");
-        //         }
-        //     } catch (error) {
-        //         console.error("Error:", error);
-        //     }
-        // }
         // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
         var map = L.map('map').setView([37.5665, 126.9780], 16);
 

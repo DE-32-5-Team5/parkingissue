@@ -84,8 +84,6 @@ const trendingSearchesDiv = document.querySelector('.trending-searches')
 let timeout;
 let isComposing = false;
 
-
-
 searchInput.addEventListener('input', (e) => {
     const value = e.target.value;
     suggestionsDiv.innerHTML = ''; // 기존 제안 목록 초기화
@@ -230,7 +228,12 @@ function handleButtonSearch() {
 
 // 실제 검색 동작 (API 호출 또는 데이터 필터링)
 function performSearch(query) {
-    console.log(`"${query}"로 검색을 실행합니다.`);
+    const selectElement = document.getElementById("parkhot"); // select 요소 가져오기
+    const selectedValue = selectElement.value; // 선택된 값 읽기
+    // 만약 selectedValue가 park 면 주차장 엔드포인트로 hotplace면 핫플로
+    // TODO
+    
+    console.log(`"${query}"로 ${selectedValue} 검색을 실행합니다.`);
     // 예: 서버로 검색 요청 보내기
     fetch(`https://parkingissue.online/api/search?q=${encodeURIComponent(query)}`, {
             method: 'GET',
