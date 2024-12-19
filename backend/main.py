@@ -169,17 +169,40 @@ async def manager_check_id(request: RequestManagerSchema):
         return JSONResponse(content={"status": 200, "detail": "manager_id is Unique"}, status_code=200)
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
 
-# 핫플레이스 게시글 리스트 요청
-@app.post("/api/hotplace/list")
-async def hotplace_list(location: Location):
+# 핫플레이스 게시글 리스트 요청 (가까운 순)
+@app.post("/api/hotplace/list/default")
+async def hotplace_default_list(location: Location):
 
-    from hotplace.modules.hotplace import select_hotplace_list_info
-    
-    # hotplace_title = request.ContentsList.title
-    # hotplace_startdate = request.ContentsList.eventstartdate
-    # hotplace_enddate = request.ContentsList.eventenddate
+    from hotplace.modules.hotplace import select_hotplace_default_info
     hotplace_longitude = str(location.longitude)
     hotplace_latitude = str(location.latitude)
 
-    return  select_hotplace_list_info(hotplace_longitude, hotplace_latitude)
+    return  select_hotplace_default_info(hotplace_longitude, hotplace_latitude)
     
+# 핫플레이스 게시글 리스트 요청 (진행중이며, 끝나는 일자가 가까운 순)
+@app.post("/api/hotplace/list/ongoing")
+async def hotplace_ongoing_list():
+    from hotplace.modules.hotplace import select_hotplace_ongoing_info
+
+    return select_hotplace_ongoing_info()
+
+# 핫플레이스 게시글 리스트 요청 (아직 시작안함, 끝나는 일자가 가까운 순)
+@app.post("/api/hotplace/list/upcoming")
+async def hotplace_upcoming_list():
+    from hotplace.modules.hotplace import select_hotplace_upcoming_info
+
+    return select_hotplace_upcoming_info()
+
+# 핫플레이스 게시글 리스트 요청 (지역분류, 끝나는 일자가 가까운 순)
+@app.post("/api/hotplace/list/adress")
+async def hotplace_adress_list(resion: str):
+    from hotplace.modules.hotplace import select_hotplace_address_info
+    
+    return select_hotplace_address_info(resion)
+
+# 핫플레이스 게시글 내용 요청 (상세정보)
+@app.post("/api/hotplace/content")
+async def hotplace_content_info(contentid: str):
+    from hotplace.modules.hotplace import select_hotplace_content
+
+    return select_hotplace_content(contentid)
