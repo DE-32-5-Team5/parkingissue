@@ -20,7 +20,6 @@ class UserSchema(BaseModel):
     id: str = Field(..., description="사용자의 ID")
     password: SecretStr = Field(..., description="사용자의 비밀번호")
 
-
 class RequestUserSchema(BaseModel):
     User: UserSchema = Field(..., description="사용자 정보")
 
@@ -33,6 +32,11 @@ class RequestUserSchema(BaseModel):
 #         "password": "qwer1234"
 #     }
 # }
+
+# 중복체크용 스키마마
+class CheckSchema(BaseModel):
+    id: str = Field(..., description="사용자의 이름")
+
 
 # 기업회원 스키마
 class ManagerSchema(BaseModel):

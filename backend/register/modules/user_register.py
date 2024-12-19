@@ -2,7 +2,7 @@ import pymysql.cursors
 
 def connect_db():
     connection = pymysql.connect(
-        host='10.0.4.80',
+        host='127.0.0.1',
         port=6033,
         user='root',
         password='samdul2024$',
@@ -23,7 +23,7 @@ def check_user_id(user_id):
             WHERE id = %s;
             """
             cursor.execute(sql, (user_id,))
-            result = bool(cursor.fetchone())
+            result = bool(cursor.fetchone()) #테이블에 아이디 값이 이미 존재하면 true/ 없으면 false
             return result
 # 유저 정보 삽입
 def insert_user_info(user_name, user_nick, user_id, user_pw):

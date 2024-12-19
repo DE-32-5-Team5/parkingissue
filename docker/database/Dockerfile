@@ -1,14 +1,18 @@
 FROM mysql:latest
 
 COPY ./config/default.conf /etc/mysql/conf.d/
-COPY ./init/initialize.sql /docker-entrypoint-initdb.d/
-COPY ./init/parkingarea_information.csv /var/lib/mysql-files/
-COPY ./init/parkingarea_operationtime.csv /var/lib/mysql-files/
-COPY ./init/parkingarea_operationcharge.csv /var/lib/mysql-files/
-COPY ./init/parkingarea_realtime.csv /var/lib/mysql-files/
+COPY ./init/init.sql /docker-entrypoint-initdb.d/
 
 ARG MYSQL_ROOT_PASSWORD
 ARG MYSQL_DATABASE
+ARG LOGIN_PASSWORD
+ARG USER_PASSWORD
+ARG EXPORTER_PASSWORD
+ARG AIRFLOW_PASSWORD
 
 ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 ENV MYSQL_DATABASE=${MYSQL_DATABASE}
+ENV LOGIN_PASSWORD=${LOGIN_PASSWORD}
+ENV USER_PASSWORD=${USER_PASSWORD}
+ENV EXPORTER_PASSWORD=${EXPORTER_PASSWORD}
+ENV AIRFLOW_PASSWORD=${AIRFLOW_PASSWORD}

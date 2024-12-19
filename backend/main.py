@@ -1,14 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from location.model import Location, FromSpark, Getdf, RequestBody
+from location.model import Location, FromSpark
 from location.pymysql_module import select_park_info, related_data
 from location.kafka_producer import send_to_kafka
 import requests
 from typing import List
 
 # 유저, 기업 정보 스키마
-from register.model.register_schema import RequestUserSchema, UserSchema, RequestManagerSchema, ManagerSchema
+from register.model.register_schema import RequestUserSchema, UserSchema, RequestManagerSchema, ManagerSchema, CheckSchema
 # pip install "passlib[bcrypt]"
 from passlib.context import CryptContext
 
@@ -81,7 +81,7 @@ async def get_related_data(text: str):
 
 # 회원가입 폼 - ID 체크 / 개인
 @app.post("/api/users/check")
-async def user_check_id(request: RequestUserSchema):
+async def user_check_id(request: CheckSchema):
     from register.modules.user_register import check_user_id, insert_user_info
 
     user_id = request.User.id  # 올바르게 ID를 추출
@@ -131,6 +131,11 @@ async def user_register(request: RequestUserSchema):
     user_nick = request.User.nickname
     user_id = request.User.id  # 올바르게 ID를 추출
     user_pw = get_password_hash(request.User.password) # 해시처리
+
+    print(user_name)
+    print(user_nick)
+    print(user_id)
+    print(user_pw)
     
     if not check_user_id(user_id):  # ID 중복 확인
         raise HTTPException(status_code=400, detail="user_id isn't Unique")
