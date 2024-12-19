@@ -23,9 +23,12 @@ const trendingSearches = [
     "아일릿"
 ];
 
+const selectElementRe = document.getElementById("parkhot"); // select 요소 가져오기
+const selectedValueRe = selectElementRe.value;
+
 // 연관검색어 조회용 function
-async function relatedSearch(text_value) {
-    const url = `https://parkingissue.online/api/getRelated?text=${text_value}`;
+async function relatedSearch(text_value, cls) {
+    const url = `https://parkingissue.online/api/getRelated?text=${text_value}&cls=${cls}`;
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -55,7 +58,7 @@ async function relatedSearch(text_value) {
         return null; // 에러 발생 시 null 반환
     }
 }
-// 검색값 GET 요청 보내기
+// 검색어 로그 kafka로 보내기
 async function sendSearch(txt_value) {
     const url = `https://parkingissue.online/api/getClickSearch?txt=${txt_value}`;
     try {
@@ -81,6 +84,7 @@ const suggestionsDiv = document.querySelector('.suggestions');
 const voiceButton = document.querySelector('.voice-search-btn');
 const trendingSearchesDiv = document.querySelector('.trending-searches')
 
+
 let timeout;
 let isComposing = false;
 
@@ -92,7 +96,7 @@ searchInput.addEventListener('input', (e) => {
 
     if (value.length > 1) {
         timeout = setTimeout(async () => {
-            const relatedSearches = await relatedSearch(value);
+            const relatedSearches = await relatedSearch(value, selectedValueRe);
             // 검색어 카프카로 보내기
             sendSearch(value);
             // const relatedSearches = {
@@ -192,60 +196,3 @@ document.addEventListener('click', (e) => {
 // 실시간 검색어 업데이트 시작
 displayTrendingSearches();
 setInterval(displayTrendingSearches, 3000);
-
-// 검색어 가져오기 함수
-function getSearchValue() {
-    const searchInput = document.querySelector(".search-bar");
-    return searchInput.value.trim(); // 검색어 값 (공백 제거)
-}
-
-// Enter 키 입력 또는 검색 버튼 클릭 시 호출되는 함수
-function handleSearch(event) {
-    event.preventDefault(); // 기본 폼 제출 동작 방지
-    const searchValue = getSearchValue();
-
-    if (searchValue) {
-        console.log("검색어 (Enter 키):", searchValue);
-        // 검색 로직 실행 (예: API 호출)
-        performSearch(searchValue);
-    } else {
-        alert("검색어를 입력하세요.");
-    }
-}
-
-// 검색 버튼 클릭 시 호출되는 함수
-function handleButtonSearch() {
-    const searchValue = getSearchValue();
-
-    if (searchValue) {
-        console.log("검색어 (검색 버튼):", searchValue);
-        // 검색 로직 실행 (예: API 호출)
-        performSearch(searchValue);
-    } else {
-        alert("검색어를 입력하세요.");
-    }
-}
-
-// 실제 검색 동작 (API 호출 또는 데이터 필터링)
-function performSearch(query) {
-    const selectElement = document.getElementById("parkhot"); // select 요소 가져오기
-    const selectedValue = selectElement.value; // 선택된 값 읽기
-    // 만약 selectedValue가 park 면 주차장 엔드포인트로 hotplace면 핫플로
-    // TODO
-    
-    console.log(`"${query}"로 ${selectedValue} 검색을 실행합니다.`);
-    // 예: 서버로 검색 요청 보내기
-    fetch(`https://parkingissue.online/api/search?q=${encodeURIComponent(query)}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            cache: "no-store",
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("검색 결과:", data);
-            // 검색 결과를 UI에 렌더링하거나 로직 추가
-        })
-        .catch(error => console.error("검색 요청 실패:", error));
-}

@@ -100,7 +100,7 @@
             </div>
         </div>
     <!-- 검색창 기능 -->
-    <script src="assets/js/form.js"></script>
+    <script src="assets/js/form.js"></script> <!-- 여기에서 window.enter_result, window.search_result 정의했음-->
     <!-- voice search -->
     <script src="assets/js/voice-search.js"></script>
     <!-- Initialize the Leaflet Map -->
@@ -366,6 +366,76 @@
             // 페이지 새로고침
             location.reload();
         });
+
+        // ####################################### 검색 ##########################################
+
+        const selectElement = document.getElementById("parkhot"); // select 요소 가져오기
+        const selectedValue = selectElement.value;
+
+        // 검색어 가져오기 함수
+        async function getSearchValue() {
+            const searchInput = document.querySelector(".search-bar");
+            return searchInput.value; // 검색어 값
+        }
+
+        //########################################## 수정중 ##########################################
+        // Enter 키 입력 또는 검색 버튼 클릭 시 호출되는 함수
+        async function handleSearch(event) {
+            event.preventDefault(); // 기본 폼 제출 동작 방지
+            const searchValue = getSearchValue();
+
+            if (searchValue) {
+                console.log("검색어 (Enter 키):", searchValue);
+                // 검색 로직 실행 (예: API 호출)
+                const enter_result = performSearch(searchValue);
+                console.log(enter_result);
+                // TODO 지도 위치 최신화 위경도 받아서 주차장이면 해당 위치만, 행사면 주변 500m 주차장까지지
+            } else {
+                alert("검색어를 입력하세요.");
+            }
+        }
+        
+        // 검색 버튼 클릭 시 호출되는 함수 
+        async function handleButtonSearch() {
+            const searchValue = getSearchValue();
+
+            if (searchValue) {
+                console.log("검색어 (검색 버튼):", searchValue);
+                // 검색 로직 실행 (예: API 호출)
+                const search_result = performSearch(searchValue);
+                console.log(search_result);
+                // TODO 지도 최신화
+            } else {
+                alert("검색어를 입력하세요.");
+            }
+        }
+        // ########################################## 수정중 ##########################################
+        // 실제 검색 동작 (API 호출 또는 데이터 필터링)
+        async function performSearch(query) {
+            console.log(`"${query}"로 ${selectedValue} 검색을 실행합니다.`);
+            // 만약 selectedValue가 park 면 주차장 엔드포인트로 hotplace면 핫플로
+            // TODO
+            try {
+                const response = await fetch(`https://parkingissue.online/api/search?searchWord=${encodeURIComponent(query)}&searchClass=${encodeURIComponent(selectedValue)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    cache: "no-store",
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data
+            } catch (error) {
+                return {
+                    status: "error",
+                    message: error.message,
+                };
+            }
+        }
     </script>
 </body>
 </html>
