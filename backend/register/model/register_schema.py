@@ -15,13 +15,18 @@ from pydantic import BaseModel, Field, SecretStr
 
 # 사용자 스키마
 class UserSchema(BaseModel):
-    name: str = Field(..., description="사용자의 이름")
-    nickname: str = Field(..., description="사용자의 닉네임")
-    id: str = Field(..., description="사용자의 ID")
-    password: SecretStr = Field(..., description="사용자의 비밀번호")
+    userName: str = Field(..., description="사용자의 이름")
+    userNick: str = Field(..., description="사용자의 닉네임")
+    userId: str = Field(..., description="사용자의 ID")
+    userPw: SecretStr = Field(..., description="사용자의 비밀번호")
+
 
 class RequestUserSchema(BaseModel):
     User: UserSchema = Field(..., description="사용자 정보")
+
+# 중복체크용 스키마
+class CheckSchema(BaseModel):
+    id: str = Field(..., description="사용자의 이름")
 
 # jsonExample = {
 #     "Manager":{

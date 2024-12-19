@@ -1,16 +1,16 @@
 import pymysql.cursors
-
+import mysql.connector
 def connect_db():
-    connection = pymysql.connect(
-        host='127.0.0.1',
+    connection = mysql.connector.connect(
+        host='10.0.4.80',
         port=6033,
         user='root',
         password='samdul2024$',
         database='parkingissue',
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
+        auth_plugin='mysql_native_password'  # 또는 'caching_sha2_password'
     )
-    return connection    
+    return connection
+
 # 유저 id 중복 검사
 def check_user_id(user_id):
     connection = connect_db()
@@ -18,21 +18,36 @@ def check_user_id(user_id):
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT id
+            SELECT user_id
             FROM user_info
-            WHERE id = %s;
+            WHERE user_id = %s;
             """
             cursor.execute(sql, (user_id,))
-            result = bool(cursor.fetchone()) #테이블에 아이디 값이 이미 존재하면 true/ 없으면 false
+            result = bool(cursor.fetchone())
             return result
+
 # 유저 정보 삽입
 def insert_user_info(user_name, user_nick, user_id, user_pw):
     connection = connect_db()
-
-    with connection:
-        with connection.cursor() as cursor:
-            sql = """
-            INSERT INTO user_info (name, nickname, id, password) VALUES (%s, %s, %s, %s)
-            """
-            result = bool(cursor.execute(sql, (user_name, user_nick, user_id, user_pw)))
-            return result
+    print(f"&&&&&& {user_name}, {user_nick}, {user_id}, {user_pw} &&&&&&&&&&")
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                sql = """
+                INSERT INTO user_info (user_name, user_nick, user_id, user_pw) VALUES (%s, %s, %s, %s)
+                """
+                cursor.execute(sql, (user_name, user_nick, user_id, user_pw))
+                connection.commit()  # 커밋을 명시적으로 수행
+                print("데이터 삽입 성공")
+                return True
+    except Exception as e:
+        # 에러 로그 출력
+        print("데이터 삽입 중 에러 발생!")
+        print(f"에러 메시지: {e}")
+        print(f"SQL: {sql}")
+        print(f"파라미터: {user_name}, {user_nick}, {user_id}, {user_pw}")
+        return False
+    finally:
+        if connection.is_connected():
+            connection.close()
+            print("데이터베이스 연결이 닫혔습니다.")

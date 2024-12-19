@@ -84,12 +84,13 @@ async def get_related_data(text: str):
 async def user_check_id(request: CheckSchema):
     from register.modules.user_register import check_user_id, insert_user_info
 
-    user_id = request.User.id  # 올바르게 ID를 추출
-    if not check_user_id(user_id):  # ID 중복 확인
-        raise HTTPException(status_code=400, detail="user_id isn't Unique")
-    
+    user_id = request.id  # 올바르게 ID를 추출
+    print(f"**************** {user_id}")
+    if check_user_id(user_id):  # ID 중복 확인
+        raise HTTPException(status_code=400, detail="이미 사용 중인 아이디입니다.")
+
     # ID가 고유하다면 성공 상태를 반환
-    return JSONResponse(content={"status": 200, "detail": "user_id is Unique"}, status_code=200)
+    return JSONResponse(content={"status": 200, "detail": "사용 가능한 아이디입니다."}, status_code=200)
 
 # 회원가입 폼 - ID 체크 / 기업
 @app.post("/api/company/check/id")
@@ -116,6 +117,7 @@ async def user_register(request: RequestManagerSchema):
     return JSONResponse(content={"status": 200, "detail": "manager_phone is Unique"}, status_code=200)
 
 
+
 # 해시 알고리즘 컨텍스트를 생성.
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -126,25 +128,19 @@ def get_password_hash(password):
 @app.post("/api/users/register")
 async def user_register(request: RequestUserSchema):
     from register.modules.user_register import check_user_id, insert_user_info
-
-    user_name = request.User.name
-    user_nick = request.User.nickname
-    user_id = request.User.id  # 올바르게 ID를 추출
-    user_pw = get_password_hash(request.User.password) # 해시처리
-
-    print(user_name)
-    print(user_nick)
-    print(user_id)
-    print(user_pw)
-    
-    if not check_user_id(user_id):  # ID 중복 확인
-        raise HTTPException(status_code=400, detail="user_id isn't Unique")
-    
+    print(f"------ 저장버튼 클릭-----")
+    user_name = request.User.userName
+    user_nick = request.User.userNick
+    user_id = request.User.userId  # 올바르게 ID를 추출
+    user_pw = get_password_hash(request.User.userPw.get_secret_value()) # 해시처리
+    #user_pw = request.User.userPw
+    print(f"^^^^^ {user_pw} ^^^^")
     # ID가 고유하다면 성공 상태를 반환, 가입
     # db 연결이 원활하지 않으면 에러.
     if insert_user_info(user_name, user_nick, user_id, user_pw): # True
         return JSONResponse(content={"status": 200, "detail": "user registering is success"}, status_code=200)
     return JSONResponse(content={"status": 404, "detail": "user registering is failed"}, status_code=404)
+
 
 # 회원가입 폼 - 저장 / 기업
 @app.post("/api/company/register")
