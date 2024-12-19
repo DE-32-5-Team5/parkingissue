@@ -3265,7 +3265,29 @@ body.is-touch .tiles article .content {
             flex-direction: column;
             /* align-items: center; */
 }
-
+.sort_area label {
+	font-size: 1em;
+	/* padding-top: 3%; */
+	align-items: center;
+	padding-left: 6%;
+	margin-bottom: 0px;
+}
+.sort_area {
+	/* width: calc(fit-content + 100px); */
+	width: 15%;
+	box-sizing: calc(fit-content + 100px);
+	margin-right: 3%;
+	justify-self: end;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#select {
+	/* width: calc(fit-content + 100px); */
+	/* width: 20%; */
+	padding-left: 6%;
+}
+option {
+	font-size: 1em;
+}
 .item-container {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);

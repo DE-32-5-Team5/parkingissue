@@ -22,6 +22,7 @@
                         <span class="symbol"><img src="images/자동차.gif" alt="" /></span><span class="title">주차잇슈</span>
                     </a>
                     <!-- Search Bar -->
+                    
                     <div class="search-bar-container">
                         <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
                         <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
@@ -34,6 +35,16 @@
         <div id="main">
             <div class="inner">
                 <!-- 지도 섹션 -->
+                <div class="sort_area">
+                    <label>정렬</label>
+                    <select id="select">
+                        <option id="default" value="가까운 순">가까운 순</option>
+                        <option id="ongoing" value="진행 중이에요">진행 중</option>
+                        <option id="upcoming" value="곧 시작">시작 예정</option>
+                    </select>
+                </div>
+                <div id="loader" style="display: none;">Loading...</div>
+                <div id="no-data-message" style="display: none;">데이터가 없습니다.</div>
                 <div class="item-container" id="item-container">
                     
                 </div>

@@ -41,6 +41,7 @@ class HotplaceListSchema(BaseModel):
     title: str = Field(..., description="게시글 제목")
     eventstartdate: str = Field(..., description="시작 시간")
     eventenddate: str = Field(..., description="끝나는 시간")
+    firstimage: str = Field(..., description="썸네일 이미지 주소")
     mapx: float = Field(..., description="longitude")
     mapy: float = Field(..., description="latitude")
 
