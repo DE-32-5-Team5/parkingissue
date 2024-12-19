@@ -1,49 +1,99 @@
-# 0.1/loginpage
+본 문서는 모든 기능에 대한 요구사항정의에 관한 요약본입니다.
+각 기능의 세부 기능 요구사항에 대해서는 각 기능의 별도 문서를 참고 바랍니다.
 
-## Function Introduce
-- 사용자가 본 프로젝트에 접근시 사용자 인증을 받는 로그인 화면
+본 문서의 분류에 대한 기준은 각 페이지를 기준으로 작성되었습니다.
 
-## Function Requirements
-- 로그인을 담당하는 화면을 제작한다.
-- 로그인에는 ID와 PW가 필요하다
-- PW 입력창의 경우 어떤 값을 입력하더라도 ● 표시가 되어 입력한 값이 보이지 않도록 한다.
-- 로그인 시도시 입력된 ID와 PW을 이용해 시도하며 이때, 보안을 위해 get, post등에 ID와 PW가 노출되지 않도록 한다.
-- 로그인 화면은 아래와 같은 화면으로 구성되도록 한다.
-![image](https://github.com/user-attachments/assets/703eaff8-c7ff-484a-9994-fdf2081c0a5b)
-    1. 로고 (우선순위 낮음)
-    2. ID 입력창
-    3. PW 입력창
-    4. 로그인 시도 버튼
-    5. 회원가입 버튼 (우선순위 낮음)
-    6. ID/PW찾기 버튼 (우선순위 낮음)
+- Page Tree Diagram
+![Page Tree Diagram](./images/Page%20Tree%20Diagram.png)
 
-# 0.1/logindb
-## Function Introduce
-- 사용자가 본 프로젝트에 접근시 사용자 인증을 확인할 Database를 구현
+# Level 1
 
-## Function Requirements
-- MariaDB를 이용한다.
-- 이 화면에서 요청하는 DB에 접근할 user설정은 다음과 같이 진행한다
-``` bash
-$ mariadb -u login
-```
-- login 유저로 진행하는 경우 어떠한 수정, 쓰기등의 권한을 주지 않도록 주의한다.
+## Login (로그인)
+- 페이지 역할 : 사용자 식별
+    - 주요 기능
+        - 로그인 정보 분류 및 수집
+        - 간편로그인 정보 수집
+    - 부가 기능
+        - 비밀번호 보안 표시
+        - 간편 로그인 API 지원
+    - 연결 페이지
+        - 로그인 성공시 : 메인페이지
+        - 회원가입 클릭시 : 회원가입
+    - 사용 API
+        - 간편 로그인 API (네이버, 카카오)
+        - 내부 서버 API (/login)
+## Signup (회원가입)
+- 페이지 역할 : 사용자 추가
+    - 주요 기능
+        - 신규 회원 정보 수집 및 등록
+    - 부가 기능
+        - 회원 정보 수집
+        - 수집된 회원정보 신규 등록
+        - 등록 이후 로그인 지원
+    - 연결 페이지
+        - 뒤로가기 : 로그인 페이지
+        - 회원가입 성공 : 로그인 페이지
+    - 사용 API
+        - 내부 서버 API (/signup)
 
-- Database는 parkingissue를 사용한다.
-``` mysql
-> USE parkingissue;
-```
 
-- 로그인 기능과 상호작용할 테이블은 user로 둔다.
-- 로그인 쿼리는 다음과 같이 짜되 가능하다면 query injection 공격을 방어할 수 있는 쿼리가 가능하다면 해당 코드로 변경한다.
-``` mysql
-> SELECT CASE WHEN EXISTS (
-SELECT 1 
-FROM user 
-WHERE id = '<request_id>' AND pw = '<request_pw>'
-) THEN 1 ELSE 0 END AS result;
-```
+# Level 2
 
-## Architecture Requirements
-- Docker Compose를 이용한다.
-- 
+## Main (메인 화면)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+## Search (검색 결과 화면)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+## Hotplace (추천 장소 화면)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+
+# Level 3
+
+## Mypage (마이페이지)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+## Bookmark (즐겨찾기)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+## Placedetail (장소 상세)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+
+## Managerpage (마이페이지 - 기업회원)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+## Uploadboard (업로드 화면)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
+## Festivalboard (기업회원 장소 관리게시판)
+- 페이지 역할 :
+    - 주요 기능
+    - 부가 기능
+    - 연결 페이지
+    - 사용 API
