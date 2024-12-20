@@ -1,6 +1,6 @@
 @font-face {
     font-family: '레코체';
-    src: url('Recipekorea 레코체 FONT.ttf') format('truetype');
+    /* src: url('Recipekorea 레코체 FONT.ttf') format('truetype'); */
     font-weight: normal;
     font-style: normal;
 }
@@ -106,4 +106,28 @@ button:hover {
 
 .mobile-phone select, .landline-phone select {
     width: 30%;
+}
+
+textarea {
+    resize: none;
+    width: 100%;  /* 부모 요소 너비에 맞추기 */
+    box-sizing: border-box; /* 패딩 포함한 너비 설정 */
+    padding: 12px 10px; /* 상단 12px, 좌우 10px */
+    font-size: 15px; /* 글씨 크기 */
+    line-height: 1.6; /* 줄 높이 조정 */
+    border: 1px solid #ccc; /* 테두리 */
+    border-radius: 5px; /* 둥근 테두리 */
+    
+}
+
+input:focus, textarea:focus {
+    border-color: #36c3b9; /* 초록색 테두리 */
+    box-shadow: 0 0 5px rgba(54, 195, 185, 0.5); /* 부드러운 초록색 외곽선 */
+    outline: none; /* 기본 아웃라인 제거 */
+}
+
+textarea#event-description::placeholder {
+    font-size: 15px; /* 내용 설명 placeholder 글씨 크기 */
+    color: #999; /* placeholder 색상 */
+    line-height: 2;
 }

@@ -68,11 +68,11 @@
             </div>
             <div class="form-group">
                 <label for="event-start-date">행사 시작일</label>
-                <input type="date" id="event-start-date" name="event-start-date" required>
+                <input type="date" id="event-start-date" name="event-start-date" >
             </div>
             <div class="form-group">
                 <label for="event-end-date">행사 종료일</label>
-                <input type="date" id="event-end-date" name="event-end-date" required>
+                <input type="date" id="event-end-date" name="event-end-date" >
             </div>
             <div class="form-group">
                 <label for="event-main-image">대표 이미지</label>
@@ -82,12 +82,17 @@
                 <label for="event-thumbnail-image">썸네일 이미지</label>
                 <input type="file" id="event-thumbnail-image" name="event-thumbnail-image" accept="image/*" required>
             </div>
+
+            <!-- 새로 추가된 내용 설명 입력 필드 -->
+            <div class="form-group">
+                <label for="event-description">내용 설명</label>
+                <textarea id="event-description" name="event-description" placeholder="내용 설명을 입력하세요." rows="5" required></textarea>
+            </div>
             
             <button type="submit">행사 등록</button>
         </form>
     </div>
 
-    <script src="../js/script.js"></script>
     <script>
         document.getElementById('event-form').addEventListener('submit', async function (e) {
             e.preventDefault(); // 기본 폼 제출을 막음
@@ -99,15 +104,16 @@
                 title: formData.get('event-title'),
                 address: formData.get('event-address'),
                 contact: `${formData.get('call-first')}-${formData.get('call-second')}-${formData.get('call-third')}`,
-                start_date: formData.get('event-start-date'),
-                end_date: formData.get('event-end-date'),
+                start_date: formData.get('event-start-date') || '',
+                end_date: formData.get('event-end-date') || '',
                 main_image: formData.get('event-main-image'),
-                thumbnail_image: formData.get('event-thumbnail-image')
+                thumbnail_image: formData.get('event-thumbnail-image'),
+                description: formData.get('event-description')
             };
 
             // FastAPI 서버로 요청 보내기
             try {
-                const response = await fetch('http://localhost:8000/event-registration/', {
+                const response = await fetch('https://parkingissue.online/api2/event-registration/', {
                     method: 'POST',
                     body: formData
                     // headers: {
