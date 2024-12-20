@@ -5,9 +5,9 @@ from .database import get_db
 from .models import FestivalInfo
 import os, uuid, logging
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 
-
-app = FastAPI()
+app = FastAPI(docs_url='/api2/docs', openapi_url='/api2/openapi.json')
 
 # CORS 설정 활성화 - 프론트랑 백엔드 포트가 달라서 브라우저가 막아놓음
 app.add_middleware(
@@ -23,20 +23,19 @@ UPLOAD_DIR = "uploads/"
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
-
-
 # 이벤트 등록 엔드포인트
 @app.post("/event-registration/")
 async def register_event(
     title: str = Form(...),
     address: str = Form(...),
     contact: str = Form(...), 
-    start_date: str = Form(...),
-    end_date: str = Form(...),  
+    start_date: Optional[str] = Form(None),
+    end_date: Optional[str] = Form(None),  
     main_image: UploadFile = File(...),  
     thumbnail_image: UploadFile = File(...),  
-    # mapx: float = Form(...),  
-    # mapy: float = Form(...),  
+    mapx: float = Form(...),  
+    mapy: float = Form(...),  
+    description: str = Form(...),
     db: Session = Depends(get_db)  
 ):
     main_image_filename = f"{uuid.uuid4().hex}_{main_image.filename}"
@@ -70,7 +69,8 @@ async def register_event(
         firstimage=main_image_path,  # 파일 경로 저장
         firstimage2=thumbnail_image_path,  # 파일 경로 저장
         mapx=mapx,
-        mapy=mapy
+        mapy=mapy,
+        description=description
     )
 
     # 데이터베이스에 이벤트 저장

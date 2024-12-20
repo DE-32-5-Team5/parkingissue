@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Date, Float, BigInteger
+from sqlalchemy import Column, String, Date, Float, BigInteger, Text
 from .database import Base
 
 class FestivalInfo(Base):
@@ -14,3 +14,4 @@ class FestivalInfo(Base):
     firstimage2 = Column(String(255), nullable=False)
     mapx = Column(Float, nullable=False)
     mapy = Column(Float, nullable=False)
+    description = Column(Text, nullable=True)
