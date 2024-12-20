@@ -34,24 +34,21 @@
         <!-- Main -->
         <div id="main">
             <div class="inner">
-                <!-- 지도 섹션 -->
                 <div class="sort_area">
                     <label>정렬</label>
                     <select id="select">
-                        <option id="default" value="가까운 순">가까운 순</option>
-                        <option id="ongoing" value="진행 중이에요">진행 중</option>
-                        <option id="upcoming" value="곧 시작">시작 예정</option>
+                        <option id="default" value="default">가까운 순</option>
+                        <option id="ongoing" value="ongoing">진행 중</option>
+                        <option id="upcoming" value="upcoming">시작 예정</option>
                     </select>
+                    </div>
                 </div>
                 <div id="loader" style="display: none;">Loading...</div>
                 <div id="no-data-message" style="display: none;">데이터가 없습니다.</div>
                 <div class="item-container" id="item-container">
                     
                 </div>
-                <div class="galleryButton">
-                    <button id="prev-page" >⬅</button>
-                    <button id="next-page">➡</button>
-                </div>
+                <div id="pagination"></div> <!-- 페이지 번호 버튼이 동적으로 여기에 추가됩니다 -->
             </div>
         </div>
         <!-- 네비게이션 자리 -->

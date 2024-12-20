@@ -18,7 +18,7 @@ def select_hotplace_default_info(hotplace_longitude, hotplace_latitude):
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT contentid, title, eventstartdate, eventenddate, mapx, mapy,
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
                    (6371 * acos(cos(radians(%s)) * cos(radians(mapy)) * 
                    cos(radians(mapx) - radians(%s)) + sin(radians(%s)) * sin(radians(mapy)))) AS distance
             FROM festival_info
@@ -36,13 +36,13 @@ def select_hotplace_ongoing_info():
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT contentid, title, eventstartdate, eventenddate
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
             FROM festival_info
             WHERE eventstartdate >= NOW() AND eventenddate >= NOW()
             ORDER BY eventstartdate ASC
             """
             cursor.execute(sql)
-            result = bool(cursor.fetchall())
+            result = cursor.fetchall()
             return result
 
 # festival_info 테이블 아직 시작안한 목록 조회        
@@ -52,7 +52,7 @@ def select_hotplace_upcoming_info():
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT contentid, title, eventstartdate, eventenddate, mapx, mapy
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
             FROM festival_info
             WHERE eventstartdate >= NOW() AND eventenddate >= NOW()
             ORDER BY eventstartdate ASC
@@ -62,19 +62,19 @@ def select_hotplace_upcoming_info():
             return result
 
 # festival_info 테이블 지역 목록 조회        
-def select_hotplace_address_info(resion):
-    connection = connect_db()
+# def select_hotplace_address_info(resion):
+#     connection = connect_db()
 
-    with connection:
-        with connection.cursor() as cursor:
-            sql = """
-            SELECT contentid, title, eventstartdate, eventenddate, mapx, mapy
-            FROM festival_info
-            WHERE address like '%s%'
-            """
-            cursor.execute(sql)
-            result = cursor.fetchone()
-            return result
+#     with connection:
+#         with connection.cursor() as cursor:
+#             sql = """
+#             SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
+#             FROM festival_info
+#             WHERE address like '%s%'
+#             """
+#             cursor.execute(sql)
+#             result = cursor.fetchone()
+#             return result
 
 # festival_info 게시글 내용 조회
 def select_hotplace_content(contentid):

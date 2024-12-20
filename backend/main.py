@@ -194,11 +194,11 @@ async def hotplace_upcoming_list():
     return select_hotplace_upcoming_info()
 
 # 핫플레이스 게시글 리스트 요청 (지역분류, 끝나는 일자가 가까운 순)
-@app.post("/api/hotplace/list/adress")
-async def hotplace_adress_list(resion: str):
-    from hotplace.modules.hotplace import select_hotplace_address_info
+# @app.post("/api/hotplace/list/adress")
+# async def hotplace_adress_list(resion: str):
+#     from hotplace.modules.hotplace import select_hotplace_address_info
     
-    return select_hotplace_address_info(resion)
+#     return select_hotplace_address_info(resion)
 
 # 핫플레이스 게시글 내용 요청 (상세정보)
 @app.post("/api/hotplace/content")

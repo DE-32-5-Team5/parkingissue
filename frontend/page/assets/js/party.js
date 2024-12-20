@@ -2,74 +2,71 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.log("DOM content loaded."); // 로그: DOM 로드 완료
 
     const rootElement = document.getElementById("item-container");
-    const nextPageButton = document.getElementById("next-page");
-    const prevPageButton = document.getElementById("prev-page");
     const loader = document.getElementById("loader");
     const noDataMessage = document.getElementById("no-data-message"); // 데이터 없음 메시지 요소
-    let items = []; // Articles from API
-    let itemsPerPage = getItemsPerPage(); // Initial items per page setting
-    let currentPage = 1; // Current page
+    let items = []; // API로부터 가져온 기사들
+    let itemsPerPage = getItemsPerPage(); // 페이지당 항목 수
+    let currentPage = 1; // 현재 페이지
+    let totalPages = 1; // 전체 페이지 수
 
     console.log(`Initial itemsPerPage: ${itemsPerPage}`); // 로그: 초기 itemsPerPage
 
-    // Function to determine items per page based on window size
+    // 화면 크기에 따라 한페이지에 보일 총 아이템의 개수
     function getItemsPerPage() {
-        const count = window.innerWidth <= 768 ? 6 : 9; // 6 items on mobile, 9 items on desktop
+        const count = window.innerWidth <= 768 ? 6 : 9; // 모바일에서는 6개, 데스크탑에서는 9개
         console.log(`Determined itemsPerPage based on window size: ${count}`); // 로그: itemsPerPage 결정
         return count;
     }
 
-    // Function to render articles
+    // 게시글 랜더링
     function renderArticles(data) {
         console.log(`Rendering articles: ${data.length} items`); // 로그: 렌더링할 항목 개수
         rootElement.innerHTML = ""; // Clear container
 
         if (data.length === 0) {
-            // 데이터가 없으면 예시 메시지 표시
-            noDataMessage.style.display = "block";
+            noDataMessage.style.display = "block"; // 데이터가 없으면 메시지 표시
         } else {
-            noDataMessage.style.display = "none"; // 데이터가 있으면 예시 메시지 숨기기
+            noDataMessage.style.display = "none"; // 데이터가 있으면 메시지 숨김
             data.forEach((item, index) => {
                 console.log(`Rendering article #${index + 1}:`, item); // 로그: 각 항목 정보
 
                 const link = document.createElement("a");
-                link.href = item.link; // Dynamic link
+                link.href = "post1.html"; // 파일 링크 설정
+                link.id = item.contentid; // 컨텐츠 아이디값
+                link.addEventListener("click", (e) => {
+                    e.preventDefault(); // 기본 동작 방지
+                    const contentId = link.id;
+                    window.location.href = `post1.html?contentid=${contentId}`;
+                });
                 link.classList.add("article-link");
 
                 const article = document.createElement("article");
                 article.classList.add("article");
 
-                // Image Section
+                // 이미지 부분
                 const imageContainer = document.createElement("div");
                 imageContainer.classList.add("image-container");
                 const img = document.createElement("img");
-                img.src = item.image; // Dynamic image
-                img.alt = item.alt || "Article image";
+                img.src = item.firstimage ? item.firstimage : "images/no-photo.jpg";
+                img.alt = item.title || "Article image";
                 imageContainer.appendChild(img);
 
-                // Card Content
+                // 카드 컨텐츠 생성
                 const cardContent = document.createElement("div");
                 cardContent.classList.add("card-content");
 
-                // Title
+                // 제목 생성
                 const title = document.createElement("h2");
                 title.classList.add("card-title");
-                title.textContent = item.title; // Dynamic title
+                title.textContent = item.title; // 제목 연결
 
-                // Flex Containers for Address and Date
+                // 내용물
                 const flexContainers = [
-                    {
-                        iconId: "map-pin",
-                        icon: "📍",
-                        text: item.location // Dynamic location
-                    },
-                    {
-                        iconId: "calendar",
-                        icon: "📅",
-                        text: item.date // Dynamic date
-                    }
+                    { iconId: "map-pin", icon: "📍", text: item.title },
+                    { iconId: "calendar", icon: "📅", text: item.eventstartdate + '  ~  ' + item.eventenddate }
                 ];
-
+                
+                // 카드 컨텐츠 붙이기
                 flexContainers.forEach(flexItem => {
                     const flexDiv = document.createElement("div");
                     flexDiv.classList.add("flex-container");
@@ -88,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     cardContent.appendChild(flexDiv);
                 });
 
-                // Build structure
+                // 게시글 생성
                 article.appendChild(imageContainer);
                 article.appendChild(cardContent);
                 link.appendChild(article);
@@ -97,24 +94,40 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // Function to render the current page
+    // 현재 페이지 랜더링
     function renderPage(page) {
         console.log(`Rendering page ${page}`); // 로그: 현재 페이지
-        itemsPerPage = getItemsPerPage(); // Dynamically update based on screen size
+        itemsPerPage = getItemsPerPage(); // 스크린 사이즈에 맞는 컨텐츠 갯수 생성
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
 
         console.log(`Page range: ${startIndex} to ${endIndex - 1}`); // 로그: 페이지 범위
+        console.log(typeof(items))
+        console.log(items)
         const paginatedItems = items.slice(startIndex, endIndex);
 
-        // Render paginated items
         renderArticles(paginatedItems);
 
-        // Show/hide pagination buttons
-        prevPageButton.style.display = page > 1 ? "inline-block" : "none";
-        nextPageButton.style.display = endIndex < items.length ? "inline-block" : "none";
+        const paginationContainer = document.getElementById("pagination");
+        paginationContainer.innerHTML = ""; // 기존 페이지 버튼들 초기화
 
-        console.log(`Pagination buttons - Prev: ${prevPageButton.style.display}, Next: ${nextPageButton.style.display}`); // 로그: 페이지 버튼 상태
+        // 페이지 번호 동적 생성
+        totalPages = Math.ceil(items.length / itemsPerPage);
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("button");
+            pageButton.textContent = i;
+            pageButton.classList.add("page-button");
+            pageButton.addEventListener("click", () => {
+                currentPage = i;
+                renderPage(currentPage);
+            });
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // 페이지 버튼 표시 여부
+        paginationContainer.style.display = totalPages > 1 ? "flex" : "none";
+
+        console.log(`Pagination buttons created. Total pages: ${totalPages}`);
     }
 
     // Fetch data from API
@@ -125,9 +138,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             const response = await fetch(apiEndpoint, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestData)
             });
 
@@ -146,25 +157,44 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // Function to handle filter actions
+    // Get current location
+    function getCurrentLocation() {
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const { latitude, longitude } = position.coords;
+                        console.log(`Current location - Latitude: ${latitude}, Longitude: ${longitude}`); // 로그: 현재 위치
+                        resolve({ latitude, longitude });
+                    },
+                    error => {
+                        console.error("Error getting current location:", error);
+                        reject(error);
+                    }
+                );
+            } else {
+                reject(new Error("Geolocation is not supported by this browser."));
+            }
+        });
+    }
+
+    // Handle filter actions
     async function handleFilter(filterType) {
+        console.log(`handleFilter called with filterType: ${filterType}`); // 디버깅: filterType 출력
         let apiEndpoint;
         let requestData = {};
 
         switch (filterType) {
             case "default":
-                apiEndpoint = "/api/hotplace/list/default";
-                requestData = { longitude: 127.1, latitude: 37.5 }; // 사용자 위치
+                const location = await getCurrentLocation();
+                apiEndpoint = "https://parkingissue.online/api/hotplace/list/default";
+                requestData = { latitude: parseFloat(location.latitude), longitude: parseFloat(location.longitude) };
                 break;
             case "ongoing":
-                apiEndpoint = "/api/hotplace/list/ongoing";
+                apiEndpoint = "https://parkingissue.online/api/hotplace/list/ongoing";
                 break;
             case "upcoming":
-                apiEndpoint = "/api/hotplace/list/upcoming";
-                break;
-            case "address":
-                apiEndpoint = "/api/hotplace/list/address";
-                requestData = { region: "Seoul" }; // 예시: 지역 이름
+                apiEndpoint = "https://parkingissue.online/api/hotplace/list/upcoming";
                 break;
             default:
                 console.error("Unknown filter type");
@@ -173,65 +203,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         items = await fetchDataWithLoading(apiEndpoint, requestData);
 
-        // 데이터 매핑
-        const mappedItems = items.map((item) => ({
-            title: item.title,
-            link: "post1.html", // 링크 정보 필요
-            image: item.firstimage,
-            alt: item.title,
-            location: `${item.mapx}, ${item.mapy}`, // 지도 좌표
-            date: `${item.eventstartdate} ~ ${item.eventenddate}`
-        }));
-
-        currentPage = 1; // 페이지 초기화
+        currentPage = 1;
         renderPage(currentPage);
     }
 
-    // Fetch data with loading
     async function fetchDataWithLoading(apiEndpoint, requestData) {
-        const loader = document.getElementById("loader"); // 로딩 UI 요소
         loader.style.display = "block";
-
         const data = await fetchData(apiEndpoint, requestData);
-
         loader.style.display = "none";
         return data;
     }
 
-    // Event listeners for pagination
-    nextPageButton.addEventListener("click", () => {
-        console.log("Next page button clicked."); // 로그: 다음 페이지 버튼 클릭
-        currentPage++;
-        renderPage(currentPage);
-    });
+    // Initial filter to load data
+    handleFilter("default");
 
-    prevPageButton.addEventListener("click", () => {
-        console.log("Previous page button clicked."); // 로그: 이전 페이지 버튼 클릭
-        currentPage--;
-        renderPage(currentPage);
-    });
-
-    // Resize event to handle changes in items per page
-    window.addEventListener("resize", () => {
-        console.log("Window resized."); // 로그: 창 크기 조정
-        const previousItemsPerPage = itemsPerPage;
-        itemsPerPage = getItemsPerPage();
-
-        if (itemsPerPage !== previousItemsPerPage) {
-            console.log(`Items per page changed from ${previousItemsPerPage} to ${itemsPerPage}`); // 로그: itemsPerPage 변경
-            currentPage = Math.ceil((currentPage - 1) * previousItemsPerPage / itemsPerPage) + 1;
-        }
-
-        renderPage(currentPage);
-    });
-
-    // Initial API call and setup
-    const apiEndpoint = "/api/hotplace/list/default";
-    const requestData = { longitude: 127.1, latitude: 37.5 }; // 사용자 위치
-
-    items = await fetchData(apiEndpoint, requestData);
-    renderPage(currentPage);
-
-    // 예시 필터 적용
-    handleFilter("default"); // 기본 필터 적용
+    //
+    const filterSelect = document.getElementById("select");
+    filterSelect.addEventListener("change", async function () {
+        const selectedFilter = filterSelect.value;
+        console.log("******************")
+        console.log(selectedFilter)
+        console.log("******************")
+        await handleFilter(selectedFilter);
+    })
+    
 });
