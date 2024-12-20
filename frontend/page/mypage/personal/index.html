@@ -55,7 +55,7 @@
                     <h2>회원 탈퇴</h2>
                     <p>정말로 회원 탈퇴를 하시겠습니까?</p>
                     <button class="confirm">탈퇴하기</button>
-                    <button class="cancel">취소</button>
+                    <button class="cancel" id="cancelUnsubscribe">취소</button>
                 </div>
             </div>
 
@@ -91,6 +91,7 @@
                 const modal = document.getElementById('unsubscribeModal');
                 const closeModal = document.getElementById('closeModal');
                 const openModalButton = document.getElementById('openModal');
+                const cancelUnsubscribeBtn = document.getElementById('cancelUnsubscribe');
         
                 // 모달 열기
                 openModalButton.addEventListener('click', () => {
@@ -108,6 +109,10 @@
                         modal.style.display = 'none';  // 모달 숨기기
                     }
                 });
+                // 취소 버튼 클릭 시 모달 닫기
+    cancelUnsubscribeBtn.addEventListener('click', () => {
+        unsubscribeModal.style.display = 'none';  // 모달 숨기기
+    });
 
                 // 로그아웃 모달
                 const logoutModal = document.getElementById('logoutModal');
