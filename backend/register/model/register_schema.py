@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from pydantic import BaseModel, Field, SecretStr 
+from pydantic import BaseModel, Field, SecretStr
 
 # jsonExample = {
 #     "User":{
@@ -26,7 +26,11 @@ class RequestUserSchema(BaseModel):
 
 # 중복체크용 스키마
 class CheckSchema(BaseModel):
-    id: str = Field(..., description="사용자의 이름")
+    id: str = Field(...)
+
+
+
+
 
 # jsonExample = {
 #     "Manager":{
@@ -38,17 +42,12 @@ class CheckSchema(BaseModel):
 #     }
 # }
 
-# 중복체크용 스키마마
-class CheckSchema(BaseModel):
-    id: str = Field(..., description="사용자의 이름")
-
-
 # 기업회원 스키마
 class ManagerSchema(BaseModel):
     company: str = Field(..., description="기업의 이름")
     name: str = Field(..., description="담당자의 이름")
-    phone: SecretStr = Field(..., description="담당자의 번호")
-    id: str = Field(..., description="기업회원의 ID")
+    phone: str = Field(..., description="담당자의 번호")
+    companyid: str = Field(..., description="기업회원의 ID")
     password: SecretStr = Field(..., description="기업회원의 비밀번호")
 
 

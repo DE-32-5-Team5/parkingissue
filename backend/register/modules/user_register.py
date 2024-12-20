@@ -48,6 +48,6 @@ def insert_user_info(user_name, user_nick, user_id, user_pw):
         print(f"파라미터: {user_name}, {user_nick}, {user_id}, {user_pw}")
         return False
     finally:
-        if connection.is_connected():
+        if connection:
             connection.close()
             print("데이터베이스 연결이 닫혔습니다.")
