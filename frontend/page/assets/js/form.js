@@ -23,8 +23,8 @@ const trendingSearches = [
     "아일릿"
 ];
 
-const selectElementRe = document.getElementById("parkhot"); // select 요소 가져오기
-const selectedValueRe = selectElementRe.value;
+let selectElementRe = null; // select 요소 가져오기
+let selectedValueRe = null;
 
 // 연관검색어 조회용 function
 async function relatedSearch(text_value, cls) {
@@ -91,7 +91,8 @@ let isComposing = false;
 searchInput.addEventListener('input', (e) => {
     const value = e.target.value;
     suggestionsDiv.innerHTML = ''; // 기존 제안 목록 초기화
-
+    selectElementRe = document.getElementById("parkhot"); // select 요소 가져오기
+    selectedValueRe = selectElementRe.value;
     clearTimeout(timeout); // 이전 타임아웃 제거
 
     if (value.length > 1) {
