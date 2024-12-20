@@ -13,10 +13,10 @@ app = FastAPI()
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 모든 출처(origin)에서의 요청을 허용. 특정 도메인만 허용하려면 목록에 도메인 추가.
+    allow_origins=["*"],  
     allow_credentials=True,
-    allow_methods=["*"],  # 모든 HTTP 메소드(GET, POST 등)를 허용
-    allow_headers=["*"],  # 모든 헤더를 허용
+    allow_methods=["*"], 
+    allow_headers=["*"],  
 )
 
 class ChangePasswordRequest(BaseModel):
