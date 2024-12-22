@@ -1,0 +1,884 @@
+@import url(fontawesome-all.min.css);
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,700,900");
+
+/*
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+*/
+
+html, body, div, span, applet, object,
+iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
+pre, a, abbr, acronym, address, big, cite,
+code, del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var, b,
+u, i, center, dl, dt, dd, ol, ul, li, fieldset,
+form, label, legend, table, caption, tbody,
+tfoot, thead, tr, th, td, article, aside,
+canvas, details, embed, figure, figcaption,
+footer, header, hgroup, menu, nav, output, ruby,
+section, summary, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;}
+
+body {
+	line-height: 1;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+	blockquote:before, blockquote:after, q:before, q:after {
+		content: '';
+		content: none;
+	}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+body {
+	-webkit-text-size-adjust: none;
+}
+
+mark {
+	background-color: transparent;
+	color: inherit;
+}
+
+input::-moz-focus-inner {
+	border: 0;
+	padding: 0;
+}
+
+input, select, textarea {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	-ms-appearance: none;
+	appearance: none;
+}
+
+/* Type */
+
+	body, input, select, textarea {
+		color: #585858;
+		font-family: "Source Sans Pro", Helvetica, sans-serif;
+		font-size: 16pt;
+		font-weight: 300;
+		line-height: 1.75;
+	}
+
+		@media screen and (max-width: 1680px) {
+
+			body, input, select, textarea {
+				font-size: 14pt;
+			}
+
+		}
+
+		@media screen and (max-width: 1280px) {
+
+			body, input, select, textarea {
+				font-size: 12pt;
+			}
+
+		}
+
+	a {
+		-moz-transition: border-bottom-color 0.2s ease, color 0.2s ease;
+		-webkit-transition: border-bottom-color 0.2s ease, color 0.2s ease;
+		-ms-transition: border-bottom-color 0.2s ease, color 0.2s ease;
+		transition: border-bottom-color 0.2s ease, color 0.2s ease;
+		text-decoration: none;
+		color: #585858;
+		border-bottom: dotted 1px rgba(88, 88, 88, 0.5);
+	}
+
+		a:hover {
+			border-bottom-color: transparent;
+			color: #33cbca !important;
+		}
+
+	strong, b {
+		font-weight: 900;
+	}
+
+	em, i {
+		font-style: italic;
+	}
+
+	p {
+		margin: 0 0 2em 0;
+	}
+
+	@font-face {
+		font-family: 'Yeongdo';
+		src: url('../../fonts/영도체-패밀리/TTF/Yeongdo-Heavy.ttf') format('truetype');
+	}
+	@font-face {
+		font-family: 'Recipekorea';
+		src: url('../../fonts/Recipekorea 레코체 FONT/Recipekorea 레코체 FONT.ttf') format('truetype'); /* 경로 확인 필요 */
+	}
+	
+
+	h1 {
+		font-family: 'Yeongdo', sans-serif;
+		font-size: 3.75em;
+		font-weight: 700;
+		line-height: 1.3;
+		margin: 0 0 1em 0;
+		letter-spacing: -0.035em;
+	}
+	span.font-recipekorea {
+		font-family: 'Recipekorea', sans-serif;
+		font-size: 0.1em;
+		font-weight: 80; /* 이미 HTML에서 적용된 값 */
+	}
+	
+
+		h1 a {
+			color: inherit;
+		}
+
+		@media screen and (max-width: 736px) {
+
+			h1 {
+				font-size: em;
+				margin: 0 0 1em 0;
+			}
+
+		}
+
+		@media screen and (max-width: 360px) {
+
+			h1 {
+				font-size: 1.75em;
+			}
+
+		}
+
+	h2, h3, h4, h5, h6 {
+		font-weight: 900;
+		line-height: 1.5;
+		margin: 0 0 2em 0;
+		text-transform: uppercase;
+		letter-spacing: 0.35em;
+	}
+
+		h2 a, h3 a, h4 a, h5 a, h6 a {
+			color: inherit;
+		}
+
+	h2 {
+		font-size: 1.1em;
+	}
+
+	h3 {
+		font-size: 1em;
+	}
+
+	h4 {
+		font-size: 0.8em;
+	}
+
+	h5 {
+		font-size: 0.8em;
+	}
+
+	h6 {
+		font-size: 0.8em;
+	}
+
+	@media screen and (max-width: 980px) {
+
+		h1 br, h2 br, h3 br, h4 br, h5 br, h6 br {
+			display: none;
+		}
+
+	}
+
+	@media screen and (max-width: 736px) {
+
+		h2 {
+			font-size: 1em;
+		}
+
+		h3 {
+			font-size: 0.8em;
+		}
+
+	}
+
+	sub {
+		font-size: 0.8em;
+		position: relative;
+		top: 0.5em;
+	}
+
+	sup {
+		font-size: 0.8em;
+		position: relative;
+		top: -0.5em;
+	}
+
+	blockquote {
+		border-left: solid 4px #c9c9c9;
+		font-style: italic;
+		margin: 0 0 2em 0;
+		padding: 0.5em 0 0.5em 2em;
+	}
+
+	code {
+		background: rgba(144, 144, 144, 0.075);
+		border-radius: 4px;
+		border: solid 1px #c9c9c9;
+		font-family: "Courier New", monospace;
+		font-size: 0.9em;
+		margin: 0 0.25em;
+		padding: 0.25em 0.65em;
+	}
+
+	pre {
+		-webkit-overflow-scrolling: touch;
+		font-family: "Courier New", monospace;
+		font-size: 0.9em;
+		margin: 0 0 2em 0;
+	}
+
+		pre code {
+			display: block;
+			line-height: 1.75;
+			padding: 1em 1.5em;
+			overflow-x: auto;
+		}
+
+	hr {
+		border: 0;
+		border-bottom: solid 1px #c9c9c9;
+		margin: 2em 0;
+	}
+
+		hr.major {
+			margin: 3em 0;
+		}
+
+	.align-left {
+		text-align: left;
+	}
+
+	.align-center {
+		text-align: center;
+	}
+
+	.align-right {
+		text-align: right;
+	}
+
+/* Form */
+
+	label {
+		display: block;
+		font-size: 0.9em;
+		font-weight: 900;
+		margin: 0 0 1em 0;
+	}
+
+	input[type="text"],
+	select,
+	textarea {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		-ms-appearance: none;
+		appearance: none;
+		background-color: transparent;
+		border: none;
+		border-radius: 0;
+		border-bottom: solid 1px #c9c9c9;
+		color: inherit;
+		display: block;
+		outline: 0;
+		padding: 0;
+		text-decoration: none;
+		width: 100%;
+	}
+
+		input[type="text"]:invalid,
+		select:invalid,
+		textarea:invalid {
+			box-shadow: none;
+		}
+
+		input[type="text"]:focus,
+		select:focus,
+		textarea:focus {
+			border-bottom-color: #f2849e;
+			box-shadow: inset 0 -1px 0 0 #f2849e;
+		}
+
+	textarea {
+		padding: 0;
+		min-height: 3.75em;
+	}
+
+/* Button */
+
+	input[type="submit"],
+	input[type="reset"],
+	input[type="button"],
+	button,
+	.button {
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		-ms-appearance: none;
+		appearance: none;
+		-moz-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+		-webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+		-ms-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+		transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+		background-color: transparent;
+		border-radius: 4px;
+		border: 0;
+		/* box-shadow: inset 0 0 0 2px #585858; */
+		/* color: #585858 !important; */
+		cursor: pointer;
+		display: inline-block;
+		font-size: 0.8em;
+		font-weight: 900;
+		height: 3.5em;
+		letter-spacing: 0.35em;
+		line-height: 3.45em;
+		overflow: hidden;
+		padding: 0 1.25em 0 1.6em;
+		text-align: center;
+		text-decoration: none;
+		text-overflow: ellipsis;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+/* Header */
+
+	#header {
+		padding: 0em 0 0.1em 0;
+		box-sizing: border-box;
+
+		position: relative;
+		z-index: 10;
+	}
+		/* 로고와 검색창을 한 줄에 배치하는 컨테이너 */
+		.logo-container {
+			display: flex; /* 로고와 검색창을 한 줄에 배치 */
+			align-items: center; /* 수직 가운데 정렬 */
+			flex-direction: row;
+			justify-content: space-between;
+			gap: 50px; /* 로고와 검색창 사이 간격 조정 */
+			margin-top: 20px; /* 상단 여백 조정 */
+			width: 100%; /* 전체 너비 사용 */
+		}
+		/* 검색창과 돋보기 아이콘을 감싸는 컨테이너 */
+		.search-bar-container {
+			display: flex; /* 검색창과 아이콘을 한 줄에 배치 */
+			align-items: center; /* 수직 정렬 */
+			flex-grow: 1; /* 남은 공간을 모두 검색창이 차지하도록 설정 */
+			gap: 15px; /* 검색창과 돋보기 아이콘 사이 간격 조정 */
+			position: relative;
+			border-radius: 10px;
+		}
+		/* 검색 폼 설정 */
+		.search-form {
+			display: flex;
+			gap: 10px;
+			margin: 0;
+			width: 100%;
+		}
+		/* 검색창 스타일 */
+		.search-bar {
+			padding: 8px; /* 검색창 안쪽 여백 */
+			font-size: 16px; /* 글자 크기 */
+			border: none; /* 기존 테두리 제거 */
+			border-bottom: 2px solid #ccc; /* 밑줄 추가 */
+			border-radius: 0; /* 모서리 둥글게 설정 제거 */
+			/* width: 600px; 검색창 너비 설정 */
+			flex: 1;
+			outline: none; /* 포커스 시 외곽선 제거 */
+			font-size: 23px;
+			font-weight: bold; /* 글자 두께를 굵게 설정 */
+			outline: none;
+		}
+		/* 검색창의 placeholder 스타일 설정 */
+		.search-bar::placeholder {
+			font-weight: bold; /* 글씨를 굵게 설정 */
+			color: #888; /* 색상도 조정 가능 */
+		}
+			/* 검색 아이콘 스타일 */
+		.search-icon {
+			width: 32px; /* 아이콘 너비 설정 */
+			height: 32px; /* 아이콘 높이 설정 */
+			
+		}
+		/* 드롭다운 메뉴 */
+		.search_class {
+			display: flex; /* Flexbox 사용 */
+			flex-direction: column; /* 세로 정렬 */
+			align-items: center; /* 왼쪽 정렬 */
+			gap: 0px; /* label과 select 사이 간격 */
+			margin: 0px auto; /* 전체 여백 */
+		}
+		
+		.search_class label {
+			font-size: 16px; /* 글꼴 크기 */
+			color: #333; /* 텍스트 색상 */
+			/* font-weight: bold; 강조 */
+			margin: 0px
+		}
+		
+		.search_class select {
+			outline: none; /* 선택 시 외곽선 제거 */
+			padding: 6px 10px; /* 내부 여백 설정 */
+			border: 2px solid #33cbca; /* 얇은 테두리 추가 */
+			border-radius: 4px; /* 둥근 모서리 */
+			background-color: #fff; /* 흰색 배경 */
+			font-size: 16px; /* 글꼴 크기 */
+			font-weight: bold;
+			color: #333; /* 텍스트 색상 */
+			cursor: pointer; /* 포인터 변경 */
+			text-align: center;
+			transition: border-color 0.3s ease; /* 호버 애니메이션 */
+		}
+		
+		.search_class select:hover {
+			border-color: #007BFF; /* 호버 시 테두리 색상 변경 */
+		}
+		
+
+			#header .inner {
+				width: 100%;
+				max-width: 70%;
+				margin: 0 auto;
+				padding: 0 2.5em;
+			}
+		/* Header 로고 스타일 */
+			#header .logo {
+				font-family: 'Yeongdo', sans-serif;
+				display: flex; /* 로고 내부 텍스트와 이미지를 함께 배치 */
+				align-items: center; /* 로고 텍스트와 이미지 수직 가운데 정렬 */
+				color: inherit;
+				font-weight: 100;
+				letter-spacing: 0em;
+				font-size: 3em; /* 텍스트 크기 조정 */
+				margin: 0;
+				text-decoration: none !important;
+				text-transform: uppercase;
+				white-space: nowrap; /* 텍스트가 한 줄에 나오도록 설정 */
+				justify-content: flex-start; /* 로고와 텍스트를 왼쪽으로 정렬 */
+				margin-left: -4em; /* 왼쪽으로 이동 */
+			}
+			#header .logo > * {
+				display: inline-block;
+				vertical-align: middle;
+				
+			}
+			
+			/* 로고 이미지 스타일 */
+			#header .logo .symbol {
+				margin-right: 0.2em; /* 로고 이미지와 텍스트 간 간격 */
+				position: relative;
+			}
+			#header .logo .symbol img {
+				display: block;
+				width: 2.2em; /* 로고 이미지 크기 */
+				height: 2.2em;
+			}
+
+			/* 검색창 옆 버튼 스타일 */
+			.search-buttons {
+				display: flex;
+				gap: 5px;
+			}
+			
+		/* 검색창 옆 음성 검색 버튼 스타일 */
+		.voice-search-btn {
+			background: none; /* 배경 없음 */
+			border: none; /* 테두리 없음 */
+			border-radius: 5px;
+			padding: 10px 20px;
+			cursor: pointer; /* 마우스 포인터 변경 */
+			line-height: 1;
+			align-items: center;
+			justify-content: center;
+			margin-left: 8px; /* 검색창과 버튼 사이 간격 */
+			transition: background 0.3s;
+		}
+		.search-button {
+			background: none;
+			border: none;
+			border-radius: 5px;
+			padding: 10px 15px 10px 18px;
+			cursor: pointer;
+			line-height: 1;
+			align-items: center;
+			justify-content: center;
+			transition: background 0.3s;
+			margin-right: 10px;
+		}
+
+		.voice-search-icon {
+			width: 20px; /* 아이콘 크기 */
+			height: 20px;
+		}
+		.suggestions {
+			top: 100%;
+			left: 0;
+			right: 0;
+			display: none;
+			position: absolute;
+			background: white;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			margin-top: 5px;
+		}
+		.suggestion-emj {
+			padding-left: 15px;
+			padding-right: 15px;
+		}
+		
+		.suggestion-item {
+			padding-top: 7px;
+			padding-bottom: 5px;
+			padding-left: 10px;
+            cursor: pointer;
+        }
+
+		.suggesion-icon {
+			padding-right: 10px;
+		}
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+
+		/* 실시간 검색어 스타일 */
+		.trending-searches {
+			position: absolute;
+			display: block;
+			padding: 10px;
+			right: 90px;
+			top: 30;
+			overflow: hidden;
+		}
+		.trending-item {
+			display: flex;
+			align-items: center;
+			margin-bottom: 10px;
+			padding: 5px;
+		}
+		.suggestions,
+		.trending-searches {
+			z-index: 1000; /* header와 겹치지 않도록 설정 */
+		}
+		@keyframes slideUp {
+            from {
+                transform: translateY(100%);
+			}
+            to {
+                transform: translateY(-100%);
+            }
+        }
+
+		/* 모바일 및 태블릿 스타일 */
+		@media (max-width: 768px) {
+			#header {
+				padding: 4em 0 0.1em 0;
+				display: flex;
+				flex-direction: column; /* 세로로 배치 */
+				justify-content: flex-start; /* 상단 정렬 */
+				align-items: flex-start; /* 왼쪽 정렬 */
+				width: 100%;
+				/* height: 15vh; */
+			}
+
+			#header .inner {
+				width: 100%;
+				max-width: 90%;
+				margin: 0;
+				padding: 0;
+			}
+		
+			.logo-container {
+				display: flex;
+				flex-direction: column; /* 로고와 검색바를 세로로 배치 */
+				align-items: flex-start; /* 왼쪽 정렬 */
+				justify-content: flex-start; /* 상단 정렬 */
+				width: 100%; /* 화면 너비 꽉 채움 */
+				gap: 5px; /* 로고와 검색바 사이 간격 */
+				margin-left: 20px;
+				margin-top: -55px;
+			}
+		
+			.search-bar-container {
+				display: flex;
+				flex-direction: row; /* 검색창과 아이콘을 가로로 배치 */
+				align-items: center; /* 세로 중앙 정렬 */
+				gap: 10px; /* 검색창과 아이콘 사이 간격 */
+				width: 100%; /* 부모 요소 너비 꽉 채움 */
+				padding: 0 0px; /* 좌우 여백 추가 */
+			}
+		
+			.search-bar {
+				flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
+				width: 100%; /* 부모 너비에 맞게 확장 */
+				font-size: 13px; /* 글자 크기 */
+				padding: 0.5em; /* 내부 여백 */
+				border: 1px solid #ccc; /* 테두리 */
+				border-radius: 4px; /* 둥근 모서리 */
+			}
+		
+			.search-icon {
+				width: 20px;
+				height: 20px;
+			}
+		
+			.voice-search-btn {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		
+			#header .logo {
+				font-size: 2em; /* 모바일에서 로고 텍스트 크기 축소 */
+				text-align: left; /* 로고 왼쪽 정렬 */
+				margin-right: 0; /* 오른쪽 마진 제거 */
+				margin-left: -30px;
+			}
+			.trending-searches {
+				right: 5px;
+				top: 10px;
+			}
+			
+		}
+		
+/* Main */
+	#main {
+		padding: 0;
+		margin: 0; /* 기본 마진을 없애기 */
+		width: 100%; /* 화면을 가득 채우게 */
+		height: auto; /* 화면 전체 높이 */
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		flex: 1;
+		box-sizing: border-box;
+	}
+
+		/* .inner에 여백이 있을 경우, 이를 제거 */
+		.inner {
+			margin: 0; /* 여백 제거 */
+			padding: 0; /* 여백 제거 */
+			width: 100%; /* 너비를 100%로 설정 */
+		}
+
+		/* 지도 섹션 */
+		.map-section {
+			width: 100%; /* 부모 섹션의 너비를 100%로 설정 */
+			height: 100%; /* 부모 섹션에 맞게 높이 설정 */
+			display: flex;
+			justify-content: flex-start;
+			padding: 0;
+			margin-bottom: 0;
+		}
+
+	/* 지도 */
+	#map {
+		width: 100%; /* 지도 너비 100% */
+		height: 100%; /* 지도 높이 100% */
+		margin-bottom: 0;
+		position: absolute;
+		z-index: 1;
+	}
+
+	/* 모바일 스타일 */
+	@media (max-width: 768px) {
+		#main {
+			flex: 1; /* 남은 공간 전부 차지 */
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			height: 100vh;
+			min-height: 0;
+			margin-top: 15px;
+		}
+
+		#main .inner {
+			display: flex;
+			height : 100vh;
+			min-height: 0;
+		}
+
+		#main .map-section {
+			width: 100%;
+			height: 100%; /* 부모 요소(#main)의 크기 */
+			position: relative;
+			overflow: hidden;
+			margin-bottom: 0px;
+		}
+
+		#map {
+			width: 100%;
+			height: 100%;
+		}
+
+		#find-me {
+			position: absolute;
+			bottom: 20px;
+			right: 20px;
+			width: 50px;
+			height: 50px;
+			border: none;
+			border-radius: 50%;
+			z-index: 1000;
+		}
+	}
+
+
+	#status{
+		position: absolute;
+		bottom: 30px;
+		left: 10px;
+	}
+	/* 네비게이션 스타일 */
+	.navi {
+		background-color: #33cbca; /* 배경색 */
+		padding: 6px 0;
+		margin-top: 0px; /* map과 더 가깝게 붙이기 위한 마진 조정 */
+		box-sizing: border-box;
+	}
+
+	.navi-section {
+		max-width: 1200px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: center; /* 가운데 정렬 */
+	}
+	.navbar ul {
+		list-style-type: none;
+		display: flex;
+		gap: 20px;
+		padding: 0;
+		margin: 0;
+	}
+
+	.navbar ul li {
+		display: inline-block;
+	}
+
+	.navbar ul li a {
+		text-decoration: none;
+		color: white;
+		font-size: 1.2em;
+		padding: 8px 12px;
+		display: flex;
+		align-items: center;
+	}
+
+	.navbar ul li a img {
+		width: 20px; /* 아이콘 크기 */
+		height: 20px;
+		margin-right: 8px; /* 텍스트와 아이콘 간격 */
+	}
+
+	.navbar ul li a:hover {
+		background-color: #555;
+		border-radius: 5px;
+	}
+
+	/* 모바일 환경용 네비게이션 바 설정 */
+	@media screen and (max-width: 768px) {
+		.navi-section {
+			flex-wrap: nowrap; /* 줄바꿈 비활성화 */
+			justify-content: space-around; /* 버튼 간격 균일하게 */
+			margin-top : 5px;
+			margin-bottom: 5px;
+		}
+
+		.navbar ul {
+			flex-wrap: nowrap; /* 줄바꿈 비활성화 */
+			gap: 4px; /* 버튼 간격 조정 */
+			justify-content: space-around; /* 버튼을 균등 배치 */
+			padding: 0 0px; /* 양쪽 여백 추가 */
+		}
+
+		.navbar ul li {
+			flex: 1 1 auto; /* 버튼의 너비를 균등하게 */
+			text-align: center; /* 버튼 텍스트 가운데 정렬 */
+		}
+
+		.navbar ul li a {
+			font-size: 0.7em; /* 버튼 텍스트 크기 조정 */
+			padding: 7px; /* 버튼 내부 여백 축소 */
+			white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+		}
+
+		.navbar ul li a img {
+			width: 18px; /* 아이콘 크기 축소 */
+			height: 18px;
+			margin-right: 5px; /* 아이콘과 텍스트 간격 축소 */
+		}
+	}
+
+/* Wrapper */
+
+	/* Wrapper를 Flex 컨테이너로 설정 */
+	#wrapper {
+		display: flex;
+		flex-direction: column; /* 세로 정렬 */
+		width: 100%;
+		height: 100vh; /* 화면 전체 높이 */
+	}
+
+	/* #wrapper > * > .inner {
+		width: 100%;
+		max-width: 68em;
+		margin: 0 auto;
+		padding: 0 2.5em;
+	} */
+
+		/* @media screen and (max-width: 736px) {
+
+			#wrapper > * > .inner {
+				padding: 0 1.25em;
+			}
+
+		} */
+	
+		/* 모바일 화면에서 로고와 텍스트 위치 조정 */
+		@media screen and (max-width: 768px) {
+			 /* 로고와 텍스트를 전체적으로 작게 조정 */
+			 .logo-container .logo {
+				transform: scale(0.8); /* 로고와 텍스트의 크기를 80%로 줄임 */
+			}
+
+			/* "주차잇슈" 텍스트를 왼쪽으로 이동 */
+			.logo-container .logo .title {
+				margin-left: 0px; /* 글씨를 왼쪽으로 이동, 원하는 만큼 조정 가능 */
+			}
+		}
+		/* 데스크탑 화면에서 검색어 입력 placeholder 글씨 키우기 */
+		@media screen and (min-width: 1024px) {
+			.search-bar::placeholder {
+				font-size: 27px; /* 글씨 크기를 키우려면 원하는 크기로 변경 가능 */
+				font-weight: bold; /* 글씨를 더 굵게 할 수 있음 */
+			}
+		}
