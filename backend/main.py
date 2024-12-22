@@ -13,6 +13,8 @@ from register.model.register_schema import RequestUserSchema, UserSchema, Reques
 from passlib.context import CryptContext
 # 핫플레이스 정보 스키마
 from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListSchema, HotplaceSchema
+# 검색 모듈
+from search.module.search_module import searchParkDB, searchHotDB
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
 
@@ -67,9 +69,9 @@ async def get_park_info(parkid: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/getRelated")
-async def get_related_data(text: str):
+async def get_related_data(text: str, cls:str):
     # [{'park_nm': '무궁화주차빌딩'}, {'park_nm': '무궁화빌라'}, {'park_nm': '무궁화타운 제3동'}, {'park_nm': '무궁화타운 제4 동'}, {'park_nm': '무궁화타운 제5동'}]
-    result = related_data(text)
+    result = related_data(text, cls)
     if result:
         dic = {}
         for i in result:
@@ -176,6 +178,17 @@ async def hotplace_default_list(location: Location):
     from hotplace.modules.hotplace import select_hotplace_default_info
     hotplace_longitude = str(location.longitude)
     hotplace_latitude = str(location.latitude)
+    return  select_hotplace_list_info(hotplace_longitude, hotplace_latitude)
+
+# 검색 폼
+@app.get("/api/search")
+async def searchDB(searchWord: str, searchClass: str):
+    if searchClass == "park":
+        park_result = searchParkDB(searchWord)
+        return park_result
+    else:
+        hot_result = searchHotDB(searchWord)
+        return hot_result
 
     return  select_hotplace_default_info(hotplace_longitude, hotplace_latitude)
     

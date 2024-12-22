@@ -51,7 +51,7 @@
                                 <button type="button" class="voice-search-btn" title="음성 검색">
                                     <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
                                 </button>
-                                <button type="button" class="search-button" title="검색" onclick="handleButtonSearch()">🔍</button>    
+                                <button type="button" class="search-button" title="검색" onclick="handleSearch(event)">🔍</button>    
                             </div>
                         </form>
                         <div class="suggestions"></div>
@@ -100,7 +100,7 @@
             </div>
         </div>
     <!-- 검색창 기능 -->
-    <script src="assets/js/form.js"></script>
+    <script src="assets/js/form.js"></script> <!-- 여기에서 window.enter_result, window.search_result 정의했음-->
     <!-- voice search -->
     <script src="assets/js/voice-search.js"></script>
     <!-- Initialize the Leaflet Map -->
@@ -117,6 +117,13 @@
         
         var parkIcon = L.icon({
                     iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+
+        var hotIcon = L.icon({
+                    iconUrl: 'images/hotplace-icon.png', // 사용할 이미지 파일 경로
                     iconSize: [42, 42], // 아이콘 크기 (픽셀)
                     iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
                     popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
@@ -195,6 +202,7 @@
         var map = L.map('map').setView([37.5665, 126.9780], 16);
 
         var markers = L.layerGroup().addTo(map);
+        var hotmarkers = L.layerGroup().addTo(map);
 
         L.tileLayer('https://xdworld.vworld.kr/2d/Base/202002/{z}/{x}/{y}.png', {
             maxZoom: 21,
@@ -252,6 +260,7 @@
                 const currentTime = Date.now();
                 if (currentTime - lastFetchedTime >= FETCH_INTERVAL) {
                     // 일정 시간 간격이 지난 경우에만 요청
+                    hotmarkers.clearLayers();
                     fetchAndProcessParkingData(latitude, longitude)
                         .then(parkingData => {
                             if (parkingData) {
@@ -321,6 +330,7 @@
                 watchId = null; // ID 초기화
             }
             const center = map.getCenter(); // 현재 지도 중심 가져오기
+            hotmarkers.clearLayers();
             fetchAndProcessParkingData(center.lat, center.lng)
                 .then(parkingData => {
                     if (parkingData) {
@@ -345,7 +355,8 @@
             // URL에 위경도 파라미터가 있으면 해당 위치로 지도 이동
             if (latitude && longitude) {
                 // 위경도가 있다면 해당 위치로 지도 이동
-                map.setView([latitude, longitude], 15); // 15는 줌 레벨
+                hotmarkers.clearLayers();
+                map.setView([latitude, longitude], map.getZoom()); // 15는 줌 레벨
                 fetchAndProcessParkingData(latitude, longitude)
                     .then(parkingData => {
                         if (parkingData) {
@@ -366,6 +377,111 @@
             // 페이지 새로고침
             location.reload();
         });
+
+        // ####################################### 검색 ##########################################
+
+        let selectElement = null;
+        let selectedValue = null;
+
+        // 검색어 가져오기 함수
+        async function getSearchValue() {
+            const searchInput = document.querySelector(".search-bar");
+            return searchInput.value; // 검색어 값
+        }
+
+        // Enter 키 입력 또는 검색 버튼 클릭 시 호출되는 함수
+        async function handleSearch(event) {
+            event.preventDefault(); // 기본 폼 제출 동작 방지
+            const searchValue = await getSearchValue();
+        
+            if (searchValue) {
+                console.log("검색어 (Enter 키):", searchValue);
+                selectElement = document.getElementById("parkhot"); // select 요소 가져오기
+                selectedValue = selectElement.value;
+                // 검색 로직 실행 (예: API 호출)
+                const enter_result = await performSearch(searchValue);
+                console.log(enter_result);
+                if (enter_result) {
+                    if (watchId) { // 현재 위치 주변 500m 검색 중지
+                            navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                            watchId = null; // ID 초기화
+                        }
+                    if (selectedValue == "park") {
+                        // 주차장인 경우에는 지도만 옮기고 마킹만
+                        markers.clearLayers(); // 기존 마커 삭제
+                        hotmarkers.clearLayers();
+                        map.setView([enter_result.park_la, enter_result.park_lo], map.getZoom()); // 지도 위치 이동
+                        var marker = L.marker([enter_result.park_la, enter_result.park_lo], { icon: parkIcon }).addTo(markers); // 마킹
+                        marker.on('click', function() {
+                            const parkla = encodeURIComponent(enter_result.park_la);
+                            const parklo = encodeURIComponent(enter_result.park_lo);
+                            const parkid = encodeURIComponent(enter_result.park_id);
+                            const parknm = encodeURIComponent(enter_result.park_nm);
+                            const parkaddr = encodeURIComponent(enter_result.park_addr);
+                            // 원하는 HTML 페이지로 이동
+                            window.location.href = `parkinginfo.html?parkid=${parkid}&parknm=${parknm}&parkaddr=${parkaddr}&lat=${parkla}&lon=${parklo}`;
+                        });
+                    } else { // 행사인 경우
+                        if (watchId) { // 현재 위치 주변 500m 검색 중지
+                            navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                            watchId = null; // ID 초기화
+                        }
+                        markers.clearLayers();
+                        hotmarkers.clearLayers();
+                        map.setView([enter_result.mapy, enter_result.mapx], map.getZoom());
+                        // 행사장 마킹
+                        var hotmarker = L.marker([enter_result.mapy, enter_result.mapx], { icon: hotIcon }).addTo(hotmarkers);
+                        hotmarker.on('click', function() {
+                            const conid = encodeURIComponent(enter_result.contentid)
+                            window.location.href = `post1.html?contentid=${conid}`
+                        });
+                        // 행사장 주변 마킹
+                        fetchAndProcessParkingData(enter_result.mapy, enter_result.mapx)
+                            .then(parkingData => {
+                                if (parkingData) {
+                                    console.log("주차장 데이터:", parkingData);
+                                    addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                                } else {
+                                    console.error("주차장 데이터를 가져오지 못했습니다.");
+                                }
+                            })
+                            .catch(error => console.error("Error:", error));
+                    }
+                } else {
+                    alert("검색 결과가 없습니다.");
+                }
+                console.log(enter_result);
+            } else {
+                alert("검색어를 입력하세요.");
+            }
+        }
+        
+        // 실제 검색 동작 (API 호출 또는 데이터 필터링)
+        async function performSearch(query) {
+            console.log(`"${query}"로 ${selectedValue} 검색을 실행합니다.`);
+            // 만약 selectedValue가 park 면 주차장 엔드포인트로 hotplace면 핫플로
+            // TODO
+            try {
+                const response = await fetch(`https://parkingissue.online/api/search?searchWord=${encodeURIComponent(query)}&searchClass=${encodeURIComponent(selectedValue)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    cache: "no-store",
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data
+            } catch (error) {
+                return {
+                    status: "error",
+                    message: error.message,
+                };
+            }
+        }
     </script>
 </body>
 </html>

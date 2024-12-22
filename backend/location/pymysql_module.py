@@ -54,17 +54,29 @@ def select_park_info(park_id):
             result = cursor.fetchone()
             return result
 
-def related_data(text):
+def related_data(text: str, cls: str):
     connection = connect_db()
-
-    with connection:
-        with connection.cursor() as cursor:
-            sql = f"""
-            SELECT park_nm AS {text}
-            FROM parkingarea_info
-            WHERE park_nm LIKE '%{text}%'
-            LIMIT 5;
-            """
-            cursor.execute(sql,)
-            result = cursor.fetchall()
-            return result
+    if cls == 'park':
+        with connection:
+            with connection.cursor() as cursor:
+                sql = f"""
+                SELECT park_nm AS {text}
+                FROM parkingarea_info
+                WHERE park_nm LIKE '%{text}%'
+                LIMIT 5;
+                """
+                cursor.execute(sql,)
+                result = cursor.fetchall()
+                return result
+    else:
+        with connection:
+            with connection.cursor() as cursor:
+                sql = f"""
+                SELECT title AS {text}
+                FROM festival_info
+                WHERE title LIKE '%{text}%'
+                LIMIT 5;
+                """
+                cursor.execute(sql,)
+                result = cursor.fetchall()
+                return result
