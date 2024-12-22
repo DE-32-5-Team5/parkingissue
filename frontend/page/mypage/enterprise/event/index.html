@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">  <!-- styles.css 파일을 외부 링크로 추가 -->
+    <link rel="icon" href="../../../images/parkingissue-favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="../../../images/parkingissue-apple-icon.png"/>
+    <title>행사 등록 페이지</title>
+</head>
+<body>
+    <div class="form-container">
+        <h2><img src="img/yellow.png" alt="아이콘" style="vertical-align: middle; width: 40px; height: auto; margin-top: -5px;">관리자 행사 등록</h2>
+        <form action="#" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="event-title">행사 제목</label>
+                <input type="text" id="event-title" name="event-title" placeholder="예: 서울 재즈 페스티벌" required>
+            </div>
+            <div class="form-group">
+                <label for="event-address">행사 주소</label>
+                <input type="text" id="event-address" name="event-address" placeholder="예: 서울 서초구 효령로 335 " required>
+            </div>
+            
+            <div class="form-group">
+                <label for="event-contact">행사 연락처</label>
+                <div class="phone-group">
+                    <input type="text" id="call-first" name="landline-middle" maxlength="4" placeholder="02" required>
+                    <input type="text" id="call-second" name="landline-last" maxlength="4" placeholder="123" required>
+                    <input type="text" id="call-third" name="landline-middle" maxlength="4" placeholder="4567" required>
+                    <!-- 전화번호 선택 옵션 추가 -->
+                    <!-- <select id="phone-type" name="phone-type" required>
+                        <option value="select" nonselected>선택 </option>
+                        <option value="mobile">휴대전화</option>
+                        <option value="landline">일반전화</option>
+                    </select> -->
+                    
+                    <!-- 휴대전화 입력란 -->
+                    <!-- <div class="mobile-phone">
+                        <select id="mobile-prefix" name="mobile-prefix" required>
+                            <option value="010">010</option>
+                            <option value="011">011</option>
+                            <option value="016">016</option>
+                            <option value="017">017</option>
+                            <option value="018">018</option>
+                            <option value="019">019</option>
+                        </select>
+                        <input type="text" id="mobile-middle" name="mobile-middle" maxlength="4" required>
+                        <input type="text" id="mobile-last" name="mobile-last" maxlength="4" required>
+                    </div>
+                     -->
+                    <!-- 일반전화 입력란 -->
+                    <!-- <div class="landline-phone" style="display: none;">
+                        <select id="landline-prefix" name="landline-prefix" required>
+                            <option value="02">02</option>
+                            <option value="031">031</option>
+                            <option value="032">032</option>
+                            <option value="033">033</option>
+                            <option value="041">041</option>
+                            <option value="042">042</option>
+                            <option value="043">043</option>
+                            <option value="044">044</option> -->
+                            <!-- 기타 지역 번호 추가 -->
+                        <!-- </select>
+                        <input type="text" id="landline-middle" name="landline-middle" maxlength="4" required>
+                        <input type="text" id="landline-last" name="landline-last" maxlength="4" required>
+                    </div> -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="event-start-date">행사 시작일</label>
+                <input type="date" id="event-start-date" name="event-start-date" >
+            </div>
+            <div class="form-group">
+                <label for="event-end-date">행사 종료일</label>
+                <input type="date" id="event-end-date" name="event-end-date" >
+            </div>
+            <div class="form-group">
+                <label for="event-main-image">대표 이미지</label>
+                <input type="file" id="event-main-image" name="event-main-image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="event-thumbnail-image">썸네일 이미지</label>
+                <input type="file" id="event-thumbnail-image" name="event-thumbnail-image" accept="image/*" required>
+            </div>
+
+            <!-- 새로 추가된 내용 설명 입력 필드 -->
+            <div class="form-group">
+                <label for="event-description">내용 설명</label>
+                <textarea id="event-description" name="event-description" placeholder="내용 설명을 입력하세요." rows="5" required></textarea>
+            </div>
+            
+            <button type="submit" id="register_btn">행사 등록</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('register_btn').addEventListener('click', async function (e) {
+            e.preventDefault(); // 기본 폼 제출을 막음
+
+            //const formData = new FormData(this); // 폼 데이터 가져오기
+
+            // 폼 데이터를 객체로 변환
+        try {
+            const title = document.getElementById("event-title").value;
+            const address = document.getElementById("event-address").value;
+            const contact = `${document.getElementById("call-first").value}-${document.getElementById("call-second").value}-${document.getElementById("call-third").value}`;
+            const start_date = document.getElementById("event-start-date").value || '';
+            const end_date = document.getElementById("event-end-date").value || '';
+            const main_image = document.getElementById("event-main-image").files[0]; // 파일 입력은 value 대신 files 사용
+            const thumbnail_image = document.getElementById("event-thumbnail-image").files[0]; // 파일 입력은 value 대신 files 사용
+            const description = document.getElementById("event-description").value;
+
+            // FormData 객체 생성
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("address", address);
+            formData.append("contact", contact);
+            formData.append("start_date", start_date);
+            formData.append("end_date", end_date);
+            formData.append("main_image", main_image);
+            formData.append("thumbnail_image", thumbnail_image);
+            formData.append("description", description);
+
+            // Fetch API로 전송
+            const response = await fetch("https://parkingissue.online/api2/event-registration/", {
+                method: "POST",
+                body: formData, // FormData 객체 전송
+            });
+
+            const result = await response.json(); // 서버 응답 처리
+
+            if (response.ok) {
+                alert('행사가 등록되었습니다.');
+            } else {
+                alert('행사 등록에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('서버 연결에 문제가 발생했습니다.');
+        }
+    });
+
+
+    </script>
+</body>
+</html>
