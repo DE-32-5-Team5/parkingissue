@@ -19,6 +19,7 @@
 
 <body>
     <div class="parking-info-container">
+        <button class="go-back"></button>
         <div class="map-section" style="position: relative;">
             <!-- 지도 leafletjs로 수정해야함 해당 주차장 위치에 아이콘 찍힌 느낌으로 -->
             <div id="map" style="position: relative; width: 100%; height: 40vh;"></div>
@@ -83,6 +84,28 @@
         <p>&copy; 주차잇슈에대한설명을적으세요</p>
     </div>
 </div>
+
+<!-- 뒤로가기 script -->
+<script>
+    // 상세정보 외부 공간 클릭 시 뒤로
+    document.addEventListener('DOMContentLoaded', function () {
+        // 클릭 이벤트 리스너 등록
+        document.addEventListener('click', function (event) {
+            // 클릭한 대상이 parking-info-container 내부가 아닌 경우
+            const container = document.querySelector('.parking-info-container');
+            if (!container.contains(event.target)) {
+                // 뒤로가기 동작 실행
+                window.history.back();
+            }
+        });
+    });
+    // X 누르면 뒤로
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('.go-back').addEventListener('click', function () {
+            window.history.back();
+        });
+    });
+</script>
 
 <!-- 혼잡도 차트 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
