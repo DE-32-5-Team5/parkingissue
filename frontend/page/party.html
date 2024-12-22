@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>주차잇슈</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="assets/css/party.css" />
+    <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+<body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <div class="inner">
+                <!-- Logo and Search Bar Container -->
+                <div class="logo-container">
+                    <a href="mainpage.html" class="logo">
+                        <span class="symbol"><img src="images/자동차.gif" alt="" /></span><span class="title">주차잇슈</span>
+                    </a>
+                    <!-- Search Bar -->
+                    
+                    <div class="search-bar-container">
+                        <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
+                        <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+                <div class="sort_area">
+                    <label>정렬</label>
+                    <select id="select">
+                        <option id="default" value="default">가까운 순</option>
+                        <option id="ongoing" value="ongoing">진행 중</option>
+                        <option id="upcoming" value="upcoming">시작 예정</option>
+                    </select>
+                    </div>
+                </div>
+                <div id="loader" style="display: none;">Loading...</div>
+                <div id="no-data-message" style="display: none;">데이터가 없습니다.</div>
+                <div class="item-container" id="item-container">
+                    
+                </div>
+                <div id="pagination"></div> <!-- 페이지 번호 버튼이 동적으로 여기에 추가됩니다 -->
+            </div>
+        </div>
+        <!-- 네비게이션 자리 -->
+        <div class="navi">
+            <div class="navi-section">
+                <nav class="navbar">
+                    <ul>
+                        <!-- 홈으로 새로고침 -->
+                        <li><a href="mainpage.html"><img src="images/sweethome.png" alt="Home" /> HOME</a></li>
+                        <!-- hot place 게시판 이동 -->
+                        <li><a href="party.html"><img src="images/hotplace.png" alt="About" /> HOT PLACE</a></li>
+                        <!-- 즐겨찾기 페이지 이동 -->
+                        <li><a href="favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
+                        <!-- 개인 프로필 페이지 이동 -->
+                        <li><a href="personal_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <script src="assets/js/party.js"></script>
+    </div>
+</body>
+</html>

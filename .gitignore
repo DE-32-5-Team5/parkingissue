@@ -1,4 +1,12 @@
 data/
+docker/.db_env
+docker/.airflow_env
+docker/.front_env
+docker/.back_env
+docker/database/init/*.csv
+docker/database/init/*.sql
+
+backend/.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
