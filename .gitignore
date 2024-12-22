@@ -9,7 +9,7 @@ docker/database/init/*.sql
 backend/.env
 frontend/.env
 .DS_Store
-__MACOSX/
+__MACOSX
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
