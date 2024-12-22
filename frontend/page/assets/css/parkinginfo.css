@@ -1,0 +1,169 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.logo-container {
+    text-align: left;
+}
+
+.logo {
+    max-width: 100px;
+    height: auto;
+}
+
+
+.parking-info-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.map-section {
+    margin-bottom: 25px;
+}
+
+.info-section {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+
+.info-section .parking-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.details-list {
+    list-style: none;
+    padding: 0;
+}
+
+.details-list li {
+    margin: 8px 0;
+    font-size: 1.1em;
+    color: #555;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+}
+
+.action-buttons button {
+    border: none;
+    padding: 12px 15px;
+    background: #007bff;
+    color: #ffffff;
+    font-size: 1em;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.action-buttons button:hover {
+    background: #0056b3;
+}
+
+.action-buttons .share-button {
+    background: #28a745;
+}
+
+.action-buttons .share-button:hover {
+    background: #218838;
+}
+
+.action-buttons .roadview-button {
+    background: #ffc107;
+    color: #000;
+}
+
+.action-buttons .roadview-button:hover {
+    background: #e0a800;
+}
+
+.action-buttons .nav-button {
+    background: #17a2b8;
+}
+
+.action-buttons .nav-button:hover {
+    background: #138496;
+}
+
+.reservation-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.reservation-item {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    color: #444;
+}
+
+.reservation-item strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+.availability-text {
+    font-size: 1.0em;
+}
+
+.availability-bar {
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    height: 20px;
+    margin-bottom: 20px;
+}
+
+
+.availability-fill {
+    height: 100%;
+    background-color: #28a745;
+    border-radius: 8px;
+}
+
+.parking-status {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+    color: #333;
+    
+}
+
+.footer {
+    background: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #e9ecef;
+    margin-top: 40px;
+}
+
+.footer-info p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.footer-info a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer-info a:hover {
+    text-decoration: underline;
+}
