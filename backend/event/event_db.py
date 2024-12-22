@@ -1,0 +1,86 @@
+import pymysql.cursors
+def connect_db():
+    connection = pymysql.connect(
+        host='localhost',
+        port=6033,
+        user='root',
+        password='',
+        database='parkingissue',
+        charset='utf8mb4',
+        cursorclass=pymysql.cursors.DictCursor
+    )
+    return connection
+
+def insert_event_info(title, address, contact, start_date, end_date,main_image_path,thumbnail_image_path, description):
+    connection = connect_db()
+    print(title, address, contact, start_date, end_date,main_image_path,thumbnail_image_path, description)
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                sql = """
+                    INSERT INTO festival_info 
+                    (contentid, title, address, eventstartdate, eventenddate, tel, firstimage, firstimage2, mapx, mapy, description) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                    title = VALUES(title),
+                    address = VALUES(address),
+                    eventstartdate = VALUES(eventstartdate),
+                    eventenddate = VALUES(eventenddate),
+                    tel = VALUES(tel),
+                    firstimage = VALUES(firstimage),
+                    firstimage2 = VALUES(firstimage2),
+                    mapx = VALUES(mapx),
+                    mapy = VALUES(mapy),
+                    description = VALUES(description)
+                """
+                cursor.execute(sql, ("contentid", title, address, start_date, end_date, contact, main_image_path, thumbnail_image_path, 0.0, 0.0, description ))
+                connection.commit()  # 커밋을 명시적으로 수행
+                print("데이터 삽입 성공")
+                return True
+    except Exception as e:
+        # 에러 로그 출력
+        print("데이터 삽입 중 에러 발생!")
+        print(f"에러 메시지: {e}")
+        print(f"SQL: {sql}")
+        return False
+    
+def get_event_info(id):
+    connection = connect_db()
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                sql = """
+                    SELECT *
+                    FROM festival_info
+                    WHERE contentid LIKE %s;
+                """
+                param = f"{id}%"
+                cursor.execute(sql, (param,))
+                results = cursor.fetchall()
+                return results
+    except Exception as e:
+        # 에러 로그 출력
+        print("데이터 조회 중 에러 발생!")
+        print(f"에러 메시지: {e}")
+        print(f"SQL: {sql}")
+        return False
+    
+def get_event_info_by_id(contentid):
+    connection = connect_db()
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                sql = """
+                    SELECT *
+                    FROM festival_info
+                    WHERE contentid = %s;
+                """
+                cursor.execute(sql, (contentid,))
+                results = cursor.fetchall()
+                return results
+    except Exception as e:
+        # 에러 로그 출력
+        print("데이터 조회 중 에러 발생!")
+        print(f"에러 메시지: {e}")
+        print(f"SQL: {sql}")
+        return False

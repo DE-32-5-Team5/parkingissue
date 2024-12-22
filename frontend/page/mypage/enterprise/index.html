@@ -29,7 +29,7 @@
             </div>
             <div class="information-card">
                 <p class="information-title">아이디</p>
-                <p class="information-value" style="margin-right: 20px;">abcd1234</p>
+                <p class="information-value" id="ID" style="margin-right: 20px;">content</p>
             </div>
             <div class="information-card">
                 <p class="information-title">비밀번호</p>
@@ -44,10 +44,10 @@
                 <h3>행사 목록</h3>
                 <div class="icon-buttons">
                     <button class="icon-button" onclick="location.href='./event/index.html'">+</button>
-                    <button class="icon-button">-</button>
+                    <!-- <button class="icon-button">-</button> -->
                 </div>
             </div>
-            <div class="event-grid">
+            <!-- <div class="event-grid">
                 <div class="event-card">
                     <img src="img/event1.jpg" alt="행사 이미지" class="event-image">
                     <p class="information-title">구름이 걷히니 달이 비치고 바람 부니 별이 빛난다</p>
@@ -59,7 +59,10 @@
                 <div class="event-card">
                     <img src="img/event3.jpg" alt="행사 이미지" class="event-image">
                     <p class="information-title">대정 동일 해넘이축제</p>
-                </div>
+                </div> -->
+            <div class="event-grid" id="event-grid"></div>
+
+                
             </div>
         </section>
         
@@ -182,6 +185,40 @@
                         confirmPasswordInput.value = '';
                     }
                 });
+            
+                document.addEventListener("DOMContentLoaded", async () => {
+                const ID = document.getElementById("ID").innerText.trim();
+
+                try {
+                    const response = await fetch(`http://127.0.0.1:8000/api2/events?ID=${ID}`);
+                    const event = await response.json();
+
+
+                    if (event.events) {
+                        event.events.forEach(e => {
+                            const eventCard = document.createElement("div");
+                            eventCard.className = "event-card";
+                            eventCard.innerHTML = `
+                                <img src="${e.firstimage}" alt="${e.title}" class="event-image">
+                                <p class="information-title">${e.title}</p>
+                            `;
+                            document.getElementById("event-grid").appendChild(eventCard);
+
+                            eventCard.addEventListener("click", () => {
+                            // 이벤트 등록 화면으로 이동, 이벤트 ID를 URL 파라미터로 전달
+                            window.location.href = `./event/index.html?contentid=${e.contentid}`;
+                        });
+
+                        });
+                    } else {
+                        console.log(event.error || "No events found.");
+                    }
+                } catch (error) {
+                    console.error("이벤트 데이터를 가져오는 중 오류 발생:", error);
+                }
+            });
+
+
             </script>
         </section>
     </div>

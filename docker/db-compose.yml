@@ -4,7 +4,7 @@ services:
     build:
       context: ./database
       dockerfile: Dockerfile  # Dockerfile 이름
-    image: parkingissue-db:latest  # 빌드될 이미지 이름
+    image: parkingissue-db:1.2.0  # 빌드될 이미지 이름
     container_name: parkingissue_database
     env_file:
       - .db_env

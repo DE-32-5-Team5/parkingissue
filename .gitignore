@@ -6,6 +6,7 @@ docker/.back_env
 docker/database/init/*.csv
 docker/database/init/*.sql
 
+backend/event/uploads/
 backend/.env
 
 # Byte-compiled / optimized / DLL files
