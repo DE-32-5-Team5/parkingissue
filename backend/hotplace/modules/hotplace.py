@@ -11,43 +11,82 @@ def connect_db():
         cursorclass=pymysql.cursors.DictCursor
     )
     return connection 
-# festival_info 테이블 목록 조회
-def select_hotplace_list_info(hotplace_longitude, hotplace_laitude):
+# festival_info 테이블 가까운순 목록 조회
+def select_hotplace_default_info(hotplace_longitude, hotplace_latitude):
     connection = connect_db()
 
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT title, eventstartdate, eventenddate, mapx, mapy
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
+                   (6371 * acos(cos(radians(%s)) * cos(radians(mapy)) * 
+                   cos(radians(mapx) - radians(%s)) + sin(radians(%s)) * sin(radians(mapy)))) AS distance
             FROM festival_info
-            WHERE
+            WHERE eventstartdate <= NOW() AND eventenddate >= NOW()
+            ORDER BY distance ASC
             """
-            cursor.execute(sql, (,))
-            result = bool(cursor.fetchone())
+            cursor.execute(sql, (hotplace_latitude, hotplace_longitude, hotplace_latitude))
+            result = cursor.fetchall()
             return result
+
+# festival_info 테이블 진행중 목록 조회        
+def select_hotplace_ongoing_info():
+    connection = connect_db()
+
+    with connection:
+        with connection.cursor() as cursor:
+            sql = """
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
+            FROM festival_info
+            WHERE eventstartdate >= NOW() AND eventenddate >= NOW()
+            ORDER BY eventstartdate ASC
+            """
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+
+# festival_info 테이블 아직 시작안한 목록 조회        
+def select_hotplace_upcoming_info():
+    connection = connect_db()
+
+    with connection:
+        with connection.cursor() as cursor:
+            sql = """
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
+            FROM festival_info
+            WHERE eventstartdate >= NOW() AND eventenddate >= NOW()
+            ORDER BY eventstartdate ASC
+            """
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+
+# festival_info 테이블 지역 목록 조회        
+# def select_hotplace_address_info(resion):
+#     connection = connect_db()
+
+#     with connection:
+#         with connection.cursor() as cursor:
+#             sql = """
+#             SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
+#             FROM festival_info
+#             WHERE address like '%s%'
+#             """
+#             cursor.execute(sql)
+#             result = cursor.fetchone()
+#             return result
+
 # festival_info 게시글 내용 조회
-def check_manager_phone(manager_phone):
+def select_hotplace_content(contentid):
     connection = connect_db()
 
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT phone
-            FROM manager_info
-            WHERE id = %s;
+            SELECT *
+            FROM festival_info
+            WHERE contentid = %s;
             """
-            cursor.execute(sql, (user_id,))
-            result = bool(cursor.fetchone())
-            return result
-# 기업회원 정보 삽입
-def insert_manager_info(manager_company, manager_name, manager_phone, manager_id, manager_password):
-    connection = connect_db()
-
-    with connection:
-        with connection.cursor() as cursor:
-            sql = """
-            INSERT INTO manager_info (company, name, phone, id, password) VALUES (%s, %s, %s, %s, %s)
-            """
-            result = bool(cursor.execute(sql, (manager_company, manager_name, manager_phone, manager_id, manager_password)))
-            
+            cursor.execute(sql, (contentid,))
+            result = cursor.fetchone()
             return result
