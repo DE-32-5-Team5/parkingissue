@@ -194,7 +194,6 @@
                 }
             })
             .catch(error => {
-                alert("500m내에 주차장이 없습니다!")
                 console.error('Error:', error);
             });
         }
@@ -352,13 +351,24 @@
             const urlParams = new URLSearchParams(window.location.search);
             const latitude = parseFloat(urlParams.get('lat'));
             const longitude = parseFloat(urlParams.get('lon'));
+            const conid = urlParams.get('contentid')
 
             // URL에 위경도 파라미터가 있으면 해당 위치로 지도 이동
-            if (latitude && longitude) {
+            if (latitude && longitude && conid) {
+                if (watchId) { // 현재 위치 주변 500m 검색 중지
+                            navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                            watchId = null; // ID 초기화
+                        }
                 // 위경도가 있다면 해당 위치로 지도 이동
                 hotmarkers.clearLayers();
-                map.setView([latitude, longitude], map.getZoom()); // 15는 줌 레벨
-                fetchAndProcessParkingData(latitude, longitude)
+                map.setView([latitude, longitude], 16); // 16는 줌 레벨
+                // 핫플 마커 찍고
+                var hotmarker = L.marker([latitude, longitude], { icon: hotIcon }).addTo(hotmarkers);
+                hotmarker.on('click', function() {
+                    const contenid = encodeURIComponent(conid) // url param으로 contentid 까지
+                    window.location.href = `post1.html?contentid=${contenid}`
+                });
+                fetchAndProcessParkingData(latitude, longitude) // 주변 500m 주차장
                     .then(parkingData => {
                         if (parkingData) {
                             console.log("주차장 데이터:", parkingData);
@@ -376,6 +386,7 @@
         // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
         document.querySelector("#find-me").addEventListener("click", function() {
             // 페이지 새로고침
+            history.replaceState({}, null, location.pathname);
             location.reload();
         });
 
@@ -411,7 +422,7 @@
                         // 주차장인 경우에는 지도만 옮기고 마킹만
                         markers.clearLayers(); // 기존 마커 삭제
                         hotmarkers.clearLayers();
-                        map.setView([enter_result.park_la, enter_result.park_lo], map.getZoom()); // 지도 위치 이동
+                        map.setView([enter_result.park_la, enter_result.park_lo], 16); // 지도 위치 이동
                         var marker = L.marker([enter_result.park_la, enter_result.park_lo], { icon: parkIcon }).addTo(markers); // 마킹
                         marker.on('click', function() {
                             const parkla = encodeURIComponent(enter_result.park_la);
@@ -429,7 +440,7 @@
                         }
                         markers.clearLayers();
                         hotmarkers.clearLayers();
-                        map.setView([enter_result.mapy, enter_result.mapx], map.getZoom());
+                        map.setView([enter_result.mapy, enter_result.mapx], 16);
                         // 행사장 마킹
                         var hotmarker = L.marker([enter_result.mapy, enter_result.mapx], { icon: hotIcon }).addTo(hotmarkers);
                         hotmarker.on('click', function() {
