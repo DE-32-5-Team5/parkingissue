@@ -3322,6 +3322,12 @@ body.is-touch .tiles article .content {
 	border-top: 1px solid #e5e5e5;
 }
 
+.bookmark-button, .bookmark-button:hover {
+	border: none !important;
+	box-shadow: none;
+	padding: 0px;
+}
+
 #map-pin,
 #calendar {
 	width: 1.25rem;

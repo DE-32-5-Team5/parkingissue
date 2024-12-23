@@ -15,6 +15,9 @@ from passlib.context import CryptContext
 from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListSchema, HotplaceSchema
 # 검색 모듈
 from search.module.search_module import searchParkDB, searchHotDB
+# 북마크 스키마
+from bookmark.model.bookmark_schema import RequestBookmarkSchema
+
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
 
@@ -219,3 +222,13 @@ async def hotplace_content_info(contentid: str):
     from hotplace.modules.hotplace import select_hotplace_content
 
     return select_hotplace_content(contentid)
+
+@app.post("/api/bookmark/list")
+async def select_bookmark_info(ContentsList :RequestBookmarkSchema):
+    from bookmark.modules.bookmark import select_bookmarks_info
+    if ContentsList:
+        result = select_bookmarks_info(ContentsList.idtype, ContentsList.idcode, ContentsList.mapx, ContentsList.mapy)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+
+@app.post("/api/bookmark/creation")
+async def 
