@@ -42,7 +42,7 @@ async def login_personal_service(personal_login: PersonalLogin):
                 )
 
             # 2. JWT 토큰 생성
-            access_token = create_jwt_token(user['uid'], secret_key)  # JWT secret key 설정
+            access_token = create_jwt_token(user['user_id'], 1, secret_key)  # JWT secret key 설정
 
             return {"access_token": access_token, "token_type": "bearer"}
 
@@ -78,7 +78,7 @@ async def login_enterprise_service(enterprise_login: EnterpriseLogin):
                 )
 
             # 2. JWT 토큰 생성
-            access_token = create_jwt_token(user['mid'], secret_key)  # JWT secret key 설정
+            access_token = create_jwt_token(user['manager_id'], 2, secret_key)  # JWT secret key 설정
 
             return {"access_token": access_token, "token_type": "bearer"}
 
@@ -113,7 +113,7 @@ async def login_naver_service(naver_login: NaverLogin):
                 return {"message": "naver_id not found", "redirect": True} 
 
             # 2-2. JWT 토큰 생성
-            access_token = create_jwt_token(user['uid'], secret_key)
+            access_token = create_jwt_token(user['user_id'], 1, secret_key)
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
@@ -147,7 +147,7 @@ async def login_kakao_service(kakao_login: KakaoLogin):
                 return {"message": "kakao_id not found", "redirect": True} 
 
             # 2-2. JWT 토큰 생성
-            access_token = create_jwt_token(user['uid'], secret_key)
+            access_token = create_jwt_token(user['user_id'], 1, secret_key)
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:

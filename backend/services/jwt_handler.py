@@ -19,7 +19,7 @@ def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: s
     payload = {
         "user_id": user_id,
         "user_type": user_type,  # user_type 추가
-        "exp": datetime.utcnow() + timedelta(minutes=expire_minutes)
+        "exp": datetime.now() + timedelta(minutes=expire_minutes)
     }
     token = jwt.encode(payload, secret_key, algorithm=algorithm)
     return token
@@ -40,7 +40,7 @@ def refresh_jwt_token(token: str, secret_key: str, algorithm: str = "HS256", exp
     try:
         payload = jwt.decode(token, secret_key, algorithms=[algorithm])
         # 만료 시간을 갱신합니다.
-        payload['exp'] = datetime.utcnow() + timedelta(minutes=expire_minutes)
+        payload['exp'] = datetime.now() + timedelta(minutes=expire_minutes)
         new_token = jwt.encode(payload, secret_key, algorithm=algorithm)
         return new_token
     except jwt.ExpiredSignatureError:
