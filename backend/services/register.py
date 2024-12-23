@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
-from ..db import register_db
-from ..models.register import (
+from db import register_db
+from models.register import (
     UserSchema,
     ManagerSchema,
 )

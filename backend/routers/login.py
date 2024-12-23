@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Header
 
-from ..services.login import (
+from services.login import (
     login_personal_service,
     login_enterprise_service,
     login_naver_service,
@@ -8,7 +8,7 @@ from ..services.login import (
     check_user_service,
     update_token_service,
 )
-from ..models.login import (
+from models.login import (
     PersonalLogin,
     EnterpriseLogin,
     NaverLogin,

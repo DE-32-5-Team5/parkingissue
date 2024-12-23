@@ -1,10 +1,10 @@
 from fastapi import APIRouter, File, UploadFile
-from ..models.event import FestivalInfo
-from ..services.event import register_event_service
+from models.event import FestivalInfo
+from services.event import register_event_service
 
 router = APIRouter(
-    prefix = "/api/event"
-    tag = ["event"]
+    prefix = "/api/event",
+    tags = ["event"]
 )
 
 """

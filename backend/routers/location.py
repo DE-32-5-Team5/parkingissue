@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from ..services.location import (
+from services.location import (
     create_item_service,
     receive_location_service,
     frontget_service,
@@ -9,7 +9,7 @@ from ..services.location import (
     get_related_data_service,
     get_click_search_service,
 )
-from ..models.location import Location, FromSpark
+from models.location import Location, FromSpark
 
 router = APIRouter(
     prefix="/api",

@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 import os, uuid
 from datetime import datetime
-from ..db import uploader_db
-from ..models.event import FestivalInfo
+from db import uploader_db
+from models.event import FestivalInfo
 
 async def register_event_service(festival_info: FestivalInfo):
 

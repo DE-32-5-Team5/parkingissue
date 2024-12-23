@@ -3,7 +3,7 @@
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" /> 
     <title>Sign In Page</title>
     <!-- CSS 파일 연결 -->
-    <link rel="stylesheet" href="assets/login.css">
+    <link rel="stylesheet" href="assets/css/login.css">
     <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
     <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
     <script src="https://kit.fontawesome.com/eb9b7241dc.js" crossorigin="anonymous"></script>
@@ -112,15 +112,13 @@
                 <i class="fa fa-kakao"></i> 
                 <!-- <img src="img/kakao-logo.png" style="width: 40px; height: 40px;"> -->
             </button>
-            <button id="NaverLoginBtn">
-                <img src="./images/naver-logo.png" alt="네이버 로그인">
-            </button>
+            <img id="NaverLoginBtn" src="./images/naver-logo.png" style="width: 50px; height: 50px; cursor: pointer;" alt="네이버 로그인">
             <div id="naverIdLogin" style="display: none;"></div>
             <script type="text/javascript">
                 const naver_client_id = process.env.naver_client_id;
                 var naver_id_login = new naver_id_login( naver_client_id, "www.parkingissue.online/logincallback/naver.html" );
                 var state = naver_id_login.getUniqState();
-                naver_id_login.setButton("white", 2,40);
+                naver_id_login.setButton("green", 0, 50);
                 naver_id_login.setDomain("www.parkingissue.online");
                 naver_id_login.setState(state);
                 naver_id_login.setPopup();

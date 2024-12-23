@@ -1,16 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
-from ..database import get_db
-from ..models.mypage import ChangePasswordRequest
-from ..services.mypage import change_password_service
+"""
+from models.mypage import ChangePasswordRequest
+from services.mypage import change_password_service
+"""
 
 router = APIRouter(
     prefix="/api",
     tags=["mypage"]
 )
 
-
+"""
 @router.post("/change-password/")
 async def change_password(
     request: ChangePasswordRequest, 
@@ -23,3 +22,4 @@ async def change_password(
     except Exception as e:
         print(f"비밀번호 변경 중 오류 발생: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="비밀번호 변경 중 오류 발생")
+"""

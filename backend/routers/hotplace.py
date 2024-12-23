@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
-from ..models.hotplace import Location, RequestHotplaceSchemaq  # 필요한 모델 import
-from ..services.hotplace import (
+from models.hotplace import RequestHotplaceSchemaq  # 필요한 모델 import
+from models.location import Location
+from services.hotplace import (
     hotplace_default_list_service,
     hotplace_ongoing_list_service,
     hotplace_upcoming_list_service,

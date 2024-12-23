@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from ..db import location_db
-from ..services.kafka_producer import send_to_kafka, send_to_kafka2
-from ..models.location import Location, FromSpark
+from db import location_db
+from services.kafka_producer import send_to_kafka, send_to_kafka2
+from models.location import Location, FromSpark
 
 stored_data = []
 

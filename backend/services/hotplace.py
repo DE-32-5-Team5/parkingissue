@@ -1,6 +1,6 @@
 from fastapi import HTTPException
-from ..db import hotplace_db  # db 연결 함수 import
-from ..models.location import Location  # Location 모델 import
+from db import hotplace_db  # db 연결 함수 import
+from models.location import Location  # Location 모델 import
 
 async def hotplace_default_list_service(location: Location):
     conn = hotplace_db()

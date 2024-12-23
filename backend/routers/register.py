@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from ..models.register import RequestUserSchema, RequestManagerSchema
-from ..services.register import (
+from models.register import RequestUserSchema, RequestManagerSchema
+from services.register import (
     check_user_id_service,
     check_manager_id_service,
     check_manager_phone_service,

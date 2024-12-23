@@ -1,9 +1,8 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
 
-from ..models.mypage import ChangePasswordRequest
-from ..models.userinfo import UserInfo
-
+from models.mypage import ChangePasswordRequest
+from models.userinfo import UserInfo
+"""
 async def change_password_service(request: ChangePasswordRequest, db: Session):
     # 로그인된 사용자 가져오기 (예시: 사용자 ID는 세션에서 가져온다고 가정)
     user = db.query(UserInfo).filter(UserInfo.userid == 1).first()  # 예시로 userid = 1
@@ -24,3 +23,4 @@ async def change_password_service(request: ChangePasswordRequest, db: Session):
     db.commit()
 
     return {"message": "비밀번호 변경 완료"}
+"""
