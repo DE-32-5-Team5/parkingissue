@@ -77,7 +77,7 @@
             const id = document.getElementById('id').value;
             const password = document.getElementById('password').value;
 
-            const endpoint = isCompanyUser ? '/api/login/idpw/company' : '/api/login/idpw/common'
+            const endpoint = isCompanyUser ? 'https://parkingissue.online/api/login/common/enterprise' : 'https://parkingissue.online/api/login/common/personal'
 
             fetch(endpoint, {
                 method: 'POST',
@@ -116,7 +116,7 @@
             <div id="naverIdLogin" style="display: none;"></div>
             <script type="text/javascript">
                 const naver_client_id = process.env.naver_client_id;
-                var naver_id_login = new naver_id_login( naver_client_id, "www.parkingissue.online/logincallback/naver.html" );
+                var naver_id_login = new naver_id_login( naver_client_id, "https://parkingissue.online/logincallback/naver.html" );
                 var state = naver_id_login.getUniqState();
                 naver_id_login.setButton("green", 0, 50);
                 naver_id_login.setDomain("www.parkingissue.online");
