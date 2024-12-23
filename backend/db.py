@@ -17,9 +17,10 @@ def login_db():
     try:
         conn = pymysql.connect(
             host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_LOGIN_USER"),
-            password=os.getenv("DB_LOGIN_PASSWORD"),
+            user=os.getenv("DB_USER_I"),
+            password=os.getenv("DB_USER_IPW"),
             db=os.getenv("DB_NAME"),
+            port=os.getenv("DB_PORT"),
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
         )
@@ -32,9 +33,10 @@ def register_db():
     try:
         conn = pymysql.connect(
             host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_REGISTER_USER"),
-            password=os.getenv("DB_REGISTER_PASSWORD"),
+            user=os.getenv("DB_USER_II"),
+            password=os.getenv("DB_USER_IIPW"),
             db=os.getenv("DB_NAME"),
+            port=os.getenv("DB_PORT"),
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
         )
@@ -47,9 +49,10 @@ def location_db():
     try:
         conn = pymysql.connect(
             host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_LOCATION_USER"),
-            password=os.getenv("DB_LOCATION_PASSWORD"),
+            user=os.getenv("DB_USER_III"),
+            password=os.getenv("DB_USER_IIIPW"),
             db=os.getenv("DB_NAME"),
+            port=os.getenv("DB_PORT"),
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
         )
@@ -62,9 +65,10 @@ def spark_db():
     try:
         conn = pymysql.connect(
             host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_SPARK_USER"),
-            password=os.getenv("DB_SPARK_PASSWORD"),
+            user=os.getenv("DB_USER_VII"),
+            password=os.getenv("DB_USER_VIIPW"),
             db=os.getenv("DB_NAME"),
+            port=os.getenv("DB_PORT"),
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
         )
@@ -77,9 +81,10 @@ def airflow_db():
     try:
         conn = pymysql.connect(
             host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_AIRFLOW_USER"),
-            password=os.getenv("DB_AIRFLOW_PASSWORD"),
+            user=os.getenv("DB_USER_IX"),
+            password=os.getenv("DB_USER_IXPW"),
             db=os.getenv("DB_NAME"),
+            port=os.getenv("DB_PORT"),
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
         )
@@ -92,9 +97,10 @@ def uploader_db():
     try:
         conn = pymysql.connect(
             host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_UPLOADER_USER"),
-            password=os.getenv("DB_UPLOADER_PASSWORD"),
+            user=os.getenv("DB_USER_X"),
+            password=os.getenv("DB_USER_XPW"),
             db=os.getenv("DB_NAME"),
+            port=os.getenv("DB_PORT"),
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
         )
@@ -110,6 +116,7 @@ def hotplace_db():
             user=os.getenv("DB_HOTPLACE_USER"),
             password=os.getenv("DB_HOTPLACE_PASSWORD"),
             db=os.getenv("DB_NAME"),
+            port=os.getenv("DB_PORT"),
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
         )
