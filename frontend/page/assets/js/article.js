@@ -54,7 +54,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
           {
             icon: "🌏", // address
-            text: item.address,
+            text: `<span>${item.address}</span>`,
+          },
+          {
+            icon: "🔗",
+            text: `<a href="mainpage.html?contentid=${item.contentid}&lat=${item.mapy}&lon=${item.mapx}">지도 바로가기</a>`
           },
           {
             icon: "📞", // tel
@@ -72,11 +76,12 @@ document.addEventListener("DOMContentLoaded", async function () {
           const flexDiv = document.createElement("div");
           flexDiv.classList.add("info-item");
   
-          const iconSpan = document.createElement("span");
+          const iconSpan = document.createElement("div");
           iconSpan.classList.add("icon");
           iconSpan.textContent = container.icon;
   
-          const textSpan = document.createElement("span");
+          const textSpan = document.createElement("div");
+          textSpan.classList.add("text-space");
           textSpan.innerHTML = container.text;
   
           flexDiv.appendChild(iconSpan);
