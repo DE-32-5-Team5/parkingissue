@@ -3315,8 +3315,11 @@ body.is-touch .tiles article .content {
 	margin-bottom: 1rem;
 }
 
-.description {
-	font-size: 0.8em;
+.description p{
+	font-size: 1em;
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid #e5e5e5;
 }
 
 #map-pin,
@@ -3328,7 +3331,6 @@ body.is-touch .tiles article .content {
 	margin-right: 5%;
 	transform: translateY(-8px);
 }
-
 
 /* Event Detail Card Styles */
 .event-detail {
@@ -3353,6 +3355,7 @@ body.is-touch .tiles article .content {
 
 .event-content {
 	padding: 2rem;
+	overflow-y: auto;
 }
 
 .info-item {
@@ -3360,12 +3363,7 @@ body.is-touch .tiles article .content {
 	align-items: center;
 	gap: 1rem;
 	margin-bottom: 1rem;
-}
-
-.description {
-	margin-top: 2rem;
-	padding-top: 1.5rem;
-	border-top: 1px solid #e5e5e5;
+	margin-right: 0px;
 }
 
 /* Media Query for Larger Screens */
