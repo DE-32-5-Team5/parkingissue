@@ -519,8 +519,9 @@ input, select, textarea {
 			line-height: 1;
 			align-items: center;
 			justify-content: center;
-			margin-left: 8px; /* 검색창과 버튼 사이 간격 */
+			margin-left: 0px; /* 검색창과 버튼 사이 간격 */
 			transition: background 0.3s;
+			margin-top: 28px;
 		}
 		.search-button {
 			background: none;
@@ -533,11 +534,13 @@ input, select, textarea {
 			justify-content: center;
 			transition: background 0.3s;
 			margin-right: 10px;
+			font-size: 20px;
+			margin-top: 16px;
 		}
 
 		.voice-search-icon {
-			width: 20px; /* 아이콘 크기 */
-			height: 20px;
+			width: 25px; /* 아이콘 크기 */
+			height: 25px;
 		}
 		.suggestions {
 			top: 100%;
@@ -633,6 +636,7 @@ input, select, textarea {
 				align-items: center; /* 왼쪽 정렬 */
 				gap: 0px; /* label과 select 사이 간격 */
 				margin: 0px auto; /* 전체 여백 */
+				margin-right: -20px;
 			}
 			
 			.search_class label {
@@ -687,6 +691,12 @@ input, select, textarea {
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				margin-top: 32px;
+				margin-right: -20px;
+			}
+			
+			.search-button {
+				margin-top: 18px;
 			}
 		
 			#header .logo {
