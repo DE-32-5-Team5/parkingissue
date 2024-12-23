@@ -76,7 +76,7 @@
             event.preventDefault(); // 기본 폼 제출 동작 방지
             const id = document.getElementById('id').value;
             const password = document.getElementById('password').value;
-            const url = 'http://localhost:8000/api/login'
+            const url = 'https://parkingissue.online/api/login'
             const branch = isCompanyUser ? 'common/enterprise' : 'common/personal'
             const endpoint = url + '/' + branch
 
