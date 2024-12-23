@@ -6,6 +6,16 @@ body {
     line-height: 1.6;
 }
 
+.logo-container {
+    text-align: left;
+}
+
+.logo {
+    max-width: 100px;
+    height: auto;
+}
+
+
 .parking-info-container {
     max-width: 800px;
     margin: 40px auto;
@@ -14,31 +24,6 @@ body {
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-
-.go-back {
-    position: relative;
-    float: right;
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    text-align: center;
-    background: none;
-    border: none; /* 버튼의 기본 스타일 제거 */
-    cursor: pointer; /* 클릭 가능 표시 */
-    z-index: 100;
-}
-
-.go-back:after {
-    display: inline-block;
-    content: "\00d7"; /* '×' 기호 */
-    font-size: 35pt;
-    line-height: 35px;
-}
-
-.go-back:hover {
-    color: #33cbca; /* 호버 시 색상 변경 */
-}
-
 
 .map-section {
     margin-bottom: 25px;
