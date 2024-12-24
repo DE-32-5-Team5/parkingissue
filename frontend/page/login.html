@@ -18,10 +18,10 @@
         <!-- Links -->
         <ul class="links">
             <li>
-                <a href="#" id="signin" class="active">개인 회원</a>
+                <a href="#" id="personal_user" class="active">개인 회원</a>
             </li>
             <li>
-                <a href="#" id="signup">기업회원</a>
+                <a href="#" id="enterprise_user">기업 회원</a>
             </li>
             <li>
                 <a href="./membership/personal/index.html" id="reset">회원가입</a>
@@ -29,7 +29,7 @@
         </ul>
         
         <!-- Form -->
-        <form  action="" method="post">
+        <form  action="assets/js/login.js" method="post" id="login_form">
         <!-- id input -->
             <div class="first-input input__block first-input__block">
                 <input type="id" placeholder="Id" class="input" id="id"   />
@@ -42,10 +42,9 @@
             <div class="input__block">
                 <input type="password" placeholder="Repeat password" class="input repeat__password" id="repeat__password"    />
             </div>
-            <!-- 로그인 버튼인데 값이 주어지고 로그인에 성공하면 메인페이지로 이동하게 끔 코드 수정 예정-->
-            <button class="signin__btn">
-                Sign in
-            </button>
+            <div class="signin__btn" id="loginbtn">
+                <input type="submit" value="login" />
+            </div>
         </form>
     <script>
         // 모든 링크를 선택
@@ -61,48 +60,51 @@
                 
                 // 특정 동작 추가: placeholder 값 변경
                 const idInput = document.getElementById('id');
-                if (link.id === 'signin') {
+                if (link.id === 'personal_user') {
                     idInput.placeholder = "Id"; // 개인회원
                     resetLink.href = "./membership/personal/index.html"; // 개인회원 가입 링크
-                } else if (link.id === 'signup') {
+                } else if (link.id === 'enterprise_user') {
                     idInput.placeholder = "기업회원 Id"; // 기업회원
                     resetLink.href = "./membership/enterprise/index.html"; // 기업회원 가입 링크
                 }
             });
         });
-
         const loginForm = document.querySelector('form'); // form 요소 선택
-        loginForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // 기본 폼 제출 동작 방지
+        const loginBtn = document.getElementsById('loginbtn');
+        loginBtn.addEventListener('submit', (event) => {
+            event.preventDefault();
             const id = document.getElementById('id').value;
-            const password = document.getElementById('password').value;
-            const url = 'https://parkingissue.online/api/login/'
-            const branch = isCompanyUser ? 'common/enterprise' : 'common/personal'
-            const endpoint = url + branch
-
-            fetch(endpoint, {
+            const pw = document.getElementById('password').value;
+            const loginurl = 'https://parkingissue.online/api/login/';
+            if (link.id === 'personal_user') {
+                loginurl = 'https://parkingissue.online/api/login/common/personal';
+            } else if (link.id === 'enterprise_user') {
+                loginurl = 'https://parkingissue.online/api/login/common/enterprise';
+            }
+            fetch (loginurl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id, password }),
+                body: JSON.stringify ({
+                    id: id,
+                    pw: pw,
+                }),
             })
-            .then(response => {
-                if (response.ok) {
-                    response.json().then(data => {
-                        // 로그인 성공, 토큰 로컬스토리지에 저장 후 메인페이지 전환
-                        localStorage.setItem('token', data.token);
-                        window.location.href = "./index.html"; 
-                    });
-                } else {
-                    // 로그인 실패 시 처리 (예: 에러 메시지 표시)
-                    alert('로그인 실패');
+            .then (postResponse => {
+                if(!postResponse.ok) {
+                    throw new Error(`POST Request failed: ${postResponse.status}`);
                 }
-                })
-                .catch(error => {
-                    console.error('로그인 요청 실패:', error);
-                });
+                else if (postResponse.ok) {
+                    response.json().then(data => {
+                        localStorage.setItem('token', data.token);
+                        window.location.href = "./index.html";
+                    });
+                };
+            }).catch(error => {
+                console.error('로그인 요청 실패:', error);
             });
+        })      
     </script>
         <!-- separator -->
         <div class="separator">
