@@ -29,22 +29,22 @@
         </ul>
         
         <!-- Form -->
-        <form  action="assets/js/login.js" method="post" id="login_form">
+        <form  action="" method="post" id="login_form">
         <!-- id input -->
             <div class="first-input input__block first-input__block">
                 <input type="id" placeholder="Id" class="input" id="id"   />
             </div>
             <!-- password input -->
             <div class="input__block">
-                <input type="password" placeholder="Password" class="input" id="password"    />
+                <input type="password" placeholder="Password" class="input" id="password" autocomplete="new-password">
             </div>
             <!-- repeat password input -->
             <div class="input__block">
-                <input type="password" placeholder="Repeat password" class="input repeat__password" id="repeat__password"    />
+                <input type="password" placeholder="Repeat password" class="input repeat__password" id="repeat__password" autocomplete="new-password">
             </div>
-            <div class="signin__btn" id="loginbtn">
-                <input type="submit" value="login" />
-            </div>
+            <button class="signin__btn" id="loginbtn">
+                Sign in
+            </button>
         </form>
     <script>
         // 모든 링크를 선택
@@ -70,7 +70,7 @@
             });
         });
         const loginForm = document.querySelector('form'); // form 요소 선택
-        const loginBtn = document.getElementsById('loginbtn');
+        const loginBtn = document.getElementById('loginbtn');
         loginBtn.addEventListener('submit', (event) => {
             event.preventDefault();
             const id = document.getElementById('id').value;
@@ -78,19 +78,32 @@
             const loginurl = 'https://parkingissue.online/api/login/';
             if (link.id === 'personal_user') {
                 loginurl = 'https://parkingissue.online/api/login/common/personal';
-            } else if (link.id === 'enterprise_user') {
-                loginurl = 'https://parkingissue.online/api/login/common/enterprise';
-            }
-            fetch (loginurl, {
+                fetch (loginurl, {
                 method: 'POST',
                 headers: {
+                    'accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify ({
-                    id: id,
-                    pw: pw,
+                    'user_id': id,
+                    'user_pw': pw,
                 }),
             })
+            } else if (link.id === 'enterprise_user') {
+                loginurl = 'https://parkingissue.online/api/login/common/enterprise';
+                fetch (loginurl, {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify ({
+                    'manager_id': id,
+                    'manager_pw': pw,
+                }),
+            })
+            }
+            
             .then (postResponse => {
                 if(!postResponse.ok) {
                     throw new Error(`POST Request failed: ${postResponse.status}`);
@@ -115,22 +128,11 @@
                 <i class="fa fa-kakao"></i> 
                 <!-- <img src="img/kakao-logo.png" style="width: 40px; height: 40px;"> -->
             </button>
-            <img id="NaverLoginBtn" src="./images/naver-logo.png" style="width: 50px; height: 50px; cursor: pointer;" alt="네이버 로그인">
-            <div id="naverIdLogin" style="display: none;"></div>
-            <script type="text/javascript">
-                const naver_client_id = process.env.naver_client_id;
-                var naver_id_login = new naver_id_login( naver_client_id, "https://parkingissue.online/logincallback/naver.html" );
-                var state = naver_id_login.getUniqState();
-                naver_id_login.setButton("green", 0, 50);
-                naver_id_login.setDomain("www.parkingissue.online");
-                naver_id_login.setState(state);
-                naver_id_login.setPopup();
-                naver_id_login.init_naver_id_login();
-
-                document.getElementById('NaverLoginBtn').addEventListener('click', function() {
-                    document.querySelector('#naverIdLogin .link_naver').click();
-                })
-            </script>
+            <div id="naver_id_login">
+                <img id="NaverLoginBtn" src="./images/naver-logo.png" style="width: 50px; height: 50px; cursor: pointer;" alt="네이버 로그인">
+            </div>
+            
+            
         </div>
     </div>
     

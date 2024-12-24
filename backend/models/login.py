@@ -6,7 +6,7 @@ class PersonalLogin(BaseModel):
 
 class EnterpriseLogin(BaseModel):
     manager_id: str
-    manager_pw: str
+    manager_pw: SecretStr
 
 class NaverLogin(BaseModel):
     naver_id: str

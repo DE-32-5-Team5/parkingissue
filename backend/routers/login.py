@@ -31,38 +31,38 @@ from models.login import (
     다음과 같이 작업해주시면 됩니다.
 """
 
-router = APIRouter(
+r_login = APIRouter(
     prefix = "/api/login",
     tags = ["login"],
 )
 
 # idpw 일반회원 로그인
-@router.post("/common/personal")
-async def login_personal():
-    return await login_personal_service(PersonalLogin)
+@r_login.post("/common/personal")
+async def login_personal(personallogin: PersonalLogin):
+    return await login_personal_service(personallogin)
 
 # idpw 기업회원 로그인
-@router.post("/common/enterprise")
-async def login_enterprise():
-    return await login_enterprise_service(EnterpriseLogin)
+@r_login.post("/common/enterprise")
+async def login_enterprise(enterpriselogin: EnterpriseLogin):
+    return await login_enterprise_service(enterpriselogin)
 
 # 일반회원 네이버 간편로그인
-@router.post("/simple/naver")
-async def login_naver():
-    return await login_naver_service(NaverLogin)
+@r_login.post("/simple/naver")
+async def login_naver(naverlogin:NaverLogin):
+    return await login_naver_service(naverlogin)
 
 # 일반회원 카카오 간편로그인
-@router.post("/simple/kakao")
-async def login_kakao():
-    return await login_kakao_service(KakaoLogin)
+@r_login.post("/simple/kakao")
+async def login_kakao(kakaologin:KakaoLogin):
+    return await login_kakao_service(kakaologin)
 
 # 회원여부 검증
-@router.post("/check/isuser")
+@r_login.post("/check/isuser")
 async def check_isuser(token: str = Header(..., description="JWT 토큰")):
     return await check_user_service(token)
 
 # 토큰 갱신 함수
-@router.post("/check/updatetoken")
+@r_login.post("/check/updatetoken")
 async def update_token(token: str = Header(..., description="JWT 토큰")):
     return await update_token_service(token)
                        

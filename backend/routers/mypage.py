@@ -4,7 +4,7 @@ from models.mypage import ChangePasswordRequest
 from services.mypage import change_password_service
 """
 
-router = APIRouter(
+r_mypage = APIRouter(
     prefix="/api",
     tags=["mypage"]
 )

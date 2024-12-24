@@ -2,7 +2,7 @@ from fastapi import APIRouter, File, UploadFile
 from models.event import FestivalInfo
 from services.event import register_event_service
 
-router = APIRouter(
+r_event = APIRouter(
     prefix = "/api/event",
     tags = ["event"]
 )
@@ -16,6 +16,6 @@ router = APIRouter(
     
 """
 
-@router.post("/registration")
+@r_event.post("/registration")
 async def register_event(festival_info: FestivalInfo):
     return await register_event_service(festival_info)

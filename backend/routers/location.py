@@ -11,26 +11,26 @@ from services.location import (
 )
 from models.location import Location, FromSpark
 
-router = APIRouter(
+r_location = APIRouter(
     prefix="/api",
     tags=["location"]
 )
 
-@router.post("/location")
+@r_location.post("/location")
 async def create_item(location: Location = Depends()):
     return await create_item_service(location)
 
-@router.post("/getlocation")
+@r_location.post("/getlocation")
 async def receive_location(sparkdata: list[FromSpark] = Depends()):
     if not sparkdata:
         raise HTTPException(status_code=400, detail="Empty JSON data")
     return await receive_location_service(sparkdata)
 
-@router.get("/frontget/")
+@r_location.get("/frontget/")
 async def frontget():
     return await frontget_service()
 
-@router.get("/getParkInfo")
+@r_location.get("/getParkInfo")
 async def get_park_info(parkid: str):
     try:
         park_info = await get_park_info_service(parkid)
@@ -40,7 +40,7 @@ async def get_park_info(parkid: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/getRelated")
+@r_location.get("/getRelated")
 async def get_related_data(text: str):
     result = await get_related_data_service(text)
     if result:
@@ -53,6 +53,6 @@ async def get_related_data(text: str):
                     dic[key].append(value)
         return result
 
-@router.get("/getClickSearch")
+@r_location.get("/getClickSearch")
 async def get_click_search(txt: str):
     return await get_click_search_service(txt)

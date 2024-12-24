@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+import traceback
 import bcrypt
 import os
 import jwt
@@ -30,7 +31,7 @@ async def login_personal_service(personal_login: PersonalLogin):
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디, 비밀번호 확인) - 실제 인증 로직 구현
-            sql = "SELECT user_id, user_pw FROM user_info WHERE id = %s"
+            sql = "SELECT user_id, user_pw FROM user_info WHERE user_id = %s"
             cursor.execute(sql, (personal_login.user_id,))
             user = cursor.fetchone()
 
@@ -47,7 +48,7 @@ async def login_personal_service(personal_login: PersonalLogin):
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
-        print(f"로그인 처리 오류: {e}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail="로그인 처리 오류")
 
     finally:
@@ -57,6 +58,7 @@ async def login_enterprise_service(enterprise_login: EnterpriseLogin):
     """
         기업회원 id, pw 기반 로그인 시도시 작동하는 서비스
     """
+    print(enterprise_login)
     secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
     conn = login_db()
     if not conn:
@@ -83,7 +85,7 @@ async def login_enterprise_service(enterprise_login: EnterpriseLogin):
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
-        print(f"로그인 처리 오류: {e}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail="로그인 처리 오류")
 
     finally:
@@ -117,7 +119,7 @@ async def login_naver_service(naver_login: NaverLogin):
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
-        print(f"로그인 처리 오류: {e}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail="로그인 처리 오류")
 
     finally:
