@@ -1,5 +1,10 @@
 import pymysql.cursors
 import random
+import os
+import requests
+from dotenv import load_dotenv
+
+load_dotenv() # .env에 있는 환경변수 읽는용
 
 def connect_db():
     connection = pymysql.connect(
@@ -13,6 +18,16 @@ def connect_db():
     )
     return connection
 
+def get_xy(region):
+    k_key = os.getenv('KAKAO_REST')
+    url = 'https://dapi.kakao.com/v2/local/search/address.json'
+    headers = {'Authorization': f'KakaoAK {k_key}'}
+    params = {'query' : region, 'analyze_type' : 'similar', 'size' : 30}
+
+    res = requests.get(url, params = params, headers = headers).json()
+
+    return res
+
 def generate_unique_id(c_ID, cursor):
     """데이터베이스에서 중복되지 않는 ID 생성"""
     while True:
@@ -24,6 +39,11 @@ def generate_unique_id(c_ID, cursor):
 
 def insert_event_info(c_ID, title, address, contact, start_date, end_date, main_image_path, thumbnail_image_path, description):
     connection = connect_db()
+    # 주소 위경도 변환
+    result = get_xy(address)
+    add_xy = result['documents']
+    x = add_xy[0]['address']['x']
+    y = add_xy[0]['address']['y']
     print(c_ID, title, address, contact)
     try:
         with connection:
@@ -51,7 +71,7 @@ def insert_event_info(c_ID, title, address, contact, start_date, end_date, main_
                 """
                 cursor.execute(sql, (
                     c_ID, title, address, start_date, end_date, contact,
-                    main_image_path, thumbnail_image_path, 0.0, 0.0, description
+                    main_image_path, thumbnail_image_path, x, y, description
                 ))
                 connection.commit()  # 커밋을 명시적으로 수행
                 print(f"데이터 삽입 성공: ID={c_ID}")
