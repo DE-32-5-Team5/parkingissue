@@ -103,6 +103,15 @@
     <script src="assets/js/form.js"></script> <!-- 여기에서 window.enter_result, window.search_result 정의했음-->
     <!-- voice search -->
     <script src="assets/js/voice-search.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            setTimeout(() => {
+                if (window.pageYOffset === 0) {
+                    window.scrollTo(0, 1);
+                }
+            }, 1000);
+        });
+    </script>
     <!-- Initialize the Leaflet Map -->
     <script>
         // 지도 중심의 위도, 경도를 얻는 함수
