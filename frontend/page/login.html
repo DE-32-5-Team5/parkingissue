@@ -1,7 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" /> 
-    <title>Sign In Page</title>
+    <title>주차잇슈</title>
     <!-- CSS 파일 연결 -->
     <link rel="stylesheet" href="assets/css/login.css">
     <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
@@ -76,9 +76,9 @@
             event.preventDefault(); // 기본 폼 제출 동작 방지
             const id = document.getElementById('id').value;
             const password = document.getElementById('password').value;
-            const url = 'https://parkingissue.online/api/login'
+            const url = 'https://parkingissue.online/api/login/'
             const branch = isCompanyUser ? 'common/enterprise' : 'common/personal'
-            const endpoint = url + '/' + branch
+            const endpoint = url + branch
 
             fetch(endpoint, {
                 method: 'POST',

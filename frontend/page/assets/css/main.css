@@ -455,6 +455,7 @@ input, select, textarea {
 			font-weight: bold;
 			color: #333; /* 텍스트 색상 */
 			cursor: pointer; /* 포인터 변경 */
+			text-align: center;
 			transition: border-color 0.3s ease; /* 호버 애니메이션 */
 		}
 		
