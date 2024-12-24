@@ -12,12 +12,11 @@ from register.model.register_schema import RequestUserSchema, UserSchema, Reques
 # pip install "passlib[bcrypt]"
 from passlib.context import CryptContext
 # 핫플레이스 정보 스키마
-from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListSchema, HotplaceSchema
+#from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListSchema, HotplaceSchema
 # 검색 모듈
 from search.module.search_module import searchParkDB, searchHotDB
 # 북마크 스키마
 from bookmark.model.bookmark_schema import RequestBookmarkSchema
-
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
 
@@ -177,11 +176,10 @@ async def manager_check_id(request: RequestManagerSchema):
 # 핫플레이스 게시글 리스트 요청 (가까운 순)
 @app.post("/api/hotplace/list/default")
 async def hotplace_default_list(location: Location):
-
     from hotplace.modules.hotplace import select_hotplace_default_info
     hotplace_longitude = str(location.longitude)
     hotplace_latitude = str(location.latitude)
-    return  select_hotplace_list_info(hotplace_longitude, hotplace_latitude)
+    return  select_hotplace_default_info(hotplace_longitude, hotplace_latitude)
 
 # 검색 폼
 @app.get("/api/search")
@@ -223,12 +221,40 @@ async def hotplace_content_info(contentid: str):
 
     return select_hotplace_content(contentid)
 
+
+
+# 북마크 페이지 > 리스트 조회
 @app.post("/api/bookmark/list")
 async def select_bookmark_info(ContentsList :RequestBookmarkSchema):
-    from bookmark.modules.bookmark import select_bookmarks_info
+    from bookmark.modules.bookmark import select_bookmarks
     if ContentsList:
-        result = select_bookmarks_info(ContentsList.idtype, ContentsList.idcode, ContentsList.mapx, ContentsList.mapy)
+        return select_bookmarks(ContentsList.idtype, ContentsList.idcode, ContentsList.mapx, ContentsList.mapy)
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
-
+# 핫플 게시글 > 북마크 하기
 @app.post("/api/bookmark/creation")
-async def 
+async def create_bookmark_info(BookmarkCreation :RequestBookmarkSchema):
+    from bookmark.modules.bookmark import insert_bookmarks
+    if BookmarkCreation:
+        return insert_bookmarks(BookmarkCreation.idtype, BookmarkCreation.idcode, BookmarkCreation.contentid, BookmarkCreation.bookmark_nickname)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+# 북마크 페이지 > 북마크 제거, 핫플 게시글 > 북마크 제거
+@app.post("/api/bookmark/delete")
+async def delete_bookmarks_info(BookmarkDelete:RequestBookmarkSchema):
+    from bookmark.modules.bookmark import delete_bookmarks
+    if BookmarkDelete:
+        return delete_bookmarks(BookmarkDelete.idtype, BookmarkDelete.idcode, BookmarkDelete.contentid)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+# 북마크 여부 > 핫플 게시글
+@app.post("/api/bookmark/check")
+async def check_bookmarks_info(BookmarkCheck: RequestBookmarkSchema):
+    from bookmark.modules.bookmark import check_bookmarks
+    if BookmarkCheck:
+        return check_bookmarks(BookmarkCheck.idtype, BookmarkCheck.idcode, BookmarkCheck.contentid)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+# 북마크 수정
+@app.post("/api/bookmark/update")
+async def update_bookmarks_info(BookmarkUpdate:RequestBookmarkSchema):
+    from bookmark.modules.bookmark import update_bookmarks
+    if BookmarkUpdate:
+        return update_bookmarks(BookmarkUpdate.idtype, BookmarkUpdate.idcode, BookmarkUpdate.contentid, BookmarkUpdate.bookmark_nickname)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
