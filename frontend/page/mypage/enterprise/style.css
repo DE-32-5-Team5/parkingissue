@@ -110,6 +110,20 @@ body {
     position: relative;
 }
 
+.event-card img {
+    width: 100%; /* 이미지의 너비를 카드 너비에 맞춤 */
+    height: 150px; /* 이미지 고정 높이 */
+    object-fit: cover; /* 이미지 비율 유지하면서 카드 크기에 맞춤 */
+    border-bottom: 1px solid #ddd; /* 이미지 하단에 구분선 */
+}
+
+.event-card .information-title {
+    margin: 10px 0 0; /* 이미지와 제목 간격 */
+    font-size: 16px; /* 텍스트 크기 */
+    text-align: center; /* 텍스트 정렬 */
+    color: #333;
+}
+
 .event-image {
     width: 100%;
     height: auto;
