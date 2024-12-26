@@ -10,18 +10,26 @@
 
 // 실시간 검색어 데이터 (예시)
 // 여기에 log 데이터 긁어오는 쿼리 짜면 되는거고
-const trendingSearches = [
-    "월드컵 중계",
-    "날씨",
-    "플레이데이터",
-    "만세력",
-    "에스파",
-    "사주풀이",
-    "MBTI",
-    "태풍",
-    "뉴진즈",
-    "아일릿"
-];
+// const trendingSearches = [
+//     "월드컵 중계",
+//     "날씨",
+//     "플레이데이터",
+//     "만세력",
+//     "에스파",
+//     "사주풀이",
+//     "MBTI",
+//     "태풍",
+//     "뉴진즈",
+//     "아일릿"
+// ];
+
+// DOM 요소
+const searchInput = document.querySelector(".search-bar");
+const suggestionsDiv = document.querySelector('.suggestions');
+const voiceButton = document.querySelector('.voice-search-btn');
+const trendingSearchesDiv = document.querySelector('.trending-searches')
+
+// ################연관검색어################
 
 let selectElementRe = null; // select 요소 가져오기
 let selectedValueRe = null;
@@ -92,13 +100,6 @@ async function sendSearch(txt_value) {
         return null; // 에러 발생 시 null 반환
     }
 }
-
-// DOM 요소
-const searchInput = document.querySelector(".search-bar");
-const suggestionsDiv = document.querySelector('.suggestions');
-const voiceButton = document.querySelector('.voice-search-btn');
-const trendingSearchesDiv = document.querySelector('.trending-searches')
-
 
 let timeout;
 let isComposing = false;
@@ -182,6 +183,40 @@ voiceButton.addEventListener('click', function() {
         };
     } else {
         alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+    }
+});
+
+// ################ 실시간 검색어 ################
+let trendingSearches = null;
+
+async function getParkingList() {
+    const apiUrl = 'https://parkingissue.online/api/realSearch'
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json(); // JSON 형식으로 응답 받기
+        console.log('Received data:', data); // 데이터를 콘솔에 출력
+        return data; // 데이터를 반환
+    } catch (error) {
+        console.error('Error fetching parking list:', error);
+    }
+}
+
+// 페이지 로드 시 데이터 저장
+document.addEventListener('DOMContentLoaded', async () => {
+    const data = await getParkingList();
+    if (data) {
+        trendingSearches = data; // trendingSearches 객체에 데이터 저장
+        console.log('Trending Searches:', trendingSearches);
     }
 });
 
