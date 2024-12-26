@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" /> 
     <link href="./style.css" rel="stylesheet">
-    <link rel="icon" href="img/parkingissue-favicon-16x16.png"/>
-    <link rel="apple-touch-icon" href="img/parkingissue-apple-icon.png"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <title>회원가입</title>
+    <title>personal</title>
 </head>
 <body class="is-preload">
     <div id="wrapper">
@@ -31,23 +29,27 @@
                         <div class="form-group">
                             <label for="username">사용자 이름</label>
                             <input type="text" id="username" class="form-control" placeholder="사용자 이름을 입력하세요" required>
+                            
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="position: relative;">
                             <label for="nickname">닉네임</label>
-                            <input type="nickname" id="nickname" class="form-control" placeholder="닉네임을 입력하세요" required>
+                            <input type="id" id="nickname" class="form-control" placeholder="2~12자, 첫 자는 숫자가 아니어야 하며 한글과 영어만 가능" required>
+                        
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="position: relative;">
                             <label for="id">아이디</label>
-                            <input type="id" id="id" class="form-control" placeholder="아이디를 입력하세요" required>
+                            <input type="id" id="id" class="form-control" placeholder="6~20자, 첫 자는 영어로 시작" required>
+                            <button type="button" id="check-id-btn" class="btn-check">중복확인</button>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="position: relative;">
                             <label for="password">비밀번호</label>
-                            <input type="password" id="password" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                            <input type="password" id="password" class="form-control" placeholder="6~12자, 첫 자는 영어로 시작해야 하며 특수문자 포함 가능" required>
+                            
                         </div>
-                        <button type="submit" class="btn-primary">가입하기</button>
+                        <button type="submit" id="register-btn" class="btn-primary">가입하기</button>
                     </form>
                     <p class="text-center mt-3">
-                        이미 계정이 있으신가요? <a href="../../login.html">로그인</a>
+                        이미 계정이 있으신가요? <a href="../../index.html">로그인</a>
                     </p>
                 </div>
             </div>

@@ -52,7 +52,7 @@ body {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.delete-btn {
+.delete_btn {
     background-color: #ff4c4c;
     color: white;
     border: none;
@@ -108,6 +108,20 @@ body {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
+}
+
+.event-card img {
+    width: 100%; /* 이미지의 너비를 카드 너비에 맞춤 */
+    height: 150px; /* 이미지 고정 높이 */
+    object-fit: cover; /* 이미지 비율 유지하면서 카드 크기에 맞춤 */
+    border-bottom: 1px solid #ddd; /* 이미지 하단에 구분선 */
+}
+
+.event-card .information-title {
+    margin: 10px 0 0; /* 이미지와 제목 간격 */
+    font-size: 16px; /* 텍스트 크기 */
+    text-align: center; /* 텍스트 정렬 */
+    color: #333;
 }
 
 .event-image {
@@ -218,4 +232,111 @@ body {
 .confirm:hover,
 .cancel:hover {
     opacity: 0.8; /* 호버 시 투명도 조정 */
+}
+
+/* 비밀번호 수정 모달 배경 */
+#passwordModal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* 반투명 배경 */
+    padding-top: 100px; /* 모달 상단 여백 */
+}
+
+/* 비밀번호 수정 모달 내용 */
+#passwordModal .modal-content {
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    animation: fadeIn 0.3s ease-out; /* 모달 등장 애니메이션 */
+}
+
+/* 비밀번호 수정 모달 제목 */
+#passwordModal h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 입력 필드 스타일 */
+#passwordModal input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+#passwordModal input[type="password"]:focus {
+    border-color:#40e0d0;
+    background-color: #fff;
+    outline: none;
+}
+
+/* 확인 버튼 스타일 */
+#passwordModal .confirm-btn {
+    background-color: #40e0d0;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 48%;
+    transition: all 0.3s ease;
+}
+
+#passwordModal .confirm-btn:hover {
+    background-color: #32beb0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 취소 버튼 스타일 */
+#passwordModal .cancel-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 48%;
+    transition: all 0.3s ease;
+}
+
+#passwordModal .cancel-btn:hover {
+    background-color: #e53935;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 닫기 버튼 */
+#passwordModal .close {
+    color: #aaa;
+    font-size: 30px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+#passwordModal .close:hover,
+#passwordModal .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
