@@ -11,6 +11,16 @@ from typing import List
 from register.model.register_schema import RequestUserSchema, UserSchema, RequestManagerSchema, ManagerSchema
 # pip install "passlib[bcrypt]"
 from passlib.context import CryptContext
+# 핫플레이스 정보 스키마
+#from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListSchema, HotplaceSchema
+# 검색 모듈
+from search.module.search_module import searchParkDB, searchHotDB
+# 북마크 스키마
+from bookmark.model.bookmark_schema import RequestBookmarkSchema
+
+import boto3
+import io
+import pandas as pd
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
 
@@ -65,9 +75,9 @@ async def get_park_info(parkid: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/getRelated")
-async def get_related_data(text: str):
+async def get_related_data(text: str, cls:str, lat:float, lon:float):
     # [{'park_nm': '무궁화주차빌딩'}, {'park_nm': '무궁화빌라'}, {'park_nm': '무궁화타운 제3동'}, {'park_nm': '무궁화타운 제4 동'}, {'park_nm': '무궁화타운 제5동'}]
-    result = related_data(text)
+    result = related_data(text, cls, lat, lon)
     if result:
         dic = {}
         for i in result:
@@ -166,4 +176,98 @@ async def manager_check_id(request: RequestManagerSchema):
     # db 연결이 원활하지 않으면 에러.
     if insert_manager_info(manager_company, manager_name, manager_phone, manager_id, manager_password):
         return JSONResponse(content={"status": 200, "detail": "manager_id is Unique"}, status_code=200)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+
+# 핫플레이스 게시글 리스트 요청 (가까운 순)
+@app.post("/api/hotplace/list/default")
+async def hotplace_default_list(location: Location):
+    from hotplace.modules.hotplace import select_hotplace_default_info
+    hotplace_longitude = str(location.longitude)
+    hotplace_latitude = str(location.latitude)
+    return  select_hotplace_default_info(hotplace_longitude, hotplace_latitude)
+
+# 검색 폼
+@app.get("/api/search")
+async def searchDB(searchWord: str, searchClass: str):
+    if searchClass == "park":
+        park_result = searchParkDB(searchWord)
+        return park_result
+    else:
+        hot_result = searchHotDB(searchWord)
+        return hot_result
+
+    return  select_hotplace_default_info(hotplace_longitude, hotplace_latitude)
+    
+# 핫플레이스 게시글 리스트 요청 (진행중이며, 끝나는 일자가 가까운 순)
+@app.post("/api/hotplace/list/ongoing")
+async def hotplace_ongoing_list():
+    from hotplace.modules.hotplace import select_hotplace_ongoing_info
+
+    return select_hotplace_ongoing_info()
+
+# 핫플레이스 게시글 리스트 요청 (아직 시작안함, 끝나는 일자가 가까운 순)
+@app.post("/api/hotplace/list/upcoming")
+async def hotplace_upcoming_list():
+    from hotplace.modules.hotplace import select_hotplace_upcoming_info
+
+    return select_hotplace_upcoming_info()
+
+# 핫플레이스 게시글 리스트 요청 (지역분류, 끝나는 일자가 가까운 순)
+# @app.post("/api/hotplace/list/adress")
+# async def hotplace_adress_list(resion: str):
+#     from hotplace.modules.hotplace import select_hotplace_address_info
+    
+#     return select_hotplace_address_info(resion)
+
+# 핫플레이스 게시글 내용 요청 (상세정보)
+@app.post("/api/hotplace/content")
+async def hotplace_content_info(contentid: str):
+    from hotplace.modules.hotplace import select_hotplace_content
+
+    return select_hotplace_content(contentid)
+
+s3 = boto3.client('s3')
+@app.get("/api/realSearch")
+async def real():
+    bucket = 'fiveguys-s3'
+    obj = s3.get_object(Bucket=bucket, Key="rank.csv")
+    df = pd.read_csv(io.BytesIO(obj["Body"].read()))
+    print(df)
+    # dataframe 잘 들어오면 value만 list로 받아서 return 하면 끝
+    return True
+
+# 북마크 페이지 > 리스트 조회
+@app.post("/api/bookmark/list")
+async def select_bookmark_info(ContentsList :RequestBookmarkSchema):
+    from bookmark.modules.bookmark import select_bookmarks
+    if ContentsList:
+        return select_bookmarks(ContentsList.idtype, ContentsList.idcode, ContentsList.mapx, ContentsList.mapy)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+# 핫플 게시글 > 북마크 하기
+@app.post("/api/bookmark/creation")
+async def create_bookmark_info(BookmarkCreation :RequestBookmarkSchema):
+    from bookmark.modules.bookmark import insert_bookmarks
+    if BookmarkCreation:
+        return insert_bookmarks(BookmarkCreation.idtype, BookmarkCreation.idcode, BookmarkCreation.contentid, BookmarkCreation.bookmark_nickname)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+# 북마크 페이지 > 북마크 제거, 핫플 게시글 > 북마크 제거
+@app.post("/api/bookmark/delete")
+async def delete_bookmarks_info(BookmarkDelete:RequestBookmarkSchema):
+    from bookmark.modules.bookmark import delete_bookmarks
+    if BookmarkDelete:
+        return delete_bookmarks(BookmarkDelete.idtype, BookmarkDelete.idcode, BookmarkDelete.contentid)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+# 북마크 여부 > 핫플 게시글
+@app.post("/api/bookmark/check")
+async def check_bookmarks_info(BookmarkCheck: RequestBookmarkSchema):
+    from bookmark.modules.bookmark import check_bookmarks
+    if BookmarkCheck:
+        return check_bookmarks(BookmarkCheck.idtype, BookmarkCheck.idcode, BookmarkCheck.contentid)
+    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+# 북마크 수정
+@app.post("/api/bookmark/update")
+async def update_bookmarks_info(BookmarkUpdate:RequestBookmarkSchema):
+    from bookmark.modules.bookmark import update_bookmarks
+    if BookmarkUpdate:
+        return update_bookmarks(BookmarkUpdate.idtype, BookmarkUpdate.idcode, BookmarkUpdate.contentid, BookmarkUpdate.bookmark_nickname)
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
