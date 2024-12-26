@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>My Page</title>
+</head>
+<body>
+    <div class="container">
+        <!-- 상단 섹션: 프로필 정보 -->
+        <section class="profile-section">
+            <div class="profile-card">
+                <img src="img/profile.png" alt="프로필 사진" class="profile-image">
+                <h2 class="profile-name">(재)서울관광재단 </h2>
+                <!-- <p class="profile-email">example@email.com</p> -->
+                <!-- <button class="edit-profile-btn">Edit Profile</button> -->
+            </div>
+        </section>
+        
+        <!-- 중단 섹션: 내 정보 -->
+        <section class="information-section">
+            <h3>내 정보</h3>
+            <div class="information-card">
+                <p class="information-title">이름</p>
+                <p class="information-value" style="margin-right: 20px;">(재)서울관광재단</p>
+            </div>
+            <div class="information-card">
+                <p class="information-title">아이디</p>
+                <p class="information-value" style="margin-right: 20px;">abcd1234</p>
+            </div>
+            <div class="information-card">
+                <p class="information-title">비밀번호</p>
+                <p class="information-value" style="margin-left: 380px;">*****</p>
+                <button class="delete_btn" id="editPasswordBtn">수정</button>
+            </div>
+        </section>
+
+        <!-- 하단 섹션: 행사 목록 (이미지 추가 및 3개씩 나열) -->
+        <section class="event-section">
+            <div class="event-header">
+                <h3>행사 목록</h3>
+                <div class="icon-buttons">
+                    <button class="icon-button" onclick="location.href='./event/index.html'">+</button>
+                    <button class="icon-button">-</button>
+                </div>
+            </div>
+            <div class="event-grid">
+                <div class="event-card">
+                    <img src="img/event1.jpg" alt="행사 이미지" class="event-image">
+                    <p class="information-title">구름이 걷히니 달이 비치고 바람 부니 별이 빛난다</p>
+                </div>
+                <div class="event-card">
+                    <img src="img/event2.jpg" alt="행사 이미지" class="event-image">
+                    <p class="information-title">국가유산 조선왕릉축전</p>
+                </div>
+                <div class="event-card">
+                    <img src="img/event3.jpg" alt="행사 이미지" class="event-image">
+                    <p class="information-title">대정 동일 해넘이축제</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 하단 섹션: 로그아웃 및 기타 -->
+        <section class="logout-section">
+            <button class="logout-btn">Log Out</button>
+
+            <button id="openModal">회원 탈퇴</button>
+
+            <!-- 회원 탈퇴 모달 -->
+            <div class="modal" id="unsubscribeModal">
+                <div class="modal-content">
+                    <span class="close" id="closeModal">&times;</span>
+                    <h2>회원 탈퇴</h2>
+                    <p>정말로 회원 탈퇴를 하시겠습니까?</p>
+                    <button class="confirm">탈퇴하기</button>
+                    <button class="cancel">취소</button>
+                </div>
+            </div>
+
+        <!-- 비밀번호 수정 모달 -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <h2>비밀번호 변경</h2>
+                <input type="password" placeholder="현재 비밀번호" id="currentPassword">
+                <input type="password" placeholder="새 비밀번호" id="newPassword">
+                <input type="password" placeholder="새 비밀번호 확인" id="confirmPassword">
+                
+                <!-- 오류 메시지 -->
+                <p id="passwordError" style="color: red; display: none;"></p>
+                
+                <button class="confirm-btn" id="changePasswordBtn">확인</button>
+                <button class="cancel-btn" id="cancelPasswordBtn">취소</button>
+            </div>
+        </div>
+            
+            <script>
+                const modal = document.getElementById('unsubscribeModal');
+                const closeModal = document.getElementById('closeModal');
+                const openModalButton = document.getElementById('openModal');
+        
+                // 모달 열기
+                openModalButton.addEventListener('click', () => {
+                    modal.style.display = 'block';  // 모달 표시
+                });
+        
+                // 모달 닫기
+                closeModal.addEventListener('click', () => {
+                    modal.style.display = 'none';  // 모달 숨기기
+                });
+        
+                // 배경 클릭 시 모달 닫기
+                window.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';  // 모달 숨기기
+                    }
+
+                });
+
+                // 비밀번호 수정 모달
+                const passwordModal = document.getElementById('passwordModal');
+                const editPasswordBtn = document.getElementById('editPasswordBtn');
+                const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+                const currentPasswordInput = document.getElementById('currentPassword');
+                const newPasswordInput = document.getElementById('newPassword');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+                const passwordError = document.getElementById("passwordError");
+                const changePasswordBtn = document.getElementById('changePasswordBtn');
+
+                // 비밀번호 수정 버튼 클릭 시 모달 열기
+                editPasswordBtn.addEventListener('click', () => {
+                    passwordModal.style.display = 'block';
+                });
+
+                // 취소 버튼 클릭 시 모달 닫기 및 입력 필드 초기화
+                cancelPasswordBtn.addEventListener('click', () => {
+                    passwordModal.style.display = 'none';  // 모달 숨기기
+                    // 입력 필드 초기화
+                    currentPasswordInput.value = '';
+                    newPasswordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    passwordError.style.display = 'none';  // 오류 메시지 숨기기
+
+                    
+                });
+
+                // 비밀번호 변경 폼 제출 (확인 버튼 클릭 시)
+                document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const errorElement = document.getElementById("passwordError");
+                
+
+                    const response = await fetch('http://localhost:8000/change-password/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_password: newPassword,
+                            confirm_password: confirmPassword
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.status !== 200) {
+                        passwordError.style.display = 'block';
+                        passwordError.textContent = data.detail || "비밀번호 변경에 실패했습니다.";  // detail에 담긴 오류 메시지 표시
+                    } else {
+                        passwordError.style.display = 'none';
+                        alert(data.message);  // 성공 메시지 처리
+                        passwordModal.style.display = 'none';  // 모달 닫기
+
+                        // 확인 버튼 클릭 시 입력 필드 초기화
+                        currentPasswordInput.value = '';
+                        newPasswordInput.value = '';
+                        confirmPasswordInput.value = '';
+                    }
+                });
+            </script>
+        </section>
+    </div>
+</body>
+</html>
