@@ -4,6 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from location.model import Location, FromSpark, Getdf, RequestBody
 from location.pymysql_module import select_park_info, related_data
 from location.kafka_producer import send_to_kafka
+from login.login_model import PersonalLogin, EnterpriseLogin, NaverLogin, KakaoLogin
 import requests
 from typing import List
 
@@ -177,6 +178,26 @@ async def manager_check_id(request: RequestManagerSchema):
     if insert_manager_info(manager_company, manager_name, manager_phone, manager_id, manager_password):
         return JSONResponse(content={"status": 200, "detail": "manager_id is Unique"}, status_code=200)
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+
+@app.post("/api/login/common/personal")
+async def personal_user_login_service(user_infomation: PersonalLogin):
+    from login.login_service import login_personal_service
+    return await login_personal_service(user_infomation)
+
+@app.post("/api/login/common/enterprise")
+async def enterprise_user_login_service(enterprise_information: EnterpriseLogin):
+    from login.login_service import login_enterprise_service
+    return await login_enterprise_service(enterprise_information)
+
+@app.post("/api/login/simple/naver")
+async def personal_user_naver_login_service(user_naver_information: NaverLogin):
+    from login.login_service import login_naver_service
+    return await login_naver_service(user_naver_information)
+
+@app.post("/api/login/simple/kakao")
+async def personal_user_login_service(user_kakao_information: KakaoLogin):
+    from login.login_service import login_kakao_service
+    return await login_kakao_service(user_kakao_information)
 
 # 핫플레이스 게시글 리스트 요청 (가까운 순)
 @app.post("/api/hotplace/list/default")
