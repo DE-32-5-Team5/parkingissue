@@ -246,7 +246,11 @@
 
             // 주차장 주차 가능 면 수
             // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
-            document.querySelector('.availability-text').innerText = `총 면수: ${parkInfo.park_total}면`;
+            if (!parkInfo.park_total) {
+                document.querySelector('.availability-text').innerText = `총 면수: 정보 제공 ❌`;
+            } else {
+                document.querySelector('.availability-text').innerText = `총 면수: ${parkInfo.park_total}면`;
+            }
             // 운영시간 파트
             const spans = document.querySelectorAll('.reservation-item span');
             // 평일 운영 시간 업데이트
