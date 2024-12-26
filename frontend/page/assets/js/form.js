@@ -26,9 +26,24 @@ const trendingSearches = [
 let selectElementRe = null; // select 요소 가져오기
 let selectedValueRe = null;
 
+function getCurrentMapCenter() {
+    if (window.map) {
+        const center = window.map.getCenter();
+        const latitude = center.lat;
+        const longitude = center.lng;
+        return { latitude, longitude };
+    } else {
+        console.error('Map object is not initialized');
+        return null;
+    }
+}
+
+// 사용 예시
+const mapCenter = getCurrentMapCenter();
+
 // 연관검색어 조회용 function
 async function relatedSearch(text_value, cls) {
-    const url = `https://parkingissue.online/api/getRelated?text=${text_value}&cls=${cls}`;
+    const url = `https://parkingissue.online/api/getRelated?text=${text_value}&cls=${cls}&lat=${mapCenter.latitude}&lon=${mapCenter.longitude}`;
     try {
         const response = await fetch(url, {
             method: 'GET',

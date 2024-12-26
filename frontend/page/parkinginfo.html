@@ -37,9 +37,9 @@
         </div>
         <div class="availability-bar">
             <!-- width 값이 바 채움 정도 -->
-            <div class="availability-fill" style="width: 0%;"></div>
+            <div class="availability-fill" style="width: 100%;"></div>
             <div style="margin-bottom: 5px;"></div>
-            <i class="fas fa-car" style="color: #28a745; font-size: 1.5em;"></i> <span class="availability-text">구현중</span>
+            <i class="fas fa-car" style="color: #28a745; font-size: 1.5em;"></i> <span class="availability-text">정보 없음</span>
         </div>
 
         <div style="margin-bottom: 40px;"></div>
@@ -66,22 +66,21 @@
                 </div>
             </div>
         </div>
-        <div class="reservation-section">
+        <!-- <div class="reservation-section">
             <div class="reservation-item">
-                <!-- 아마 여기가 구현된다면 Spark로 계산 -->
                 <strong>시간 별 혼잡도</strong><br>
                 <canvas id="congestionChart" width="400" height="200"></canvas>
-            </div>
+            </div> -->
     </div>
 </body> 
 
 <div class="footer">
     <div class="footer-info">
-        <p>주식회사 삼둘샵 ㅋㅋ</p>
-        <p>대표자명: 조수진</p>
-        <p>사업자 번호: 220-88-52570</p>
+        <p>주식회사 인생한방</p>
+        <p>대표자명: 김원준</p>
+        <p>사업자 번호: 02-123-1234</p>
         <p><a href="#">이용약관</a> | <a href="#">개인정보처리방침</a> | <a href="#">위치정보 이용약관</a> | <a href="#">고객센터</a></p>
-        <p>&copy; 주차잇슈에대한설명을적으세요</p>
+        <p>&copy; 주차잇슈</p>
     </div>
 </div>
 
@@ -108,7 +107,7 @@
 </script>
 
 <!-- 혼잡도 차트 -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // 여기가 지금 혼잡도 bargraph 예시인듯
     const ctx = document.getElementById('congestionChart').getContext('2d');
@@ -171,7 +170,7 @@
             }
         }
     });
-</script>
+</script> -->
 <!-- url에서 값 가져오기 -->
 <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -247,7 +246,7 @@
 
             // 주차장 주차 가능 면 수
             // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
-            // document.querySelector('.availability-text').innerText = `주차 가능: ${parkInfo.availableSlots}면`;
+            document.querySelector('.availability-text').innerText = `총 면수: ${parkInfo.park_total}면`;
             // 운영시간 파트
             const spans = document.querySelectorAll('.reservation-item span');
             // 평일 운영 시간 업데이트

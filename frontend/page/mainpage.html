@@ -99,8 +99,6 @@
                 </nav>
             </div>
         </div>
-    <!-- 검색창 기능 -->
-    <script src="assets/js/form.js"></script> <!-- 여기에서 window.enter_result, window.search_result 정의했음-->
     <!-- voice search -->
     <script src="assets/js/voice-search.js"></script>
     <script>
@@ -209,6 +207,7 @@
 
         // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
         var map = L.map('map').setView([37.5665, 126.9780], 16);
+        window.map = map;
 
         var markers = L.layerGroup().addTo(map);
         var hotmarkers = L.layerGroup().addTo(map);
@@ -504,5 +503,7 @@
             }
         }
     </script>
+    <!-- 검색창 기능 -->
+    <script src="assets/js/form.js"></script>
 </body>
 </html>

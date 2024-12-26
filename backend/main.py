@@ -16,6 +16,10 @@ from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListS
 # 검색 모듈
 from search.module.search_module import searchParkDB, searchHotDB
 
+import boto3
+import io
+import pandas as pd
+
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
 
 @app.get("/")
@@ -69,9 +73,9 @@ async def get_park_info(parkid: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/getRelated")
-async def get_related_data(text: str, cls:str):
+async def get_related_data(text: str, cls:str, lat:float, lon:float):
     # [{'park_nm': '무궁화주차빌딩'}, {'park_nm': '무궁화빌라'}, {'park_nm': '무궁화타운 제3동'}, {'park_nm': '무궁화타운 제4 동'}, {'park_nm': '무궁화타운 제5동'}]
-    result = related_data(text, cls)
+    result = related_data(text, cls, lat, lon)
     if result:
         dic = {}
         for i in result:
@@ -219,3 +223,13 @@ async def hotplace_content_info(contentid: str):
     from hotplace.modules.hotplace import select_hotplace_content
 
     return select_hotplace_content(contentid)
+
+s3 = boto3.client('s3')
+@app.get("/api/realSearch")
+async def real():
+    bucket = 'fiveguys-s3'
+    obj = s3.get_object(Bucket=bucket, Key="rank.csv")
+    df = pd.read_csv(io.BytesIO(obj["Body"].read()))
+    print(df)
+    # dataframe 잘 들어오면 value만 list로 받아서 return 하면 끝
+    return True
