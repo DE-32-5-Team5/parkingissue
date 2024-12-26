@@ -10,18 +10,26 @@
 
 // 실시간 검색어 데이터 (예시)
 // 여기에 log 데이터 긁어오는 쿼리 짜면 되는거고
-const trendingSearches = [
-    "월드컵 중계",
-    "날씨",
-    "플레이데이터",
-    "만세력",
-    "에스파",
-    "사주풀이",
-    "MBTI",
-    "태풍",
-    "뉴진즈",
-    "아일릿"
-];
+// const trendingSearches = [
+//     "월드컵 중계",
+//     "날씨",
+//     "플레이데이터",
+//     "만세력",
+//     "에스파",
+//     "사주풀이",
+//     "MBTI",
+//     "태풍",
+//     "뉴진즈",
+//     "아일릿"
+// ];
+
+// DOM 요소
+const searchInput = document.querySelector(".search-bar");
+const suggestionsDiv = document.querySelector('.suggestions');
+const voiceButton = document.querySelector('.voice-search-btn');
+const trendingSearchesDiv = document.querySelector('.trending-searches')
+
+// ################연관검색어################
 
 let selectElementRe = null; // select 요소 가져오기
 let selectedValueRe = null;
@@ -92,13 +100,6 @@ async function sendSearch(txt_value) {
         return null; // 에러 발생 시 null 반환
     }
 }
-
-// DOM 요소
-const searchInput = document.querySelector(".search-bar");
-const suggestionsDiv = document.querySelector('.suggestions');
-const voiceButton = document.querySelector('.voice-search-btn');
-const trendingSearchesDiv = document.querySelector('.trending-searches')
-
 
 let timeout;
 let isComposing = false;
@@ -185,22 +186,62 @@ voiceButton.addEventListener('click', function() {
     }
 });
 
+// ################ 실시간 검색어 ################
+async function getParkingList() {
+    const apiUrl = 'https://parkingissue.online/api/realSearch';
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json(); // JSON 형식으로 응답 받기
+        console.log('반환된 실검 데이터:', data); // 데이터를 콘솔에 출력
+        return data; // 데이터를 반환
+    } catch (error) {
+        console.error('Error fetching parking list:', error);
+        return []; // 실패 시 빈 배열 반환
+    }
+}
+
 // 실시간 검색어 순위 애니메이션
 let currentIndex = 0;
-function displayTrendingSearches() {
-    const keyword = trendingSearches[currentIndex];
+
+async function displayTrendingSearches() {
+    // getParkingList에서 데이터를 비동기적으로 받아온 후
+    const trendingSearches = await getParkingList(); // 데이터를 받아오는 부분을 비동기 처리
+    
+    if (trendingSearches.length === 0) {
+        console.log('No trending searches available.');
+        return;
+    }
+
+    let keyword = trendingSearches[currentIndex];
+    // 5글자 초과 시 '...' 추가
+    if (keyword.length > 5) {
+        keyword = keyword.slice(0, 5) + '...';
+    }
     const div = document.createElement('div');
     div.className = 'trending-item';
     div.textContent = `🔥 ${keyword}`;
-    
-    trendingSearchesDiv.innerHTML = '';
-    trendingSearchesDiv.appendChild(div);
-    
+
+    trendingSearchesDiv.innerHTML = ''; // 기존 내용 지우기
+    trendingSearchesDiv.appendChild(div); // 새 내용 추가
+
     currentIndex = (currentIndex + 1) % trendingSearches.length;
 }
 
 // 페이지 로드 시 실시간 검색어 표시
-displayTrendingSearches();
+document.addEventListener('DOMContentLoaded', async () => {
+    await displayTrendingSearches(); // 페이지 로드 시 실시간 검색어 표시 시작
+    setInterval(displayTrendingSearches, 3000); // 실시간 검색어 업데이트
+});
 
 // 클릭 이벤트 처리 (검색창 외부 클릭 시 추천 검색어 숨기기)
 document.addEventListener('click', (e) => {
@@ -208,7 +249,3 @@ document.addEventListener('click', (e) => {
         suggestionsDiv.style.display = 'none';
     }
 });
-
-// 실시간 검색어 업데이트 시작
-displayTrendingSearches();
-setInterval(displayTrendingSearches, 3000);
