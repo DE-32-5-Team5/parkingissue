@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 
 from routers.login import r_login
@@ -10,6 +11,14 @@ from routers.mypage import r_mypage
 from routers.event import r_event
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 모든 도메인을 허용하려면 ["*"]
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 HTTP 메서드 허용
+    allow_headers=["*"],  # 모든 헤더 허용
+)
 
 app.include_router(r_login)
 app.include_router(r_register)

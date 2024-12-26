@@ -78,6 +78,7 @@
             const loginurl = 'https://parkingissue.online/api/login/';
             if (link.id === 'personal_user') {
                 loginurl = 'https://parkingissue.online/api/login/common/personal';
+                
                 fetch (loginurl, {
                 method: 'POST',
                 headers: {
@@ -87,24 +88,8 @@
                 body: JSON.stringify ({
                     'user_id': id,
                     'user_pw': pw,
-                }),
-            })
-            } else if (link.id === 'enterprise_user') {
-                loginurl = 'https://parkingissue.online/api/login/common/enterprise';
-                fetch (loginurl, {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify ({
-                    'manager_id': id,
-                    'manager_pw': pw,
-                }),
-            })
-            }
-            
-            .then (postResponse => {
+                })
+                .then (postResponse => {
                 if(!postResponse.ok) {
                     throw new Error(`POST Request failed: ${postResponse.status}`);
                 }
@@ -114,9 +99,40 @@
                         window.location.href = "./index.html";
                     });
                 };
-            }).catch(error => {
-                console.error('로그인 요청 실패:', error);
-            });
+                }).catch(error => {
+                    console.error('로그인 요청 실패:', error);
+                })
+            })
+            } else if (link.id === 'enterprise_user') {
+                loginurl = 'https://parkingissue.online/api/login/common/enterprise';
+                
+                fetch (loginurl, {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify ({
+                    'manager_id': id,
+                    'manager_pw': pw,
+                })
+                .then (postResponse => {
+                if(!postResponse.ok) {
+                    throw new Error(`POST Request failed: ${postResponse.status}`);
+                }
+                else if (postResponse.ok) {
+                    response.json().then(data => {
+                        localStorage.setItem('token', data.token);
+                        window.location.href = "./index.html";
+                    });
+                };
+                }).catch(error => {
+                    console.error('로그인 요청 실패:', error);
+                })
+            })
+            }
+            
+            
         })      
     </script>
         <!-- separator -->

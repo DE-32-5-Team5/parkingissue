@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 import traceback
-import bcrypt
 import os
 import jwt
 
@@ -23,6 +22,7 @@ async def login_personal_service(personal_login: PersonalLogin):
         일반회원 id, pw 기반 로그인 시도시 작동하는 서비스
     """
     secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
+    password_decrypt_key = os.getenv("DB_STR_KEY")
     conn = login_db()
     if not conn:
         # 데이터베이스 연결 오류
@@ -31,14 +31,15 @@ async def login_personal_service(personal_login: PersonalLogin):
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디, 비밀번호 확인) - 실제 인증 로직 구현
-            sql = "SELECT user_id, user_pw FROM user_info WHERE user_id = %s"
-            cursor.execute(sql, (personal_login.user_id,))
+            sql = "SELECT user_id, CAST(AES_DECRYPT(unhex(user_pw), SHA2(%s, 256)) AS CHAR(255)) AS user_pw FROM user_info WHERE user_id = %s"
+            cursor.execute(sql, (password_decrypt_key, personal_login.user_id,))
             user = cursor.fetchone()
 
-            if not user or not bcrypt.checkpw(personal_login.user_pw.encode(), user['user_pw'].encode()):
+            
+            if not user or not (personal_login.user_pw == str(user['user_pw'])):
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Incorrect username or password",
+                    detail=f"Incorrect username or password, {user['user_pw']} is not {str(personal_login.user_pw)}",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
@@ -60,6 +61,7 @@ async def login_enterprise_service(enterprise_login: EnterpriseLogin):
     """
     print(enterprise_login)
     secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
+    password_decrypt_key = os.getenv("DB_STR_KEY")
     conn = login_db()
     if not conn:
         # 데이터베이스 연결 오류
@@ -68,11 +70,11 @@ async def login_enterprise_service(enterprise_login: EnterpriseLogin):
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디, 비밀번호 확인) - 실제 인증 로직 구현
-            sql = "SELECT manager_id, manager_pw FROM manager_info WHERE manager_id = %s"
-            cursor.execute(sql, (enterprise_login.manager_id,))
+            sql = "SELECT manager_id, CAST(AES_DECRYPT(unhex(manager_pw), SHA2(%s, 256)) AS CHAR(255)) AS manager_pw FROM manager_info WHERE manager_id = %s"
+            cursor.execute(sql, (password_decrypt_key, enterprise_login.manager_id,))
             user = cursor.fetchone()
 
-            if not user or not bcrypt.checkpw(enterprise_login.manager_pw.encode(), user['manager_pw'].encode()):
+            if not user or not (enterprise_login.manager_pw == str(user['manager_pw'])):
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Incorrect username or password",

@@ -36,6 +36,6 @@ ARG DB_USER_VIIIPW
 ARG DB_USER_IXPW
 ARG DB_USER_XPW
 
-
+ARG DB_STR_KEY
 
 CMD ["python", "-m", "main"]
