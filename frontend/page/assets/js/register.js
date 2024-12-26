@@ -28,6 +28,7 @@ function toggleValidationClass(field, isValid) {
     }
 }
 
+/* 개인 회원가입 */
 // 이벤트 리스너 추가: input과 textarea 모두 선택
 document.querySelectorAll("input, textarea").forEach(field => {
     field.addEventListener("input", () => validateField(field));
@@ -74,8 +75,15 @@ document.getElementById("check-id-btn").addEventListener("click", async () => {
 
 // 가입하기 버튼 클릭 이벤트
 document.getElementById("register-btn").addEventListener("click", async (event) => {
-        // 기본 동작(폼 제출)을 막음
+    // 기본 동작(폼 제출)을 막음
     event.preventDefault();
+
+    // 기본 폼 검증 동작 수행
+    if (!event.target.form.checkValidity()) {
+        event.target.form.reportValidity(); // 브라우저 기본 검증 메시지 표시
+        return; // 검증 실패 시 중단
+    }
+
     const userName = document.getElementById("username").value;
     const userNick = document.getElementById("nickname").value;
     const userId = document.getElementById("id").value;
@@ -85,7 +93,6 @@ document.getElementById("register-btn").addEventListener("click", async (event) 
         alert("아이디 중복확인을 해주세요.");
         document.getElementById("id").focus();
         return;
-        
     }
 
     try {

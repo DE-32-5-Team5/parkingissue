@@ -13,13 +13,11 @@
         <!-- 상단 섹션: 프로필 정보 -->
         <section class="profile-section">
             <div class="profile-card">
-                <img src="images/enterprise.png" alt="프로필 사진" class="profile-image">
-                <h2 class="profile-name">(재)서울관광재단 </h2>
-                <!-- <p class="profile-email">example@email.com</p> -->
-                <!-- <button class="edit-profile-btn">Edit Profile</button> -->
+                <img src="images/profile.png" alt="프로필 사진" class="profile-image">
+                <h2 class="profile-name">(재)서울관광재단</h2>
             </div>
         </section>
-        
+
         <!-- 중단 섹션: 내 정보 -->
         <section class="information-section">
             <h3>내 정보</h3>
@@ -29,44 +27,29 @@
             </div>
             <div class="information-card">
                 <p class="information-title">아이디</p>
-                <p class="information-value" style="margin-right: 20px;">abcd1234</p>
+                <p class="information-value" id="ID" style="margin-right: 20px;">tmpid</p>
             </div>
             <div class="information-card">
                 <p class="information-title">비밀번호</p>
                 <p class="information-value" style="margin-left: 380px;">*****</p>
-                <button class="delete-btn">수정</button>
+                <button class="delete_btn" id="editPasswordBtn">수정</button>
             </div>
         </section>
 
-        <!-- 하단 섹션: 행사 목록 (이미지 추가 및 3개씩 나열) -->
+        <!-- 하단 섹션: 행사 목록 -->
         <section class="event-section">
             <div class="event-header">
                 <h3>행사 목록</h3>
                 <div class="icon-buttons">
-                    <button class="icon-button" onclick="location.href='./event/index.html'">+</button>
-                    <button class="icon-button">-</button>
+                    <button class="icon-button" id="addEventButton">+</button>
                 </div>
             </div>
-            <div class="event-grid">
-                <div class="event-card">
-                    <img src="images/event1.jpg" alt="행사 이미지" class="event-image">
-                    <p class="information-title">구름이 걷히니 달이 비치고 바람 부니 별이 빛난다</p>
-                </div>
-                <div class="event-card">
-                    <img src="images/event2.jpg" alt="행사 이미지" class="event-image">
-                    <p class="information-title">국가유산 조선왕릉축전</p>
-                </div>
-                <div class="event-card">
-                    <img src="images/event3.jpg" alt="행사 이미지" class="event-image">
-                    <p class="information-title">대정 동일 해넘이축제</p>
-                </div>
-            </div>
+            <div class="event-grid" id="event-grid"></div>
         </section>
-        
+
         <!-- 하단 섹션: 로그아웃 및 기타 -->
         <section class="logout-section">
             <button class="logout-btn">Log Out</button>
-
             <button id="openModal">회원 탈퇴</button>
 
             <!-- 회원 탈퇴 모달 -->
@@ -79,30 +62,136 @@
                     <button class="cancel">취소</button>
                 </div>
             </div>
-            
-            <script>
-                const modal = document.getElementById('unsubscribeModal');
-                const closeModal = document.getElementById('closeModal');
-                const openModalButton = document.getElementById('openModal');
-        
-                // 모달 열기
-                openModalButton.addEventListener('click', () => {
-                    modal.style.display = 'block';  // 모달 표시
-                });
-        
-                // 모달 닫기
-                closeModal.addEventListener('click', () => {
-                    modal.style.display = 'none';  // 모달 숨기기
-                });
-        
-                // 배경 클릭 시 모달 닫기
-                window.addEventListener('click', (event) => {
-                    if (event.target === modal) {
-                        modal.style.display = 'none';  // 모달 숨기기
-                    }
-                });
-            </script>
+
+            <!-- 비밀번호 수정 모달 -->
+            <div id="passwordModal" class="modal">
+                <div class="modal-content">
+                    <h2>비밀번호 변경</h2>
+                    <input type="password" placeholder="현재 비밀번호" id="currentPassword">
+                    <input type="password" placeholder="새 비밀번호" id="newPassword">
+                    <input type="password" placeholder="새 비밀번호 확인" id="confirmPassword">
+                    <p id="passwordError" style="color: red; display: none;"></p>
+                    <button class="confirm-btn" id="changePasswordBtn">확인</button>
+                    <button class="cancel-btn" id="cancelPasswordBtn">취소</button>
+                </div>
+            </div>
         </section>
     </div>
+
+    <script>
+        // 회원 탈퇴 모달 열기/닫기
+        const modal = document.getElementById('unsubscribeModal');
+        const closeModal = document.getElementById('closeModal');
+        const openModalButton = document.getElementById('openModal');
+
+        openModalButton.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // 비밀번호 수정 모달 열기/닫기
+        const passwordModal = document.getElementById('passwordModal');
+        const editPasswordBtn = document.getElementById('editPasswordBtn');
+        const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+        const passwordError = document.getElementById("passwordError");
+
+        editPasswordBtn.addEventListener('click', () => {
+            passwordModal.style.display = 'block';
+        });
+
+        cancelPasswordBtn.addEventListener('click', () => {
+            passwordModal.style.display = 'none';
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            passwordError.style.display = 'none';
+        });
+
+        // 비밀번호 변경 요청
+        document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            const response = await fetch('http://localhost:8000/change-password/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    current_password: currentPassword,
+                    new_password: newPassword,
+                    confirm_password: confirmPassword
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.status !== 200) {
+                passwordError.style.display = 'block';
+                passwordError.textContent = data.detail || "비밀번호 변경에 실패했습니다.";
+            } else {
+                passwordError.style.display = 'none';
+                alert(data.message);
+                passwordModal.style.display = 'none';
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+        });
+
+        // + 버튼 눌렀을 때 ID 전달
+        document.getElementById("addEventButton").addEventListener("click", async () => {
+            const ID = document.getElementById("ID").innerText.trim();
+            const targetURL = `event_upload.html?ID=${ID}`; // ID를 URL 파라미터로 추가
+            window.location.href = targetURL; // 해당 URL로 이동
+        });
+
+        // 이벤트 목록 가져오기
+        document.addEventListener("DOMContentLoaded", async () => {
+            const ID = document.getElementById("ID").innerText.trim();
+            console.log("^^^^^^^^^^^^^^^^^^^")
+            console.log(ID)
+
+            try {
+                const response = await fetch(`https://parkingissue.online/api2/events?ID=${ID}`);
+                const event = await response.json();
+                console.log(event)
+
+                if (event.events) {
+                    event.events.forEach(e => {
+                        const eventCard = document.createElement("div");
+                        eventCard.className = "event-card";
+                        eventCard.innerHTML = `
+                            <img src="${e.firstimage}" alt="${e.title}" class="event-image">
+                            <p class="information-title">${e.title}</p>
+                        `;
+                        document.getElementById("event-grid").appendChild(eventCard);
+
+                        eventCard.addEventListener("click", () => {
+                            window.location.href = `event_upload.html?contentid=${e.contentid}`;
+                        });
+                    });
+                } else {
+                    console.log(event.error || "No events found.");
+                }
+            } catch (error) {
+                console.error("이벤트 데이터를 가져오는 중 오류 발생:", error);
+            }
+        });
+    </script>
 </body>
 </html>
+
+
+
+
+
+

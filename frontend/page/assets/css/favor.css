@@ -63,7 +63,7 @@
 
 /* 즐겨찾기 리스트 스타일 */
 .favorite-list {
-    background-color: #f4f4f4; /* 배경 색 */
+    /* background-color: #f4f4f4;  */
     padding: 40px 0; /* 위아래 여백 */
     text-align: center; /* 가운데 정렬 */
 }
@@ -126,7 +126,7 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 100px;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     justify-content: center;

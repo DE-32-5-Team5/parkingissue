@@ -519,8 +519,9 @@ input, select, textarea {
 			line-height: 1;
 			align-items: center;
 			justify-content: center;
-			margin-left: 8px; /* 검색창과 버튼 사이 간격 */
+			margin-left: 0px; /* 검색창과 버튼 사이 간격 */
 			transition: background 0.3s;
+			margin-top: 28px;
 		}
 		.search-button {
 			background: none;
@@ -533,11 +534,13 @@ input, select, textarea {
 			justify-content: center;
 			transition: background 0.3s;
 			margin-right: 10px;
+			font-size: 20px;
+			margin-top: 16px;
 		}
 
 		.voice-search-icon {
-			width: 20px; /* 아이콘 크기 */
-			height: 20px;
+			width: 25px; /* 아이콘 크기 */
+			height: 25px;
 		}
 		.suggestions {
 			top: 100%;
@@ -626,13 +629,47 @@ input, select, textarea {
 				margin-left: 20px;
 				margin-top: -55px;
 			}
+
+			.search_class {
+				display: flex; /* Flexbox 사용 */
+				flex-direction: column; /* 세로 정렬 */
+				align-items: center; /* 왼쪽 정렬 */
+				gap: 0px; /* label과 select 사이 간격 */
+				margin: 0px auto; /* 전체 여백 */
+				margin-right: -20px;
+			}
+			
+			.search_class label {
+				font-size: 13px; /* 글꼴 크기 */
+				color: #333; /* 텍스트 색상 */
+				/* font-weight: bold; 강조 */
+				margin: 0px
+			}
+			
+			.search_class select {
+				outline: none; /* 선택 시 외곽선 제거 */
+				padding: 6px 10px; /* 내부 여백 설정 */
+				border: 2px solid #33cbca; /* 얇은 테두리 추가 */
+				border-radius: 4px; /* 둥근 모서리 */
+				background-color: #fff; /* 흰색 배경 */
+				font-size: 13px; /* 글꼴 크기 */
+				font-weight: bold;
+				color: #333; /* 텍스트 색상 */
+				cursor: pointer; /* 포인터 변경 */
+				text-align: center;
+				transition: border-color 0.3s ease; /* 호버 애니메이션 */
+			}
+			
+			.search_class select:hover {
+				border-color: #007BFF; /* 호버 시 테두리 색상 변경 */
+			}
 		
 			.search-bar-container {
 				display: flex;
 				flex-direction: row; /* 검색창과 아이콘을 가로로 배치 */
 				align-items: center; /* 세로 중앙 정렬 */
 				gap: 10px; /* 검색창과 아이콘 사이 간격 */
-				width: 100%; /* 부모 요소 너비 꽉 채움 */
+				width: 105%; /* 부모 요소 너비 꽉 채움 */
 				padding: 0 0px; /* 좌우 여백 추가 */
 			}
 		
@@ -654,6 +691,12 @@ input, select, textarea {
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				margin-top: 32px;
+				margin-right: -20px;
+			}
+			
+			.search-button {
+				margin-top: 18px;
 			}
 		
 			#header .logo {

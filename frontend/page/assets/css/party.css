@@ -3268,6 +3268,7 @@ body.is-touch .tiles article .content {
 
 .item-container {
 	display: grid;
+	width: 100%;
 	grid-template-columns: repeat(3, 1fr);
 	margin-top: 1%;
 	/* flex-wrap: wrap; */
@@ -3275,9 +3276,18 @@ body.is-touch .tiles article .content {
 	justify-content: center;
 	justify-items: center;
 	margin-bottom: auto;
+	border: 1px solid red;
 }
 
-.article-link {
+/* 이미지 크기 맞추기 */
+.item-container .image-container img {
+    width: 100%;      
+    height: 15rem;     /* 고정된 높이 설정 */
+    object-fit: cover; /* 이미지를 자르지 않고 비율을 유지하면서 채우기 */
+    border-radius: 8px; /* 선택 사항: 이미지에 둥근 모서리 추가 */
+}
+
+ .article-link {
 	justify-items: center;
 }
 

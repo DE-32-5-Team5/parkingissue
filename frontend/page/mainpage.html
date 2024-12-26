@@ -1,0 +1,509 @@
+<!DOCTYPE HTML>
+<!-- html 이동 되는 곳은 주차장 팝업, 네비게이션 바 -->
+<html>
+<head>
+    <title>주차잇슈</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" /> 
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
+    <!-- marker cluster css -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- marker cluster -->
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+</head>
+<body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <div class="inner">
+                <!-- Logo and Search Bar Container -->
+                <div class="logo-container">
+                    <a href="mainpage.html" class="logo">
+                        <span class="symbol"><img src="images/자동차.gif" alt="" /></span><span class="title">주차잇슈</span>
+                    </a>
+                    <!-- Search Bar -->
+                    <div class="search-bar-container">
+                        <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
+                        <!-- 여기에서 이벤트 몇개 추가 search.js 에 있음 -->
+                        <form class="search-form" onsubmit="handleSearch(event); return false;"> 
+                            <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
+                            <div class="search_class">
+                                <form action="#">
+                                    <label for="parkhot">검색구분</label>
+                                    <select name="parkorhot" id="parkhot">
+                                    <option value="park">주차장</option>
+                                    <option value="hotplace">핫플</option>
+                                    </select>
+                                </form>
+                            </div>
+                            <div class="search-buttons">
+                                <button type="button" class="voice-search-btn" title="음성 검색">
+                                    <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
+                                </button>
+                                <button type="button" class="search-button" title="검색" onclick="handleSearch(event)">🔍</button>    
+                            </div>
+                        </form>
+                        <div class="suggestions"></div>
+                    </div>
+                    <div class="trending-searches">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+                <!-- 지도 섹션 -->
+                <div class="parking-info-container">
+                    <div class="map-section" style="position: relative;">
+                        <!-- Leaflet 지도를 표시할 div -->
+                        <div id="map" style="position: relative; width: 100vw; height: 76vh;"></div>
+                        <button id="find-me" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; padding: 0; border: none; border-radius: 8px; z-index: 1000;">
+                            <img src="images/naver.png" style="width: 100%; height: 100%; object-fit: cover;">
+                        </button>
+                        <button id="research" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border: none; border-radius: 25px; background-color: #4285F4; color: white; font-size: 14px; font-weight: bold; letter-spacing: 0px; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000; cursor: pointer; width: 170px;">
+                            <img src="images/research_icon.png" alt="reload-icon" style="width: 16px; height: 16px; margin-right: 8px;">
+                            현 지도에서 검색
+                        </button>
+                    </div>
+                </div>
+                <div id="status"></div>
+                <a id="map-link" href="" target="_blank"></a>
+            </div>
+        </div>
+        <!-- 네비게이션 자리 -->
+        <div class="navi">
+            <div class="navi-section">
+                <nav class="navbar">
+                    <ul>
+                        <!-- 홈으로 새로고침 -->
+                        <li><a href="mainpage.html"><img src="images/sweethome.png" alt="Home" /> HOME</a></li>
+                        <!-- hot place 게시판 이동 -->
+                        <li><a href="party.html"><img src="images/hotplace.png" alt="About" /> HOT PLACE</a></li>
+                        <!-- 즐겨찾기 페이지 이동 -->
+                        <li><a href="favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
+                        <!-- 개인 프로필 페이지 이동 -->
+                        <li><a href="personal_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    <!-- voice search -->
+    <script src="assets/js/voice-search.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            setTimeout(() => {
+                if (window.pageYOffset === 0) {
+                    window.scrollTo(0, 1);
+                }
+            }, 1000);
+        });
+    </script>
+    <!-- Initialize the Leaflet Map -->
+    <script>
+        // 지도 중심의 위도, 경도를 얻는 함수
+        // 이 위치에서 주변 검색을 위한 함수
+        function getMapCenter() {
+            var center = map.getCenter();  // 현재 지도 중심 좌표 반환
+            var cen_latitude = center.lat;     // 위도
+            var cen_longitude = center.lng;    // 경도
+
+            return { cen_latitude, cen_longitude };
+        }
+        
+        var parkIcon = L.icon({
+                    iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+
+        var hotIcon = L.icon({
+                    iconUrl: 'images/hotplace-icon.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+
+        // 주차장 마커 찍기
+        function addParkingMarkers(parkingData) {  // 주변 주차장 데이터 가져와서
+            markers.clearLayers();
+            parkingData.forEach(function(parking) {  // for 반복문
+                var marker = L.marker([parking.park_la, parking.park_lo], { icon: parkIcon }).addTo(markers); 
+                // marker.bindPopup(`<b>${parking.park_nm}</b><br>${parking.park_addr}`); 
+                // 클릭이 일어날 경우 주차장 상세 페이지로 이동
+                marker.on('click', function() {
+                    const parkla = encodeURIComponent(parking.park_la);
+                    const parklo = encodeURIComponent(parking.park_lo);
+                    const parkid = encodeURIComponent(parking.park_id);
+                    const parknm = encodeURIComponent(parking.park_nm);
+                    const parkaddr = encodeURIComponent(parking.park_addr);
+                    // 원하는 HTML 페이지로 이동
+                    window.location.href = `parkinginfo.html?parkid=${parkid}&parknm=${parknm}&parkaddr=${parkaddr}&lat=${parkla}&lon=${parklo}`;
+                });
+                // markers.addLayer(marker);
+            });
+            // map.addLayer(markers);
+        }
+        function fetchAndProcessParkingData(latitude, longitude) {
+            const postUrl = 'https://parkingissue.online/api/location'; // POST 요청 URL
+            const getUrl = 'https://parkingissue.online/api/frontget/'; // GET 요청 URL
+
+            // FastAPI에 데이터 POST 요청
+            return fetch(postUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    latitude: latitude,
+                    longitude: longitude,
+                }),
+            })
+            .then(postResponse => {
+                if (!postResponse.ok) {
+                    throw new Error(`POST Request failed: ${postResponse.status}`);
+                }
+                console.log('POST 요청 성공');
+                return new Promise(resolve => setTimeout(resolve, 2500));
+            })
+            .then(() => fetch(getUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    cache: "no-store",
+            }))  
+            .then(getResponse => {
+                if (!getResponse.ok) {
+                    throw new Error(`GET Request failed: ${getResponse.status}`);
+                }
+                return getResponse.json();
+            })
+            .then(data => {
+                if (data.stored_data) {
+                    console.log('GET 요청 성공, 데이터:', data.stored_data);
+                    return data.stored_data;
+                } else {
+                    markers.clearLayers();
+                    throw new Error('No data received.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
+        var map = L.map('map').setView([37.5665, 126.9780], 16);
+        window.map = map;
+
+        var markers = L.layerGroup().addTo(map);
+        var hotmarkers = L.layerGroup().addTo(map);
+
+        L.tileLayer('https://xdworld.vworld.kr/2d/Base/202002/{z}/{x}/{y}.png', {
+            maxZoom: 21,
+            attribution: '© VWorld'
+        }).addTo(map);
+        // 현 위치 재검색 버튼
+        const researchButton = document.getElementById("research");
+
+        // 초기 중심 좌표
+        // 이거 이용해서 내 위치 주변 500m 할때도 처음 한번만 조회하게 하고
+        // 그 다음부터는 이동 거리랑 비교해서 멀어졌을때 재검색하게 하면 될듯
+        let initialCenter = null;
+
+        let lastFetchedTime = 0; // 마지막으로 요청을 보낸 시간
+        const FETCH_INTERVAL = 2000; // 10초 간격으로 요청 (10000ms)
+        
+        // watchPosition의 ID
+        let watchId = null;
+
+        // GeoFindMe 함수 - 현재 위치 찾기
+        function geoFindMe() {
+            const status = document.querySelector("#status");
+            const mapLink = document.querySelector("#map-link");
+
+            mapLink.href = "";
+
+            let currentMarker = null;
+            let isFirstUpdate = true;
+
+            function success(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // 서울이 없는 관계로 잠시 수원시청 기준으로 시작
+                // const latitude = 37.2635846787744;
+                // const longitude = 127.028715898311;
+                
+                // 울산
+                // const latitude = 35.5444169723408;
+                // const longitude = 129.331864527424;
+
+                // 상태 텍스트 초기화
+                status.textContent = "";
+                mapLink.href = `https://map.vworld.kr/map/maps.do?centerLon=${longitude}&centerLat=${latitude}&zoom=18`;
+
+                // 내 위치 아이콘
+                var customIcon = L.icon({
+                    iconUrl: 'images/my-location.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+
+                // 위치 업데이트 시 FastAPI에 요청을 주기적으로 보내기
+                const currentTime = Date.now();
+                if (currentTime - lastFetchedTime >= FETCH_INTERVAL) {
+                    // 일정 시간 간격이 지난 경우에만 요청
+                    hotmarkers.clearLayers();
+                    fetchAndProcessParkingData(latitude, longitude)
+                        .then(parkingData => {
+                            if (parkingData) {
+                                console.log("주차장 데이터:", parkingData);
+                                addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                            } else {
+                                console.error("주차장 데이터를 가져오지 못했습니다.");
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+                        lastFetchedTime = currentTime; // 요청 보낸 시간을 현재 시간으로 갱신
+                    }
+
+                // 지도에 커스텀 아이콘을 사용하는 마커 추가
+                // 내 위치 마커 처리
+                if (!currentMarker) {
+                    // 최초 마커 생성
+                    currentMarker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map);
+                } else {
+                    // 마커 위치만 업데이트
+                    currentMarker.setLatLng([latitude, longitude]);
+                }
+
+                // 지도 중심을 현재 위치로 이동
+                if (isFirstUpdate) {
+                    map.setView([latitude, longitude], map.getZoom());
+                    initialCenter = map.getCenter();
+                    isFirstUpdate = false;
+                }
+
+                map.invalidateSize(); // 지도 크기 갱신 (리사이징 문제 방지)
+            }
+
+            function error() {
+                status.textContent = "Unable to retrieve your location";
+            }
+
+            var options = {
+                enableHighAccuracy: true, // 모바일에서는 gps
+                maximumAge: 0, // 항상 최신 위치 정보 요청
+                timeout: 5000 // 위치 정보를 가져오는 최대 시간 5초 넘으면 오류메시지
+            }
+
+            if (!navigator.geolocation) {
+                status.textContent = "Geolocation is not supported by your browser";
+            } else {
+                status.textContent = "Locating…";
+                // 위치변경될때마다 함수호출해서 내 위치 최신화
+                watchId = navigator.geolocation.watchPosition(success, error, options);
+                // navigator.geolocation.getCurrentPosition(success, error, options);
+            }
+        }
+        
+        // 지도 이동 시 일어나는 이벤트
+        map.on('moveend', function () {
+            const currentCenter = map.getCenter(); // 현재 지도 중심 좌표
+            if (initialCenter && !initialCenter.equals(currentCenter)) {
+                researchButton.style.display = "flex"; // 지도 이동 시 버튼 표시
+            } else {
+                researchButton.style.display = "none"; // 이동하지 않으면 버튼 숨기기
+            }
+        });
+        // 현위치 검색을 눌렀을때 발생하는 이벤트
+        researchButton.addEventListener("click", function () {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                watchId = null; // ID 초기화
+            }
+            const center = map.getCenter(); // 현재 지도 중심 가져오기
+            hotmarkers.clearLayers();
+            fetchAndProcessParkingData(center.lat, center.lng)
+                .then(parkingData => {
+                    if (parkingData) {
+                        console.log("주차장 데이터:", parkingData);
+                        addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                    } else {
+                        console.error("주차장 데이터를 가져오지 못했습니다.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            initialCenter = map.getCenter(); // 현재 중심을 초기 중심으로 갱신
+            researchButton.style.display = "none"; // 버튼 숨기기
+        });
+
+        // 웹 시작하자마자 현재 위치로 이동!
+        // window.onload = geoFindMe;
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const latitude = parseFloat(urlParams.get('lat'));
+            const longitude = parseFloat(urlParams.get('lon'));
+            const conid = urlParams.get('contentid')
+
+            // URL에 위경도 파라미터가 있으면 해당 위치로 지도 이동
+            if (latitude && longitude && conid) {
+                if (watchId) { // 현재 위치 주변 500m 검색 중지
+                            navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                            watchId = null; // ID 초기화
+                        }
+                // 위경도가 있다면 해당 위치로 지도 이동
+                hotmarkers.clearLayers();
+                map.setView([latitude, longitude], 16); // 16는 줌 레벨
+                // 핫플 마커 찍고
+                var hotmarker = L.marker([latitude, longitude], { icon: hotIcon }).addTo(hotmarkers);
+                hotmarker.on('click', function() {
+                    const contenid = encodeURIComponent(conid) // url param으로 contentid 까지
+                    window.location.href = `post1.html?contentid=${contenid}`
+                });
+                fetchAndProcessParkingData(latitude, longitude) // 주변 500m 주차장
+                    .then(parkingData => {
+                        if (parkingData) {
+                            console.log("주차장 데이터:", parkingData);
+                            addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                        } else {
+                            console.error("주차장 데이터를 가져오지 못했습니다.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            } else {
+                // 위경도가 없다면 내 위치 찾기
+                geoFindMe();
+            }
+        };
+        // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
+        document.querySelector("#find-me").addEventListener("click", function() {
+            // 페이지 새로고침
+            history.replaceState({}, null, location.pathname);
+            location.reload();
+        });
+
+        // ####################################### 검색 ##########################################
+
+        let selectElement = null;
+        let selectedValue = null;
+
+        // 검색어 가져오기 함수
+        async function getSearchValue() {
+            const searchInput = document.querySelector(".search-bar");
+            return searchInput.value; // 검색어 값
+        }
+
+        // Enter 키 입력 또는 검색 버튼 클릭 시 호출되는 함수
+        async function handleSearch(event) {
+            event.preventDefault(); // 기본 폼 제출 동작 방지
+            const searchValue = await getSearchValue();
+        
+            if (searchValue) {
+                console.log("검색어 (Enter 키):", searchValue);
+                selectElement = document.getElementById("parkhot"); // select 요소 가져오기
+                selectedValue = selectElement.value;
+                // 검색 로직 실행 (예: API 호출)
+                const enter_result = await performSearch(searchValue);
+                console.log(enter_result);
+                if (enter_result) {
+                    if (watchId) { // 현재 위치 주변 500m 검색 중지
+                            navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                            watchId = null; // ID 초기화
+                        }
+                    if (selectedValue == "park") {
+                        // 주차장인 경우에는 지도만 옮기고 마킹만
+                        markers.clearLayers(); // 기존 마커 삭제
+                        hotmarkers.clearLayers();
+                        map.setView([enter_result.park_la, enter_result.park_lo], 16); // 지도 위치 이동
+                        var marker = L.marker([enter_result.park_la, enter_result.park_lo], { icon: parkIcon }).addTo(markers); // 마킹
+                        marker.on('click', function() {
+                            const parkla = encodeURIComponent(enter_result.park_la);
+                            const parklo = encodeURIComponent(enter_result.park_lo);
+                            const parkid = encodeURIComponent(enter_result.park_id);
+                            const parknm = encodeURIComponent(enter_result.park_nm);
+                            const parkaddr = encodeURIComponent(enter_result.park_addr);
+                            // 원하는 HTML 페이지로 이동
+                            window.location.href = `parkinginfo.html?parkid=${parkid}&parknm=${parknm}&parkaddr=${parkaddr}&lat=${parkla}&lon=${parklo}`;
+                        });
+                    } else { // 행사인 경우
+                        if (watchId) { // 현재 위치 주변 500m 검색 중지
+                            navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
+                            watchId = null; // ID 초기화
+                        }
+                        markers.clearLayers();
+                        hotmarkers.clearLayers();
+                        map.setView([enter_result.mapy, enter_result.mapx], 16);
+                        // 행사장 마킹
+                        var hotmarker = L.marker([enter_result.mapy, enter_result.mapx], { icon: hotIcon }).addTo(hotmarkers);
+                        hotmarker.on('click', function() {
+                            const conid = encodeURIComponent(enter_result.contentid)
+                            window.location.href = `post1.html?contentid=${conid}`
+                        });
+                        // 행사장 주변 마킹
+                        fetchAndProcessParkingData(enter_result.mapy, enter_result.mapx)
+                            .then(parkingData => {
+                                if (parkingData) {
+                                    console.log("주차장 데이터:", parkingData);
+                                    addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                                } else {
+                                    console.error("주차장 데이터를 가져오지 못했습니다.");
+                                }
+                            })
+                            .catch(error => console.error("Error:", error));
+                    }
+                } else {
+                    alert("검색 결과가 없습니다.");
+                }
+                console.log(enter_result);
+            } else {
+                alert("검색어를 입력하세요.");
+            }
+        }
+        
+        // 실제 검색 동작 (API 호출 또는 데이터 필터링)
+        async function performSearch(query) {
+            console.log(`"${query}"로 ${selectedValue} 검색을 실행합니다.`);
+            // 만약 selectedValue가 park 면 주차장 엔드포인트로 hotplace면 핫플로
+            // TODO
+            try {
+                const response = await fetch(`https://parkingissue.online/api/search?searchWord=${encodeURIComponent(query)}&searchClass=${encodeURIComponent(selectedValue)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    cache: "no-store",
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data
+            } catch (error) {
+                return {
+                    status: "error",
+                    message: error.message,
+                };
+            }
+        }
+    </script>
+    <!-- 검색창 기능 -->
+    <script src="assets/js/form.js"></script>
+</body>
+</html>
