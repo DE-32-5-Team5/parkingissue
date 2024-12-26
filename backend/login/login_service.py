@@ -4,13 +4,13 @@ import os
 import jwt
 
 from db import login_db
-from services.jwt_handler import (
+from jwt.jwt_handler import (
     create_jwt_token,
     decode_jwt_token,
     refresh_jwt_token,
 )
 
-from models.login import (
+from login.login_model import (
     PersonalLogin,
     EnterpriseLogin,
     NaverLogin,
