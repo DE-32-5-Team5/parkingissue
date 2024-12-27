@@ -247,15 +247,15 @@ async def hotplace_content_info(contentid: str):
 
     return select_hotplace_content(contentid)
 
+# s3 쓰는 곳곳
 s3 = boto3.client('s3')
 @app.get("/api/realSearch")
 async def real():
     bucket = 'fiveguys-s3'
     obj = s3.get_object(Bucket=bucket, Key="rank.csv")
     df = pd.read_csv(io.BytesIO(obj["Body"].read()))
-    print(df)
-    # dataframe 잘 들어오면 value만 list로 받아서 return 하면 끝
-    return True
+    df_list = list(df['search_msg'])
+    return df_list
 
 # 북마크 페이지 > 리스트 조회
 @app.post("/api/bookmark/list")
