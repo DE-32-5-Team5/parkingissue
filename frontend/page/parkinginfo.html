@@ -66,11 +66,11 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="reservation-section">
+        <div class="reservation-section">
             <div class="reservation-item">
                 <strong>시간 별 혼잡도</strong><br>
                 <canvas id="congestionChart" width="400" height="200"></canvas>
-            </div> -->
+            </div>
     </div>
 </body> 
 
@@ -109,65 +109,128 @@
 <!-- 혼잡도 차트 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // 여기가 지금 혼잡도 bargraph 예시인듯
-    const ctx = document.getElementById('congestionChart').getContext('2d');
-    const congestionChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
-            datasets: [{
-                label: '혼잡도 (%)',
-                data: [100, 50, 80, 60, 70, 90, 40],
-                backgroundColor: function(context) {
-                    const value = context.dataset.data[context.dataIndex];
-                    return value > 70 ? 'rgba(255, 99, 132, 0.6)' : 'rgba(54, 162, 235, 0.6)';
+    const urlParam = new URLSearchParams(window.location.search);
+    const park = urlParam.get('parkid');
+
+    async function getGraphinfo(park) {
+        const url = `https://parkingissue.online/api/infoSearch?id=${encodeURIComponent(park)}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                borderColor: function(context) {
-                    const value = context.dataset.data[context.dataIndex];
-                    return value > 70 ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
-                },
-                borderWidth: 1
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        color: '#333',
-                        font: {
-                            size: 14
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            size: 12
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.3)'
-                    }
-                },
-                x: {
-                    ticks: {
-                        color: '#333',
-                        font: {
-                            size: 12
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.3)'
-                    }
-                }
+                cache: 'no-store',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP 오류! 상태: ${response.status}`);
             }
+
+            const parkInfo = await response.json();
+            console.log('그래프용 데이터:', parkInfo)
+
+            // 최상위 키(예: 0)로 접근
+            const innerData = parkInfo[0]; // parkInfo의 첫 번째 요소 접근
+            if (!innerData) {
+                throw new Error('내부 데이터가 없습니다.');
+            }
+
+            // 내부 데이터에서 키와 값 분리
+            const keys = Object.keys(innerData); // ['21']
+            const values = Object.values(innerData); // [40]
+
+            return { keys, values }; // 키와 값을 분리해서 반환
+        } catch (error) {
+            console.error('그래프 정보 가져오기 실패:', error);
+            return null; // 에러 발생 시 null 반환
+        }
+    }
+
+        // Chart.js 그래프 생성 함수
+    async function createCongestionChart(park) {
+        const graphData = await getGraphinfo(park);
+
+        if (graphData) {
+            const { keys, values } = graphData;
+
+            // 그래프 컨텍스트 가져오기
+            const ctx = document.getElementById('congestionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: keys, // x축 라벨에 key 값
+                    datasets: [{
+                        label: '혼잡도 (%)',
+                        data: values, // y축 데이터에 value 값
+                        backgroundColor: values.map(value =>
+                            value > 70 ? 'rgba(255, 99, 132, 0.6)' : 'rgba(54, 162, 235, 0.6)'
+                        ),
+                        borderColor: values.map(value =>
+                            value > 70 ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)'
+                        ),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#333',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            },
+                            title: {
+                                display: true,
+                                text: "시간",
+                                color: '#333',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                            },
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 페이지 로드 후 그래프 생성
+    document.addEventListener('DOMContentLoaded', () => {
+        if (park) {
+            createCongestionChart(park);
+        } else {
+            console.error('parkid가 URL에 포함되지 않았습니다.');
         }
     });
 </script>

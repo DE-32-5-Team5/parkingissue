@@ -68,7 +68,7 @@ def related_data(text: str, cls: str, lat: float, lon: float):
                     WHERE park_nm LIKE '%{text}%'
                 ) AS subquery
                 ORDER BY distance ASC
-                LIMIT 10;
+                LIMIT 5;
                 """
                 cursor.execute(sql,)
                 result = cursor.fetchall()
@@ -91,7 +91,7 @@ def related_data(text: str, cls: str, lat: float, lon: float):
                     WHERE title LIKE '%{text}%'
                 ) AS subquery
                 ORDER BY distance ASC
-                LIMIT 10;
+                LIMIT 5;
                 """
                 cursor.execute(sql,)
                 result = cursor.fetchall()

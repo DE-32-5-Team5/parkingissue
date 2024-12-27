@@ -22,6 +22,7 @@ from bookmark.model.bookmark_schema import RequestBookmarkSchema
 import boto3
 import io
 import pandas as pd
+import numpy as np
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
 
@@ -256,6 +257,21 @@ async def real():
     df = pd.read_csv(io.BytesIO(obj["Body"].read()))
     df_list = list(df['search_msg'])
     return df_list
+
+@app.get("/api/infoSearch")
+async def info(id: str):
+    bucket = 'fiveguys-s3'
+    obj = s3.get_object(Bucket=bucket, Key="total.csv")
+    df = pd.read_csv(io.BytesIO(obj["Body"].read()))
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)  # inf, -inf -> NaN
+    df.fillna(0, inplace=True)  # NaN -> 0 (필요에 따라 변경 가능)
+    # 해당 주차장 값만 반환
+    df_result = df[df['park_id'] == id]
+    # id열 빼고 시간 열만 추출 후 return
+    result = df_result.drop('park_id', axis = 1)
+    data = result.to_dict(orient="records")
+    # [{"21": 40 ...}]
+    return data
 
 # 북마크 페이지 > 리스트 조회
 @app.post("/api/bookmark/list")

@@ -202,7 +202,6 @@ async function getParkingList() {
         }
 
         const data = await response.json(); // JSON 형식으로 응답 받기
-        console.log('반환된 실검 데이터:', data); // 데이터를 콘솔에 출력
         return data; // 데이터를 반환
     } catch (error) {
         console.error('Error fetching parking list:', error);
