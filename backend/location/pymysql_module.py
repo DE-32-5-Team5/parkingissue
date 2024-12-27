@@ -1,8 +1,6 @@
 import pymysql.cursors
 from db import location_db
 
-
-
 def select_park_info(park_id):
     connection = location_db()
 
