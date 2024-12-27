@@ -1,84 +1,162 @@
-import aiomysql
 import os
-from dotenv import load_dotenv
+import pymysql
 
-load_dotenv()
+"""
+    Parkingissue Database 연결 함수 모음집
+    각 기능에 해당하는 쪽으로 함수를 가져가세요.
 
-DB_USER = os.getenv("DB_LOGIN_ID")
-DB_PASSWORD = os.getenv("DB_LOGIN_PW")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
+    로그인 : login_db()
+    회원가입 : register_db()
+    메인페이지, 검색 : location_db()
+    스파크, 카프카 : spark_db()
+    에어플로우 : airflow_db()
+    게시글 업로드 : uploader_db()
+"""
 
-async def get_db():
+def login_db():
     try:
-        conn = await aiomysql.connect(
-            host=DB_HOST,
-            port=int(DB_PORT), #port는 int형이어야 함
-            user=DB_USER,
-            password=DB_PASSWORD,
-            db=DB_NAME,
-            autocommit=True, # autocommit 설정
-            cursorclass=aiomysql.DictCursor # 결과를 딕셔너리로 받기 위함
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT")),
+            user=os.getenv("DB_USER_I"),
+            password=os.getenv("DB_USER_IPW"),
+            db=os.getenv("DB_NAME"),          
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
         )
         return conn
-    except aiomysql.Error as e:
-        print(f"Database connection error: {e}")
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
         return None
-async def get_user_by_id(id: str):
-    conn = await get_db()
-    if conn:
-        try:
-            async with conn.cursor() as cur:
-                await cur.execute("SELECT * FROM user_info WHERE user_id = %s", (id,))
-                user = await cur.fetchone()
-                return user
-        except aiomysql.Error as e:
-            print(f"Query execution error: {e}")
-            return None
-        finally: # connection close 추가
-            conn.close()
-    return None
-async def get_all_users():
-    conn = await get_db()
-    if conn:
-        try:
-            async with conn.cursor() as cur:
-                await cur.execute("SELECT * FROM user_info")
-                users = await cur.fetchall()
-                return users
-        except aiomysql.Error as e:
-            print(f"Query execution error: {e}")
-            return None
-        finally: # connection close 추가
-            conn.close()
-    return None
-async def get_manager_by_id(id: str):
-    conn = await get_db()
-    if conn:
-        try:
-            async with conn.cursor() as cur:
-                await cur.execute("SELECT * FROM manager_info WHERE manager_id = %s", (id,))
-                user = await cur.fetchone()
-                return user
-        except aiomysql.Error as e:
-            print(f"Query execution error: {e}")
-            return None
-        finally:
-            conn.close()
-    return None
-async def get_all_managers():
-    conn = await get_db()
-    if conn:
-        try:
-            async with conn.cursor() as cur:
-                await cur.execute("SELECT * FROM manager_info")
-                user = await cur.fetchone()
-                return user
-        except aiomysql.Error as e:
-            print(f"Query execution error: {e}")
-            return None
-        finally:
-            conn.close()
-    return None
+
+def register_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_II"),
+            password=os.getenv("DB_USER_IIPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+
+def location_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_III"),
+            password=os.getenv("DB_USER_IIIPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+
+def bookmark_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_IV"),
+            password=os.getenv("DB_USER_IVPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+    
+def enterprise_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_V"),
+            password=os.getenv("DB_USER_VPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+
+def hotplace_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_VI"),
+            password=os.getenv("DB_USER_VIPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+    
+def spark_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_VII"),
+            password=os.getenv("DB_USER_VIIPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+    
+def airflow_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_IX"),
+            password=os.getenv("DB_USER_IXPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+    
+def uploader_db():
+    try:
+        conn = pymysql.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER_X"),
+            password=os.getenv("DB_USER_XPW"),
+            db=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT")),
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        return conn
+    except Exception as e:
+        print(f"데이터베이스 연결 오류: {e}")
+        return None
+    
+
+
 

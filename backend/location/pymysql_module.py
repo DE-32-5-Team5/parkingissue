@@ -1,19 +1,10 @@
 import pymysql.cursors
+from db import location_db
 
-def connect_db():
-    connection = pymysql.connect(
-        host='10.0.4.80',
-        port=6033,
-        user='root',
-        password='samdul2024$',
-        database='parkingissue',
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
-    return connection
+
 
 def select_park_info(park_id):
-    connection = connect_db()
+    connection = location_db()
 
     with connection:
         with connection.cursor() as cursor:
@@ -58,7 +49,7 @@ def select_park_info(park_id):
             return result
 
 def related_data(text: str, cls: str, lat: float, lon: float):
-    connection = connect_db()
+    connection = location_db()
     if cls == 'park':
         with connection:
             with connection.cursor() as cursor:

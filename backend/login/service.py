@@ -4,13 +4,13 @@ import os
 import jwt
 
 from db import login_db
-from services.jwt_handler import (
+from jwt.jwt_handler import (
     create_jwt_token,
     decode_jwt_token,
     refresh_jwt_token,
 )
 
-from models.login import (
+from login.model import (
     PersonalLogin,
     EnterpriseLogin,
     NaverLogin,
@@ -31,12 +31,12 @@ async def login_personal_service(personal_login: PersonalLogin):
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디, 비밀번호 확인) - 실제 인증 로직 구현
-            sql = "SELECT user_id, CAST(AES_DECRYPT(unhex(user_pw), SHA2(%s, 256)) AS CHAR(255)) AS user_pw FROM user_info WHERE user_id = %s"
-            cursor.execute(sql, (password_decrypt_key, personal_login.user_id,))
+            sql = "SELECT user_id FROM user_info WHERE user_id = %s AND CAST(AES_DECRYPT(unhex(user_pw), SHA2(%s, 256)) AS CHAR(255)) = %s"
+            cursor.execute(sql, (personal_login.user_id, password_decrypt_key, personal_login.user_pw,))  # user_pw 값을 추가
             user = cursor.fetchone()
 
             
-            if not user or not (personal_login.user_pw == str(user['user_pw'])):
+            if not user:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail=f"Incorrect username or password, {user['user_pw']} is not {str(personal_login.user_pw)}",
@@ -70,11 +70,11 @@ async def login_enterprise_service(enterprise_login: EnterpriseLogin):
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디, 비밀번호 확인) - 실제 인증 로직 구현
-            sql = "SELECT manager_id, CAST(AES_DECRYPT(unhex(manager_pw), SHA2(%s, 256)) AS CHAR(255)) AS manager_pw FROM manager_info WHERE manager_id = %s"
-            cursor.execute(sql, (password_decrypt_key, enterprise_login.manager_id,))
+            sql = "SELECT manager_id FROM manager_info WHERE manager_id = %s AND CAST(AES_DECRYPT(unhex(manager_pw), SHA2(%s, 256)) AS CHAR(255)) = %s"
+            cursor.execute(sql, (enterprise_login.manager_id, password_decrypt_key, enterprise_login.manager_pw))
             user = cursor.fetchone()
 
-            if not user or not (enterprise_login.manager_pw == str(user['manager_pw'])):
+            if not user:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Incorrect username or password",
