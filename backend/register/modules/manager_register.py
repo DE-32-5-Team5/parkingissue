@@ -1,5 +1,6 @@
 import pymysql.cursors
 from db import register_db
+import os
 
 
 # 기업회원 id 중복 조회
@@ -35,12 +36,13 @@ def check_manager_phone(manager_id):
 # 기업회원 정보 삽입
 def insert_manager_info(manager_company, manager_name, manager_phone, manager_id, manager_password):
     connection = register_db()
+    crypt_key = os.getenv("DB_STR_KEY")
 
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            INSERT INTO manager_info (company, name, phone, manager_id, manager_pw) VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO manager_info (company, name, phone, manager_id, manager_pw) VALUES (%s, %s, %s, %s,  HEX(AES_CRYPT(%s, SHA2(%s, 256))))
             """
-            result = bool(cursor.execute(sql, (manager_company, manager_name, manager_phone, manager_id, manager_password)))
+            result = bool(cursor.execute(sql, (manager_company, manager_name, manager_phone, manager_id, manager_password, crypt_key)))
             
             return result
