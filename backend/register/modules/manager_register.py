@@ -41,7 +41,7 @@ def insert_manager_info(manager_company, manager_name, manager_phone, manager_id
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            INSERT INTO manager_info (company, name, phone, manager_id, manager_pw) VALUES (%s, %s, %s, %s,  HEX(AES_CRYPT(%s, SHA2(%s, 256))))
+            INSERT INTO manager_info (company, name, phone, manager_id, manager_pw) VALUES (%s, %s, %s, %s,  HEX(AES_ENCRYPT(%s, SHA2(%s, 256))))
             """
             result = bool(cursor.execute(sql, (manager_company, manager_name, manager_phone, manager_id, manager_password, crypt_key)))
             

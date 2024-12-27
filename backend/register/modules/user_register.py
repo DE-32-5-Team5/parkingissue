@@ -24,7 +24,7 @@ def insert_user_info(user_name, user_nick, user_id, user_pw):
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            INSERT INTO user_info (name, nickname, user_id, user_pw) VALUES (%s, %s, %s, HEX(AES_CRYPT(%s, SHA2(%s, 256))))
+            INSERT INTO user_info (name, nickname, user_id, user_pw) VALUES (%s, %s, %s, HEX(AES_ENCRYPT(%s, SHA2(%s, 256))))
             """
             result = bool(cursor.execute(sql, (user_name, user_nick, user_id, user_pw, crypt_key)))
             return result
