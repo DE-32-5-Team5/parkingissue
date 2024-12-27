@@ -5,3 +5,6 @@ pymysql
 python-dotenv
 mysql-connector-python
 python-multipart
+boto3
+requests
+pandas

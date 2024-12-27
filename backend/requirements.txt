@@ -7,3 +7,5 @@ pydantic
 passlib[bcrypt]
 aiomysql
 python-dotenv
+boto3
+pandas
