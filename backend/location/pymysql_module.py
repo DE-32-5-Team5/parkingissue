@@ -1,5 +1,21 @@
 import pymysql.cursors
 from db import location_db
+import os
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+k_key = os.getenv('KAKAO_REST')
+
+def get_xy(region):
+    url = 'https://dapi.kakao.com/v2/local/search/address.json'
+    headers = {'Authorization': f'KakaoAK {k_key}'}
+    params = {'query' : region, 'analyze_type' : 'similar', 'size' : 30}
+
+    res = requests.get(url, params = params, headers = headers).json()
+
+    return res
 
 def select_park_info(park_id):
     connection = location_db()
@@ -70,8 +86,9 @@ def related_data(text: str, cls: str, lat: float, lon: float):
                 """
                 cursor.execute(sql,)
                 result = cursor.fetchall()
+                # [{'무궁': '무궁화공영주차장(구)'}, {'무궁': '무궁화빌라'}, {'무궁': '무궁화아파트'}, {'무궁': '무궁화아파트'}, {'무궁': '무궁화아파트'}]
                 return result
-    else:
+    elif cls == 'hotplace':
         with connection:
             with connection.cursor() as cursor:
                 sql = f"""
@@ -94,3 +111,9 @@ def related_data(text: str, cls: str, lat: float, lon: float):
                 cursor.execute(sql,)
                 result = cursor.fetchall()
                 return result
+    else: # 지번 검색
+        result = []
+        addr_li = get_xy(text)['documents']
+        for i in addr_li:
+            result.append({text: i['address']['address_name']})
+        return result

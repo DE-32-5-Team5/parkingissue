@@ -15,7 +15,7 @@ from passlib.context import CryptContext
 # 핫플레이스 정보 스키마
 #from hotplace.model.hotplace_schema import RequestHotplaceSchemaq, HotplaceListSchema, HotplaceSchema
 # 검색 모듈
-from search.module.search_module import searchParkDB, searchHotDB
+from search.module.search_module import searchParkDB, searchHotDB, searchAddr
 # 북마크 스키마
 from bookmark.model.bookmark_schema import RequestBookmarkSchema
 
@@ -214,11 +214,12 @@ async def searchDB(searchWord: str, searchClass: str):
     if searchClass == "park":
         park_result = searchParkDB(searchWord)
         return park_result
-    else:
+    elif searchClass == "hotplace":
         hot_result = searchHotDB(searchWord)
         return hot_result
-
-    return  select_hotplace_default_info(hotplace_longitude, hotplace_latitude)
+    else:
+        addr_result = searchAddr(searchWord)
+        return addr_result
     
 # 핫플레이스 게시글 리스트 요청 (진행중이며, 끝나는 일자가 가까운 순)
 @app.post("/api/hotplace/list/ongoing")
