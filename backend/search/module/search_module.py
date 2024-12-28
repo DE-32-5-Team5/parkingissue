@@ -1,8 +1,8 @@
 import pymysql.cursors
-from db import search_db
+from db import location_db
 
 def searchParkDB(word):
-    connection = search_db()
+    connection = location_db()
 
     with connection:
         with connection.cursor() as cursor:
@@ -17,7 +17,7 @@ def searchParkDB(word):
             return result
 
 def searchHotDB(word):
-    connection = search_db()
+    connection = location_db()
 
     with connection:
         with connection.cursor() as cursor:
