@@ -182,23 +182,38 @@ async def manager_check_id(request: RequestManagerSchema):
 
 @app.post("/api/login/common/personal")
 async def personal_user_login_service(user_infomation: PersonalLogin):
-    from backend.login.service import login_personal_service
+    from login.service import login_personal_service
     return await login_personal_service(user_infomation)
 
 @app.post("/api/login/common/enterprise")
 async def enterprise_user_login_service(enterprise_information: EnterpriseLogin):
-    from backend.login.service import login_enterprise_service
+    from login.service import login_enterprise_service
     return await login_enterprise_service(enterprise_information)
 
 @app.post("/api/login/simple/naver")
 async def personal_user_naver_login_service(user_naver_information: NaverLogin):
-    from backend.login.service import login_naver_service
+    from login.service import login_naver_service
     return await login_naver_service(user_naver_information)
 
 @app.post("/api/login/simple/kakao")
 async def personal_user_login_service(user_kakao_information: KakaoLogin):
-    from backend.login.service import login_kakao_service
+    from login.service import login_kakao_service
     return await login_kakao_service(user_kakao_information)
+
+@app.post("/api/login/isuser")
+async def verify_user_service(user_login_token: str):
+    from login.service import check_user_service
+    return await check_user_service(user_login_token)
+
+@app.post("/api/login/refreshtoken")
+async def refresh_token_service(user_login_token: str):
+    from login.service import update_token_service
+    return await update_token_service(user_login_token)
+
+@app.post("/api/login/decodeinfo")
+async def decode_infomation_service(user_login_token: str):
+    from login.service import decode_user_information_service
+    return await decode_user_information_service(user_login_token)
 
 # 핫플레이스 게시글 리스트 요청 (가까운 순)
 @app.post("/api/hotplace/list/default")

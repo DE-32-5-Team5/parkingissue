@@ -172,8 +172,10 @@ async def check_user_service(token: str):
             0 : Not User
             1 : Personal User
             2 : Company User
-            3 : Invaild Token
-            4 : Expired Token
+            3 : Simple Login User (Naver)
+            4 : Simple Login User (Kakao)
+            5 : Invaild Token
+            6 : Expired Token
     """
 
     secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
@@ -184,7 +186,7 @@ async def check_user_service(token: str):
     try:
         payload = decode_jwt_token(token, secret_key)
         if payload is None:
-            return 3 # Invaild Token
+            return 5 # Invaild Token
         
         user_id = payload.get('user_id')
         user_type = payload.get('user_type')
@@ -194,7 +196,7 @@ async def check_user_service(token: str):
         return user_type
     
     except jwt.ExpiredSignatureError:
-        return 4 # Expired Token
+        return 6 # Expired Token
     except Exception as e:
         print(f"Functional Error: {e}")
         raise HTTPException(status_code=500, detail="Functional Error")
@@ -219,3 +221,16 @@ async def update_token_service(token: str):
         return None
     except jwt.InvaildTokenError:
         return None
+
+async def decode_user_information_service(token: str):
+    """
+        인증된 토큰을 이용해 사용자 정보를 리턴하는 API
+        Args:
+            token (str): jwt_token
+        Returns:
+            dict: 디코딩된 페이로드
+    """
+    secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
+    algorithm = "HS256"
+    payload = decode_jwt_token(token, secret_key, algorithm)
+    return payload
