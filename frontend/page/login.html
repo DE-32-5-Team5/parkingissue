@@ -18,10 +18,10 @@
         <!-- Links -->
         <ul class="links">
             <li>
-                <a href="#" id="personal_user" class="active">개인 회원</a>
+                <a href="" id="personal_user" class="active">개인 회원</a>
             </li>
             <li>
-                <a href="#" id="enterprise_user">기업 회원</a>
+                <a href="" id="enterprise_user">기업 회원</a>
             </li>
             <li>
                 <a href="./membership/personal/index.html" id="reset">회원가입</a>
@@ -29,20 +29,16 @@
         </ul>
         
         <!-- Form -->
-        <form  action="" method="post" id="login_form">
+        <form id="login_form">
         <!-- id input -->
             <div class="first-input input__block first-input__block">
-                <input type="id" placeholder="Id" class="input" id="id"   />
+                <input type="id" placeholder="ID" class="input" id="id"   />
             </div>
             <!-- password input -->
             <div class="input__block">
                 <input type="password" placeholder="Password" class="input" id="password" autocomplete="new-password">
             </div>
-            <!-- repeat password input -->
-            <div class="input__block">
-                <input type="password" placeholder="Repeat password" class="input repeat__password" id="repeat__password" autocomplete="new-password">
-            </div>
-            <button class="signin__btn" id="loginbtn">
+            <button class="signin__btn" type="submit" id="loginbtn">
                 Sign in
             </button>
         </form>
@@ -69,85 +65,103 @@
                 }
             });
         });
-        const loginForm = document.querySelector('form'); // form 요소 선택
-        const loginBtn = document.getElementById('loginbtn');
-        loginBtn.addEventListener('submit', (event) => {
+        const loginForm = document.getElementById('login_form'); // form 요소 선택
+        loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
+
             const id = document.getElementById('id').value;
             const pw = document.getElementById('password').value;
-            const loginurl = 'https://parkingissue.online/api/login/';
-            if (link.id === 'personal_user') {
-                loginurl = 'https://parkingissue.online/api/login/common/personal';
+            let loginurl;
+            if (document.getElementById('personal_user').classList.contains('active')) {
+                const loginurl = 'https://parkingissue.online/api/login/common/personal/';
                 
                 fetch (loginurl, {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify ({
-                    'user_id': id,
-                    'user_pw': pw,
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify ({
+                        'user_id': id,
+                        'user_pw': pw,
+                    })
                 })
                 .then (postResponse => {
-                if(!postResponse.ok) {
-                    throw new Error(`POST Request failed: ${postResponse.status}`);
-                }
-                else if (postResponse.ok) {
-                    response.json().then(data => {
-                        localStorage.setItem('token', data.token);
-                        window.location.href = "./index.html";
-                    });
-                };
-                }).catch(error => {
+                    if(!postResponse.ok) {
+                        throw new Error(`POST Request failed: ${postResponse.status}`);
+                    }
+                    else if (postResponse.ok) {
+                        postResponse.json().then(data => {
+                            localStorage.setItem('access_token', data.token);
+                            window.location.href = "./mainpage.html";
+                        });
+                    };
+                })
+                .catch(error => {
                     console.error('로그인 요청 실패:', error);
                 })
-            })
-            } else if (link.id === 'enterprise_user') {
-                loginurl = 'https://parkingissue.online/api/login/common/enterprise';
+            }            
+            else if (document.getElementById('enterprise_user').classList.contains('active')) {
+                const loginurl = 'https://parkingissue.online/api/login/common/enterprise/';
                 
                 fetch (loginurl, {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify ({
-                    'manager_id': id,
-                    'manager_pw': pw,
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify ({
+                        'manager_id': id,
+                        'manager_pw': pw,
+                    })
                 })
                 .then (postResponse => {
-                if(!postResponse.ok) {
-                    throw new Error(`POST Request failed: ${postResponse.status}`);
-                }
-                else if (postResponse.ok) {
-                    response.json().then(data => {
-                        localStorage.setItem('token', data.token);
-                        window.location.href = "./index.html";
-                    });
-                };
-                }).catch(error => {
+                    if(!postResponse.ok) {
+                        throw new Error(`POST Request failed: ${postResponse.status}`);
+                    }
+                    else if (postResponse.ok) {
+                        postResponse.json().then(data => {
+                            localStorage.setItem('access_token', data.token);
+                            window.location.href = "./mainpage.html";
+                        });
+                    };
+                })
+                .catch(error => {
                     console.error('로그인 요청 실패:', error);
                 })
-            })
             }
+        });
             
-            
-        })      
     </script>
         <!-- separator -->
         <div class="separator">
         <p>OR</p>
         </div>
         <div class="button-container">
-            <button class="kakao__btn">
-                <i class="fa fa-kakao"></i> 
-                <!-- <img src="img/kakao-logo.png" style="width: 40px; height: 40px;"> -->
-            </button>
+            <a id="kakao-login-btn" href="javascript:loginWithKakao()">
+                <img src="images/kakao-logo.png">
+            </a>
+            <script>
+                Kakao.init('2e25b66a344a29cda1cfe29e4004f5c8');
+                function loginWithKakao() {
+                    Kakao.Auth.authorize({
+                        redirectUri: 'https://parkingissue.online/logincallback/kakao.html',
+                    })
+                }
+            </script>
+
             <div id="naver_id_login">
                 <img id="NaverLoginBtn" src="./images/naver-logo.png" style="width: 50px; height: 50px; cursor: pointer;" alt="네이버 로그인">
             </div>
-            
+            <script type="text/javascript">
+                var naver_id_login = new naver_id_login("8ynNGrR49i7d6lZz8y9a", "https://parkingissue.online/logincallback/naver.html");
+                var state = naver_id_login.getUniqState();
+                naver_id_login.setButton("white", 2,40);
+                naver_id_login.setDomain("https://parkingissue.online");
+                naver_id_login.setState(state);
+                naver_id_login.setPopup();
+                naver_id_login.init_naver_id_login();
+            </script>
             
         </div>
     </div>

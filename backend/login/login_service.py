@@ -108,7 +108,7 @@ async def login_naver_service(naver_login: NaverLogin):
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디 확인)
-            sql = "SELECT uid FROM user_info WHERE naver_id = %s"
+            sql = "SELECT naver_id FROM user_info WHERE naver_id = %s"
             cursor.execute(sql, (naver_login.naver_id,))
             user = cursor.fetchone()
 
@@ -117,7 +117,7 @@ async def login_naver_service(naver_login: NaverLogin):
                 return {"message": "naver_id not found", "redirect": True} 
 
             # 2-2. JWT 토큰 생성
-            access_token = create_jwt_token(user['user_id'], 1, secret_key)
+            access_token = create_jwt_token(user['naver_id'], 3, secret_key)
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
@@ -151,7 +151,7 @@ async def login_kakao_service(kakao_login: KakaoLogin):
                 return {"message": "kakao_id not found", "redirect": True} 
 
             # 2-2. JWT 토큰 생성
-            access_token = create_jwt_token(user['user_id'], 1, secret_key)
+            access_token = create_jwt_token(user['kakao_id'], 4, secret_key)
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
@@ -172,8 +172,10 @@ async def check_user_service(token: str):
             0 : Not User
             1 : Personal User
             2 : Company User
-            3 : Invaild Token
-            4 : Expired Token
+            3 : Naver Login User
+            4 : Kakao Login User
+            5 : Invaild Token
+            6 : Expired Token
     """
 
     secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
@@ -184,7 +186,7 @@ async def check_user_service(token: str):
     try:
         payload = decode_jwt_token(token, secret_key)
         if payload is None:
-            return 3 # Invaild Token
+            return 5 # Invaild Token
         
         user_id = payload.get('user_id')
         user_type = payload.get('user_type')
@@ -194,7 +196,7 @@ async def check_user_service(token: str):
         return user_type
     
     except jwt.ExpiredSignatureError:
-        return 4 # Expired Token
+        return 6 # Expired Token
     except Exception as e:
         print(f"Functional Error: {e}")
         raise HTTPException(status_code=500, detail="Functional Error")
