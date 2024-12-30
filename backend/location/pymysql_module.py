@@ -10,10 +10,10 @@ k_key = os.getenv('KAKAO_REST')
 
 def get_xy(region):
     url = 'https://dapi.kakao.com/v2/local/search/address.json'
-    headers = {'Authorization': f'KakaoAK {k_key}'}
+    headers = {'Authorization': f'KakaoAK {k_key}',}
     params = {'query' : region, 'analyze_type' : 'similar', 'size' : 30}
 
-    res = requests.get(url, params = params, headers = headers).json()
+    res = requests.get(url, headers = headers, params = params).json()
 
     return res
 
@@ -113,7 +113,8 @@ def related_data(text: str, cls: str, lat: float, lon: float):
                 return result
     else: # 지번 검색
         result = []
-        addr_li = get_xy(text)['documents']
-        for i in addr_li:
+        addr_li = get_xy(text)
+        addr_list = addr_li['documents']
+        for i in addr_list:
             result.append({text: i['address']['address_name']})
         return result
