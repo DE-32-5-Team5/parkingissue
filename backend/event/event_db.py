@@ -5,7 +5,7 @@ import requests
 from db import uploader_db
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 def get_xy(region):
     k_key = os.getenv('KAKAO_REST')

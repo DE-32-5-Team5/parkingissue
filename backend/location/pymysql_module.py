@@ -4,7 +4,7 @@ import os
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 k_key = os.getenv('KAKAO_REST')
 
@@ -114,6 +114,7 @@ def related_data(text: str, cls: str, lat: float, lon: float):
     else: # 지번 검색
         result = []
         addr_li = get_xy(text)
+        print(addr_li)
         addr_list = addr_li['documents']
         for i in addr_list:
             result.append({text: i['address']['address_name']})
