@@ -26,7 +26,7 @@ def insert_user_info(user_name, user_nick, user_id, user_pw):
             sql = """
                 INSERT INTO user_info (user_name, user_nick, user_id, user_pw) VALUES (%s, %s, %s, HEX(AES_ENCRYPT(%s, SHA2(%s, 256))))
                 """
-            cursor.execute(sql, (user_name, user_nick, user_id, user_pw))
+            cursor.execute(sql, (user_name, user_nick, user_id, user_pw, crypt_key))
             connection.commit()  # 커밋을 명시적으로 수행
             print("데이터 삽입 성공")
             return True

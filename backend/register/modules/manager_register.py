@@ -43,7 +43,7 @@ def insert_manager_info(manager_company, manager_name, manager_phone, manager_id
             sql = """
                 INSERT INTO manager_info (manager_company, manager_name, manager_phone, manager_id, manager_pw) VALUES (%s, %s, %s, %s, HEX(AES_ENCRYPT(%s, SHA2(%s, 256))))
                 """
-            cursor.execute(sql, (manager_company, manager_name, manager_phone, manager_id, manager_password))
+            cursor.execute(sql, (manager_company, manager_name, manager_phone, manager_id, manager_password, crypt_key))
             connection.commit()  # 커밋을 명시적으로 수행
             print("데이터 삽입 성공")
             return True
