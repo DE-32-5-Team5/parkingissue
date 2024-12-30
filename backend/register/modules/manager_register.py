@@ -41,7 +41,7 @@ def insert_manager_info(manager_company, manager_name, manager_phone, manager_id
     with connection:
         with connection.cursor() as cursor:
             sql = """
-                INSERT INTO manager_info (manager_company, manager_name, manager_phone, manager_id, manager_password) VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO manager_info (manager_company, manager_name, manager_phone, manager_id, manager_pw) VALUES (%s, %s, %s, %s, %s)
                 """
             cursor.execute(sql, (manager_company, manager_name, manager_phone, manager_id, manager_password))
             connection.commit()  # 커밋을 명시적으로 수행
