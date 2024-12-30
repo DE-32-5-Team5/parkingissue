@@ -10,3 +10,4 @@ python-dotenv
 boto3
 pandas
 cryptography
+PyJWT<2.0.0
