@@ -36,9 +36,9 @@ def select_hotplace_ongoing_info():
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy
             FROM festival_info
-            WHERE eventstartdate >= NOW() AND eventenddate >= NOW()
+            WHERE eventstartdate <= NOW() AND eventenddate >= NOW()
             ORDER BY eventstartdate ASC
             """
             cursor.execute(sql)
@@ -52,7 +52,7 @@ def select_hotplace_upcoming_info():
     with connection:
         with connection.cursor() as cursor:
             sql = """
-            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy,
+            SELECT contentid, title, eventstartdate, eventenddate, firstimage, mapx, mapy
             FROM festival_info
             WHERE eventstartdate >= NOW() AND eventenddate >= NOW()
             ORDER BY eventstartdate ASC
