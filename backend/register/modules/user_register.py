@@ -24,7 +24,7 @@ def insert_user_info(user_name, user_nick, user_id, user_pw):
     with connection:
         with connection.cursor() as cursor:
             sql = """
-                INSERT INTO user_info (user_name, user_nick, user_id, user_pw) VALUES (%s, %s, %s, %s)
+                INSERT INTO user_info (user_name, user_nick, user_id, user_pw) VALUES (%s, %s, %s, HEX(AES_ENCRYPT(%s, SHA2(%s, 256))))
                 """
             cursor.execute(sql, (user_name, user_nick, user_id, user_pw))
             connection.commit()  # 커밋을 명시적으로 수행
