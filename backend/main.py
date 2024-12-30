@@ -4,12 +4,12 @@ from fastapi.encoders import jsonable_encoder
 from location.model import Location, FromSpark, Getdf, RequestBody
 from location.pymysql_module import select_park_info, related_data
 from location.kafka_producer import send_to_kafka, send_to_kafka2
-from backend.login.model import PersonalLogin, EnterpriseLogin, NaverLogin, KakaoLogin
+from login.model import PersonalLogin, EnterpriseLogin, NaverLogin, KakaoLogin
 import requests
 from typing import List
 
 # 유저, 기업 정보 스키마
-from register.model.register_schema import RequestUserSchema, UserSchema, RequestManagerSchema, ManagerSchema
+from register.model.register_schema import RequestUserSchema, UserSchema, CheckSchema, RequestManagerSchema, ManagerSchema
 # pip install "passlib[bcrypt]"
 from passlib.context import CryptContext
 # 핫플레이스 정보 스키마
