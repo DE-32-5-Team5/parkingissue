@@ -160,7 +160,7 @@ async def manager_check_id(request: RequestManagerSchema):
     manager_name = request.Manager.name
     manager_phone = request.Manager.phone
     manager_id = request.Manager.companyid
-    manager_password = get_password_hash(request.Manager.password.get_secret_value()) # 해시처리
+    manager_password = request.Manager.password
 
 
     # db 연결이 원활하지 않으면 에러.
