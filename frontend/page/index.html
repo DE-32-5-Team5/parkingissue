@@ -17,10 +17,10 @@
         <!-- Links -->
         <ul class="links">
             <li>
-                <a href="#" id="signin" class="active">개인 회원</a>
+                <a href="#" id="personal" class="active">개인 회원</a>
             </li>
             <li>
-                <a href="#" id="signup">기업회원</a>
+                <a href="#" id="enterprise">기업회원</a>
             </li>
             <li>
                 <a href="./membership/personal/index.html" id="reset">회원가입</a>
@@ -31,20 +31,24 @@
         <form  action="" method="post">
         <!-- id input -->
             <div class="first-input input__block first-input__block">
-                <input type="email" placeholder="Id" class="input" id="id"   />
+                <input type="id" placeholder="Id" class="input" id="id"   />
             </div>
             <!-- password input -->
             <div class="input__block">
                 <input type="password" placeholder="Password" class="input" id="password"    />
             </div>
-            <button class="signin__btn">
-                Sign in
+            <button class="login__btn">
+                Log in
             </button>
         </form>
     <script>
         // 모든 링크를 선택
         const links = document.querySelectorAll('.links li a');
         const resetLink = document.getElementById('reset');
+
+        // 현재 활성 상태를 추적하는 변수
+        let activeType = 'personal'; // 기본값은 'personal'
+
         // 링크 클릭 이벤트 처리
         links.forEach(link => {
             link.addEventListener('click', () => {
@@ -54,44 +58,59 @@
                 // 현재 클릭된 링크에 active 클래스 추가
                 link.classList.add('active');
                 
-                // 특정 동작 추가: placeholder 값 변경
+                // 활성 상태 업데이트
+                activeType = link.id === 'enterprise' ? 'enterprise' : 'personal';
+
+                // placeholder 및 회원가입 링크 업데이트
                 const idInput = document.getElementById('id');
-                if (link.id === 'signin') {
+                if (activeType === 'personal') {
                     idInput.placeholder = "Id"; // 개인회원
                     resetLink.href = "./membership/personal/index.html"; // 개인회원 가입 링크
-                } else if (link.id === 'signup') {
+                } else if (activeType === 'enterprise') {
                     idInput.placeholder = "기업회원 Id"; // 기업회원
                     resetLink.href = "./membership/enterprise/index.html"; // 기업회원 가입 링크
                 }
             });
         });
 
-        const loginForm = document.querySelector('form'); // form 요소 선택
+        // 로그인 폼 제출 이벤트 처리
+        const loginForm = document.querySelector('form');
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault(); // 기본 폼 제출 동작 방지
-        const id = document.getElementById('id').value;
-        const password = document.getElementById('password').value;
 
-        fetch('/api/login', { // Back-end API endpoint로 요청 전송
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id, password }),
-        })
-        .then(response => {
-            if (response.ok) {
-                // 로그인 성공 시 처리 (예: 메인 페이지로 이동)
-                window.location.href = '/main'; 
-            } else {
-                // 로그인 실패 시 처리 (예: 에러 메시지 표시)
-                alert('로그인 실패');
-            }
+            const id = document.getElementById('id').value;
+            const password = document.getElementById('password').value;
+
+            // 엔드포인트를 활성 상태에 따라 동적으로 설정
+            const endpoint = `/api/login/common/${activeType}`;
+
+            // 전송할 데이터 구성
+            const loginData = activeType === 'personal'
+                ? { user_id: id, user_pw: password } // 개인회원 데이터
+                : { manager_id: id, manager_pw: password }; // 기업회원 데이터
+
+            fetch(endpoint, { // 동적 엔드포인트로 요청 전송
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(loginData), // 활성 상태에 따라 동적 데이터 전송
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 로그인 성공 시 처리 (예: 메인 페이지로 이동)
+                    window.location.href = '/main'; 
+                } else {
+                    // 로그인 실패 시 처리 (예: 에러 메시지 표시)
+                    alert('로그인 실패');
+                }
             })
             .catch(error => {
                 console.error('로그인 요청 실패:', error);
             });
         });
+
+
     </script>
         <!-- separator -->
         <div class="separator">
