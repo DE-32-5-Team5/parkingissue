@@ -135,13 +135,6 @@ async def user_register(request: CheckSchema):
     # ID가 고유하다면 성공 상태를 반환
     return JSONResponse(content={"status": 200, "detail": "사용 가능한 번호입니다."}, status_code=200)
 
-
-# 해시 알고리즘 컨텍스트를 생성.
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
-
 # 회원가입 폼 - 저장 / 개인
 @app.post("/api/users/register")
 async def user_register(request: RequestUserSchema):
@@ -150,8 +143,7 @@ async def user_register(request: RequestUserSchema):
     user_name = request.User.userName
     user_nick = request.User.userNick
     user_id = request.User.userId  # 올바르게 ID를 추출
-    user_pw = get_password_hash(request.User.userPw.get_secret_value()) # 해시처리
-    #user_pw = request.User.userPw
+    user_pw = request.User.userPw
     print(f"^^^^^ {user_pw} ^^^^")
     # ID가 고유하다면 성공 상태를 반환, 가입
     # db 연결이 원활하지 않으면 에러.
