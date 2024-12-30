@@ -213,7 +213,7 @@ async def hotplace_default_list(location: Location):
     hotplace_latitude = str(location.latitude)
 
     return  select_hotplace_default_info(hotplace_longitude, hotplace_latitude)
-    
+
 # 핫플레이스 게시글 리스트 요청 (진행중이며, 끝나는 일자가 가까운 순)
 @app.post("/api/hotplace/list/ongoing")
 async def hotplace_ongoing_list():
