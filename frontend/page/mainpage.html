@@ -42,6 +42,7 @@
                                 <form action="#">
                                     <label for="parkhot">검색구분</label>
                                     <select name="parkorhot" id="parkhot">
+                                    <option value="addr">주소</option>
                                     <option value="park">주차장</option>
                                     <option value="hotplace">핫플</option>
                                     </select>
@@ -441,7 +442,7 @@
                             // 원하는 HTML 페이지로 이동
                             window.location.href = `parkinginfo.html?parkid=${parkid}&parknm=${parknm}&parkaddr=${parkaddr}&lat=${parkla}&lon=${parklo}`;
                         });
-                    } else { // 행사인 경우
+                    } else if (selectedValue == "hotplace"){ // 행사인 경우
                         if (watchId) { // 현재 위치 주변 500m 검색 중지
                             navigator.geolocation.clearWatch(watchId); // 위치 추적 중지
                             watchId = null; // ID 초기화
@@ -457,6 +458,21 @@
                         });
                         // 행사장 주변 마킹
                         fetchAndProcessParkingData(enter_result.mapy, enter_result.mapx)
+                            .then(parkingData => {
+                                if (parkingData) {
+                                    console.log("주차장 데이터:", parkingData);
+                                    addParkingMarkers(parkingData); // 받은 데이터를 지도에 마커로 추가
+                                } else {
+                                    console.error("주차장 데이터를 가져오지 못했습니다.");
+                                }
+                            })
+                            .catch(error => console.error("Error:", error));
+                    } else {
+                        // 지번인 경우에는 지도만 옮기기만 하고 주변 주차장 나타내기
+                        markers.clearLayers(); // 기존 마커 삭제
+                        hotmarkers.clearLayers();
+                        map.setView([enter_result.lat, enter_result.lon], 16); // 지도 위치 이동
+                        fetchAndProcessParkingData(enter_result.lat, enter_result.lon)
                             .then(parkingData => {
                                 if (parkingData) {
                                     console.log("주차장 데이터:", parkingData);
