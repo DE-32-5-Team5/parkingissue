@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
 import traceback
 import os
-import jwt
+import jwt_module
 
 from db import login_db
-from jwt.jwt_handler import (
+from jwt_module.jwt_handler import (
     create_jwt_token,
     decode_jwt_token,
     refresh_jwt_token,
@@ -195,7 +195,7 @@ async def check_user_service(token: str):
         
         return user_type
     
-    except jwt.ExpiredSignatureError:
+    except jwt_module.ExpiredSignatureError:
         return 6 # Expired Token
     except Exception as e:
         print(f"Functional Error: {e}")
@@ -217,9 +217,9 @@ async def update_token_service(token: str):
     try:
         new_token = refresh_jwt_token(token, secret_key, algorithm, expire_minutes)
         return new_token
-    except jwt.ExpiredSigntureError:
+    except jwt_module.ExpiredSigntureError:
         return None
-    except jwt.InvaildTokenError:
+    except jwt_module.InvaildTokenError:
         return None
 
 async def decode_user_information_service(token: str):
