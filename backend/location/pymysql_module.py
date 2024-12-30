@@ -69,19 +69,10 @@ def related_data(text: str, cls: str, lat: float, lon: float):
             with connection.cursor() as cursor:
                 sql = f"""
                 SELECT park_nm AS {text}
-                FROM (
-                    SELECT park_nm,
-                        (
-                            6371 * acos(
-                                cos(radians({lat})) * cos(radians(park_la)) *
-                                cos(radians(park_lo) - radians({lon})) +
-                                sin(radians({lat})) * sin(radians(park_la))
-                            )
-                        ) AS distance
-                    FROM parkingarea_info
-                    WHERE park_nm LIKE '%{text}%'
-                ) AS subquery
-                ORDER BY distance ASC
+                FROM parkingarea_info
+                WHERE park_nm LIKE '%{text}%'
+                ORDER BY 
+                    ABS(park_lo - {lon}) + ABS(park_la - {lat}) ASC
                 LIMIT 5;
                 """
                 cursor.execute(sql,)
@@ -93,19 +84,10 @@ def related_data(text: str, cls: str, lat: float, lon: float):
             with connection.cursor() as cursor:
                 sql = f"""
                 SELECT title AS {text}
-                FROM (
-                    SELECT title,
-                        (
-                            6371 * acos(
-                                cos(radians({lat})) * cos(radians(mapy)) *
-                                cos(radians(mapx) - radians({lon})) +
-                                sin(radians({lat})) * sin(radians(mapx))
-                            )
-                        ) AS distance
-                    FROM festival_info
-                    WHERE title LIKE '%{text}%'
-                ) AS subquery
-                ORDER BY distance ASC
+                FROM festival_info
+                WHERE title LIKE '%{text}%'
+                ORDER BY 
+                    ABS(mapx - {lon}) + ABS(mapy - {lat}) ASC
                 LIMIT 5;
                 """
                 cursor.execute(sql,)
