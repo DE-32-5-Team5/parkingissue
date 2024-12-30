@@ -9,3 +9,5 @@ aiomysql
 python-dotenv
 boto3
 pandas
+cryptography
+PyJWT

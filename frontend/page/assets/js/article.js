@@ -1,17 +1,14 @@
-// Create the event card content and insert it into the #root element
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function () {
+  console.log("DOM content loaded."); // 로그: DOM 로드 완료
+
   const rootElement = document.getElementById("article-section");
+  const noDataMessage = document.getElementById("no-data-message"); // 데이터 없음 메시지 요소
 
-  const article = document.createElement("article");
-  article.classList.add("event-detail");
+  // URL 파라미터 가져오기
+  const urlParams = new URLSearchParams(window.location.search);
+  const contentId = urlParams.get("contentid");
 
-  // Image Section
-  const imageContainer = document.createElement("div");
-  imageContainer.classList.add("event-image");
-  const img = document.createElement("img");
-  img.src = "https://images.unsplash.com/photo-1492684223066-81342ee5ff30";
-  img.alt = "Coachella Music Festival main stage at sunset";
-  imageContainer.appendChild(img);
+  let items = []; // API로부터 가져온 기사들
 
   function renderContents(data) {
     console.log(`Rendering articles: ${Array.isArray(data) ? data.length : 1} items`); // 데이터 타입 확인 및 항목 개수 출력
