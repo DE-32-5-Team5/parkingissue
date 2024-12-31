@@ -345,7 +345,7 @@ body {
 .navi {
     background-color: #33cbca; /* 배경색 */
     padding: 6px 0;
-    margin-top: 0px; /* 상단 여백 제거 */
+    margin-top: 105px; /* 상단 여백 제거 */
     box-sizing: border-box;
 }
 
