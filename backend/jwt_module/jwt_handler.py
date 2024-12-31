@@ -1,8 +1,9 @@
 import jwt
 from fastapi.responses import JSONResponse
+from fastapi import Response
 from datetime import datetime, timedelta
 
-def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60):
+def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60, response=None):
     """
     JWT 토큰 생성하는 함수
 
@@ -12,26 +13,37 @@ def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: s
         secret_key (str): JWT Secret Key
         algorithm (str, optional): JWT 알고리즘.
         expire_minutes (int, optional): 토큰 만료 시간 (분).
+        response: FastAPI의 Response 객체, JWT 토큰을 쿠키에 설정하기 위해 사용
 
     Returns:
         str: JWT 토큰
     """
 
+    if response is None:
+        raise ValueError("response must be provided")
+
+    # Payload 설정
     payload = {
         "user_id": user_id,
         "user_type": user_type,  # user_type 추가
         "exp": datetime.now() + timedelta(minutes=expire_minutes)
     }
+
+    # JWT 토큰 생성
     token = jwt.encode(payload, secret_key, algorithm=algorithm)
-    response = JSONResponse(content={"message": "Login successful"})
+
+    # 쿠키에 토큰 설정
     response.set_cookie(
         key="jwt_token",
         value=token,
-        httponly=True,  # Prevent JavaScript access
-        secure=True,    # Use HTTPS
-        samesite="Strict"  # Protect against CSRF
+        httponly=True,  # JavaScript에서 접근 불가
+        secure=False,    # HTTPS에서만 전송
+        samesite="Lax",  # CSRF 보호
+        path="/",
+        domain="parkingissue.online"
     )
-    return response
+
+    return {"message": "Login successful"}
 
 def refresh_jwt_token(token: str, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60):
     """

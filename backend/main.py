@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.encoders import jsonable_encoder
 from location.model import Location, FromSpark, Getdf, RequestBody
@@ -25,6 +25,15 @@ import pandas as pd
 import numpy as np
 
 app = FastAPI(docs_url='/api/docs', openapi_url='/api/openapi.json')
+
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://parkingissue.online"],  # 프론트엔드 도메인
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
@@ -170,9 +179,9 @@ async def manager_check_id(request: RequestManagerSchema):
 
 
 @app.post("/api/login/common/personal")
-async def personal_user_login_service(user_infomation: PersonalLogin):
+async def personal_user_login_service(user_infomation: PersonalLogin, response: Response = None):
     from login.service import login_personal_service
-    return await login_personal_service(user_infomation)
+    return await login_personal_service(user_infomation, response)
 
 @app.post("/api/login/common/enterprise")
 async def enterprise_user_login_service(enterprise_information: EnterpriseLogin):
@@ -197,7 +206,11 @@ async def verify_user_service(user_login_token: str):
 @app.post("/api/login/refreshtoken")
 async def refresh_token_service(user_login_token: str):
     from login.service import update_token_service
-    return await update_token_service(user_login_token)
+    user_login_token = request.headers.get('Authorization')  # Authorization 헤더에서 토큰 가 져오기
+    if not user_login_token:
+        raise HTTPException(status_code=401, detail="Token missing")
+    result = await check_user_service(user_login_token)  # 토큰을 사용하여 인증 상태 확인
+    return JSONResponse(content={"status": result})
 
 @app.post("/api/login/decodeinfo")
 async def decode_infomation_service(user_login_token: str):
@@ -231,7 +244,7 @@ async def searchDB(searchWord: str, searchClass: str):
     else:
         addr_result = searchAddr(searchWord)
         return addr_result
-    
+
 # 핫플레이스 게시글 리스트 요청 (진행중이며, 끝나는 일자가 가까운 순)
 @app.post("/api/hotplace/list/ongoing")
 async def hotplace_ongoing_list():
@@ -250,7 +263,7 @@ async def hotplace_upcoming_list():
 # @app.post("/api/hotplace/list/adress")
 # async def hotplace_adress_list(resion: str):
 #     from hotplace.modules.hotplace import select_hotplace_address_info
-    
+
 #     return select_hotplace_address_info(resion)
 
 # 핫플레이스 게시글 내용 요청 (상세정보)
