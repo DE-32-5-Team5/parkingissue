@@ -3099,7 +3099,7 @@ body.is-touch .tiles article .content {
 	/* 연관 검색어 추가 */
 	.suggestions {
 		top: 100%; /* Position it right below the search bar */
-		left: 32%;
+		left: 28%;
 		right: 0;
 		display: none;
 		position: absolute;
@@ -3108,7 +3108,7 @@ body.is-touch .tiles article .content {
 		border-radius: 8px;
 		margin-top: 5px; /* Adjust the gap between input and suggestions */
 		z-index: 999; /* Ensure it appears above other elements */
-		width: 50%;
+		width: 55%;
 	}
 
 	.suggestion-emj {
