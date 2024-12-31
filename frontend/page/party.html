@@ -24,9 +24,12 @@
                     <!-- Search Bar -->
                     
                     <div class="search-bar-container">
-                        <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
-                        <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
+                        <form class="search-form" onsubmit="handleSearch(event); return false;">
+                            <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
+                            <input type="text" class="search-bar" placeholder="검색어를 입력하세요" />
+                        </form>
                     </div>
+                    <div class="suggestions"></div>
                 </div>
             </div>
         </header>
@@ -69,6 +72,7 @@
             </div>
         </div>
         <script src="assets/js/party.js"></script>
+        <script src="assets/js/party_search.js"></script>
     </div>
 </body>
 </html>
