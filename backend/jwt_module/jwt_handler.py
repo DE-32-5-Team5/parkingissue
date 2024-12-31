@@ -1,4 +1,4 @@
-import jwt_module
+import jwt
 from datetime import datetime, timedelta
 
 def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60):
@@ -21,7 +21,7 @@ def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: s
         "user_type": user_type,  # user_type 추가
         "exp": datetime.now() + timedelta(minutes=expire_minutes)
     }
-    token = jwt_module.encode(payload, secret_key, algorithm=algorithm)
+    token = jwt.encode(payload, secret_key, algorithm=algorithm)
     return token
 
 def refresh_jwt_token(token: str, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60):
@@ -38,15 +38,15 @@ def refresh_jwt_token(token: str, secret_key: str, algorithm: str = "HS256", exp
         str: 갱신된 JWT 토큰
     """
     try:
-        payload = jwt_module.decode(token, secret_key, algorithms=[algorithm])
+        payload = jwt.decode(token, secret_key, algorithms=[algorithm])
         # 만료 시간을 갱신합니다.
         payload['exp'] = datetime.now() + timedelta(minutes=expire_minutes)
-        new_token = jwt_module.encode(payload, secret_key, algorithm=algorithm)
+        new_token = jwt.encode(payload, secret_key, algorithm=algorithm)
         return new_token
-    except jwt_module.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError:
         # 토큰이 만료된 경우에는 None을 반환합니다.
         return None
-    except jwt_module.InvalidTokenError:
+    except jwt.InvalidTokenError:
         # 유효하지 않은 토큰인 경우에도 None을 반환합니다.
         return None
 
@@ -63,11 +63,11 @@ def decode_jwt_token(token: str, secret_key: str, algorithm: str = "HS256"):
         dict: 디코딩된 페이로드 또는 None
     """
     try:
-        payload = jwt_module.decode(token, secret_key, algorithms=[algorithm])
+        payload = jwt.decode(token, secret_key, algorithms=[algorithm])
         return payload
-    except jwt_module.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError:
         # 토큰이 만료된 경우에는 None을 반환합니다.
         return None
-    except jwt_module.InvalidTokenError:
+    except jwt.InvalidTokenError:
         # 유효하지 않은 토큰인 경우에도 None을 반환합니다.
         return None
