@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Request
 import traceback
 import os
 import jwt_module
@@ -161,7 +161,7 @@ async def login_kakao_service(kakao_login: KakaoLogin):
     finally:
         conn.close()
 
-async def check_user_service(token: str):
+async def check_user_service(request: Request):
     """
         토큰을 기반으로 유저 정보를 확인하는 API
         Args:
@@ -177,12 +177,14 @@ async def check_user_service(token: str):
             5 : Invaild Token
             6 : Expired Token
     """
+    token = request.cookies.get("jwt_token")
 
     secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
-    conn = login_db()
-    if not conn:
-        raise HTTPException(status_code=500, detail="Database connection error")
-    
+    #conn = login_db()
+    #if not conn:
+    #    raise HTTPException(status_code=500, detail="Database connection error")
+    if not token:
+        raise HTTPException(status_code=401, detail="Token missing")
     try:
         payload = decode_jwt_token(token, secret_key)
         if payload is None:
@@ -234,3 +236,4 @@ async def decode_user_information_service(token: str):
     algorithm = "HS256"
     payload = decode_jwt_token(token, secret_key, algorithm)
     return payload
+
