@@ -3096,6 +3096,39 @@ body.is-touch .tiles article .content {
 			width: 2.2em; /* 로고 이미지 크기 */
 			height: 2.2em;
 		}
+	/* 연관 검색어 추가 */
+	.suggestions {
+		top: 100%; /* Position it right below the search bar */
+		left: 0;
+		right: 0;
+		display: none;
+		position: absolute;
+		background: white;
+		border: 1px solid #ddd;
+		border-radius: 8px;
+		margin-top: 5px; /* Adjust the gap between input and suggestions */
+		z-index: 999; /* Ensure it appears above other elements */
+		width: 100%;
+	}
+
+	.suggestion-emj {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+	
+	.suggestion-item {
+		padding-top: 7px;
+		padding-bottom: 5px;
+		padding-left: 10px;
+		cursor: pointer;
+	}
+
+	.suggesion-icon {
+		padding-right: 10px;
+	}
+	.suggestion-item:hover {
+		background-color: #f0f0f0;
+	}
 
 /* 모바일 및 태블릿 스타일 */
 @media (max-width: 768px) {
