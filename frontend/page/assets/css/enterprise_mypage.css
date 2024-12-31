@@ -340,3 +340,99 @@ body {
     text-decoration: none;
     cursor: pointer;
 }
+
+/* 네비게이션 스타일 */
+.navi {
+    background-color: #33cbca; /* 배경색 */
+    padding: 6px 0;
+    margin-top: 0px; /* 상단 여백 제거 */
+    box-sizing: border-box;
+}
+
+.navi-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+}
+
+.navbar ul {
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar ul li {
+    display: inline-block;
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: white;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    font-weight: 300;
+}
+
+.navbar ul li a img {
+    width: 20px; /* 아이콘 크기 */
+    height: 20px;
+    margin-right: 8px; /* 텍스트와 아이콘 간격 */
+}
+
+.navbar ul li a:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+/* 모바일 환경용 네비게이션 바 설정 */
+@media screen and (max-width: 768px) {
+    .navi-section {
+        flex-wrap: nowrap; /* 줄바꿈 비활성화 */
+        justify-content: space-around; /* 버튼 간격 균일하게 */
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .navbar ul {
+        flex-wrap: nowrap; /* 줄바꿈 비활성화 */
+        gap: 4px; /* 버튼 간격 조정 */
+        justify-content: space-around; /* 버튼을 균등 배치 */
+        padding: 0 0px; /* 양쪽 여백 추가 */
+    }
+
+    .navbar ul li {
+        flex: 1 1 auto; /* 버튼의 너비를 균등하게 */
+        text-align: center; /* 버튼 텍스트 가운데 정렬 */
+    }
+
+    .navbar ul li a {
+        font-size: 0.7em; /* 버튼 텍스트 크기 조정 */
+        padding: 7px; /* 버튼 내부 여백 축소 */
+        white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+        font-weight: 300;
+    }
+
+    .navbar ul li a img {
+        width: 18px; /* 아이콘 크기 축소 */
+        height: 18px;
+        margin-right: 5px; /* 아이콘과 텍스트 간격 축소 */
+    }
+}
+
+/* 기본 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
