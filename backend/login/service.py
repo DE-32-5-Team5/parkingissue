@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status, Request, Response
 import traceback
 import os
 import jwt_module
@@ -17,7 +17,7 @@ from login.model import (
     KakaoLogin,
 )
 
-async def login_personal_service(personal_login: PersonalLogin):
+async def login_personal_service(personal_login: PersonalLogin, response: Response):
     """
         일반회원 id, pw 기반 로그인 시도시 작동하는 서비스
     """
@@ -35,7 +35,7 @@ async def login_personal_service(personal_login: PersonalLogin):
             cursor.execute(sql, (personal_login.user_id, password_decrypt_key, personal_login.user_pw,))  # user_pw 값을 추가
             user = cursor.fetchone()
 
-            
+
             if not user:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -44,8 +44,9 @@ async def login_personal_service(personal_login: PersonalLogin):
                 )
 
             # 2. JWT 토큰 생성
-            access_token = create_jwt_token(user['user_id'], 1, secret_key)  # JWT secret key 설정
-
+            access_token = create_jwt_token(user['user_id'], 1, secret_key, response=response)  # JWT secret key 설정
+            print("토큰 발행")
+            print(access_token)
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
@@ -104,7 +105,7 @@ async def login_naver_service(naver_login: NaverLogin):
     if not conn:
         # 데이터베이스 연결 오류
         raise HTTPException(status_code=500, detail="데이터베이스 연결 오류")
-    
+
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디 확인)
@@ -114,7 +115,7 @@ async def login_naver_service(naver_login: NaverLogin):
 
             if not user:
                 # 2-1. naver_id가 없다면 회원가입 창으로 리디렉션 (프론트엔드에서 처리)
-                return {"message": "naver_id not found", "redirect": True} 
+                return {"message": "naver_id not found", "redirect": True}
 
             # 2-2. JWT 토큰 생성
             access_token = create_jwt_token(user['user_id'], 1, secret_key)
@@ -138,7 +139,7 @@ async def login_kakao_service(kakao_login: KakaoLogin):
     if not conn:
         # 데이터베이스 연결 오류
         raise HTTPException(status_code=500, detail="데이터베이스 연결 오류")
-    
+
     try:
         with conn.cursor() as cursor:
             # 1. 사용자 인증 (아이디 확인)
@@ -148,7 +149,7 @@ async def login_kakao_service(kakao_login: KakaoLogin):
 
             if not user:
                 # 2-1. naver_id가 없다면 회원가입 창으로 리디렉션 (프론트엔드에서 처리)
-                return {"message": "kakao_id not found", "redirect": True} 
+                return {"message": "kakao_id not found", "redirect": True}
 
             # 2-2. JWT 토큰 생성
             access_token = create_jwt_token(user['user_id'], 1, secret_key)
@@ -166,7 +167,7 @@ async def check_user_service(request: Request):
         토큰을 기반으로 유저 정보를 확인하는 API
         Args:
             Token(str) : JWT 로그인 정보 토큰큰
-        
+
         Return:
             Integer Code
             0 : Not User
@@ -180,23 +181,23 @@ async def check_user_service(request: Request):
     token = request.cookies.get("jwt_token")
 
     secret_key = os.getenv("JWT_LOGIN_ACCESS_KEY")
-    #conn = login_db()
-    #if not conn:
-    #    raise HTTPException(status_code=500, detail="Database connection error")
+    conn = login_db()
+    if not conn:
+        raise HTTPException(status_code=500, detail="Database connection error")
     if not token:
         raise HTTPException(status_code=401, detail="Token missing")
     try:
         payload = decode_jwt_token(token, secret_key)
         if payload is None:
             return 5 # Invaild Token
-        
+
         user_id = payload.get('user_id')
         user_type = payload.get('user_type')
         if user_id is None or user_type is None:
             return 0 # Not User
-        
+
         return user_type
-    
+
     except jwt_module.ExpiredSignatureError:
         return 6 # Expired Token
     except Exception as e:
@@ -209,7 +210,7 @@ async def update_token_service(token: str):
     """
         토큰을 갱신시켜 리턴하는 API
         Args:
-            token (str): jwt_token 
+            token (str): jwt_token
         Returns:
             str: new_jwt_token
     """
@@ -236,4 +237,3 @@ async def decode_user_information_service(token: str):
     algorithm = "HS256"
     payload = decode_jwt_token(token, secret_key, algorithm)
     return payload
-
