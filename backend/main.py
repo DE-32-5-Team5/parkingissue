@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.encoders import jsonable_encoder
 from location.model import Location, FromSpark, Getdf, RequestBody
 from location.pymysql_module import select_park_info, related_data
@@ -203,6 +203,12 @@ async def refresh_token_service(user_login_token: str):
 async def decode_infomation_service(user_login_token: str):
     from login.service import decode_user_information_service
     return await decode_user_information_service(user_login_token)
+
+@app.exception_handler(HTTPException)
+async def auth_exception_handler(request: Request, exc: HTTPException):
+    if exc.status_code == 401:
+        return RedirectResponse(url="/")  # Redirect to the index page
+    raise exc
 
 # 핫플레이스 게시글 리스트 요청 (가까운 순)
 @app.post("/api/hotplace/list/default")

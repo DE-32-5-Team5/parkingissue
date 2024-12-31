@@ -1,4 +1,5 @@
 import jwt
+from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
 
 def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60):
@@ -22,7 +23,15 @@ def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: s
         "exp": datetime.now() + timedelta(minutes=expire_minutes)
     }
     token = jwt.encode(payload, secret_key, algorithm=algorithm)
-    return token
+    response = JSONResponse(content={"message": "Login successful"})
+    response.set_cookie(
+        key="jwt_token",
+        value=token,
+        httponly=True,  # Prevent JavaScript access
+        secure=True,    # Use HTTPS
+        samesite="Strict"  # Protect against CSRF
+    )
+    return response
 
 def refresh_jwt_token(token: str, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60):
     """
