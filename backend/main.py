@@ -17,7 +17,7 @@ from passlib.context import CryptContext
 # 검색 모듈
 from search.module.search_module import searchParkDB, searchHotDB, searchAddr
 # 북마크 스키마
-from bookmark.model.bookmark_schema import RequestBookmarkSchema
+from bookmark.model.bookmark_schema import BookmarkCheckSchema, RequestBookmarkSchema
 
 import boto3
 import io
@@ -336,11 +336,23 @@ async def delete_bookmarks_info(BookmarkDelete:RequestBookmarkSchema):
     return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
 # 북마크 여부 > 핫플 게시글
 @app.post("/api/bookmark/check")
-async def check_bookmarks_info(BookmarkCheck: RequestBookmarkSchema):
+async def check_bookmarks_info(bookmarkcheck :BookmarkCheckSchema, request :Request):
     from bookmark.modules.bookmark import check_bookmarks
-    if BookmarkCheck:
-        return check_bookmarks(BookmarkCheck.idtype, BookmarkCheck.idcode, BookmarkCheck.contentid)
-    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+    from login.service import check_user_service
+    if not request:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
+    try:
+        result = await check_user_service(request)
+        idtype="uid"
+        if isinstance(result[1], int):
+            return JSONResponse(content={"status": result, "detail": "Invalid or expired token"}, status_code=401)
+        idcode=result[1]
+        if result[0] == 2:
+            idtype = "mid"
+        is_it_bookmarked = check_bookmarks(idtype, idcode, bookmarkcheck.contentid)
+        return JSONResponse(content={"status": 200, "isitbookmarked": is_it_bookmarked}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
 # 북마크 수정
 @app.post("/api/bookmark/update")
 async def update_bookmarks_info(BookmarkUpdate:RequestBookmarkSchema):

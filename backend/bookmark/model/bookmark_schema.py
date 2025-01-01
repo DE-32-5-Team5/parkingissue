@@ -24,8 +24,6 @@ class BookmarkCreationSchema(BaseModel):
     bookmark_nickname: str = Field(..., description="북마크 닉네임")
 
 class BookmarkCheckSchema(BaseModel):
-    idtype: str = Field(..., description="로그인 타입")
-    idcode: str = Field(..., description="id")
     contentid: str = Field(..., description="컨텐츠 아이디")
 
 class BookmarkDeleteSchema(BaseModel):
@@ -42,6 +40,6 @@ class BookmarkUpdateSchema(BaseModel):
 class RequestBookmarkSchema(BaseModel):
     # ContentsList: BookmarkListSchema = Field(..., description="북마크 정보")
     BookmarkCreation: BookmarkCreationSchema = Field(..., description="북마크 등록")
-    BookmarkCheck: BookmarkCheckSchema = Field(..., description="북마크 여부 체크")
+    #BookmarkCheck: BookmarkCheckSchema = Field(..., description="북마크 여부 체크")
     BookmarkDelete: BookmarkDeleteSchema = Field(..., description="북마크 삭제")
     BookmarkUpdate: BookmarkUpdateSchema = Field(..., description="북마크 수정")
