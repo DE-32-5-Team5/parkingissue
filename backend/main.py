@@ -307,7 +307,7 @@ async def select_bookmark_info(location :Location, request :Request):
         return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
     try:
         result = await check_user_service(request)
-        idtype = "mid"
+        idtype = "uid"
         if isinstance(result[1], int):
             return JSONResponse(content={"status": result, "detail": "Invalid or expired token"}, status_code=401)
         idcode = result[1]
