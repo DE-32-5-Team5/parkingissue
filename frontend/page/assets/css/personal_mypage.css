@@ -187,7 +187,7 @@ body {
 .navi {
     background-color: #33cbca; /* 배경색 */
     padding: 6px 0;
-    margin-top: 217px; /* 상단 여백 제거 */
+    margin-top: 215px; /* 상단 여백 제거 */
     box-sizing: border-box;
 }
 
@@ -216,6 +216,7 @@ body {
     display: flex;
     align-items: center;
     font-weight: 300;
+    font-size: 1.2em;
 }
 
 .navbar ul li a img {
