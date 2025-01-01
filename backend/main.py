@@ -199,9 +199,9 @@ async def personal_user_login_service(user_kakao_information: KakaoLogin):
     return await login_kakao_service(user_kakao_information)
 
 @app.post("/api/login/isuser")
-async def verify_user_service(user_login_token: str):
+async def verify_user_service(request: Request):
     from login.service import check_user_service
-    return await check_user_service(user_login_token)
+    return await check_user_service(request)
 
 @app.post("/api/login/refreshtoken")
 async def refresh_token_service(user_login_token: str):
