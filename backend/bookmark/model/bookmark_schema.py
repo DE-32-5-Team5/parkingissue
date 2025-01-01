@@ -10,12 +10,12 @@ from pydantic import BaseModel, Field, SecretStr
 # }
 
 # 북마크 스키마
-class BookmarkListSchema(BaseModel):
-    title: str = Field(..., description="북마크 제목")
-    idtype: str = Field(..., description="로그인 타입")
-    idcode: str = Field(..., description="id")
-    mapx: float = Field(..., description="longitude")
-    mapy: float = Field(..., description="latitude")
+# class BookmarkListSchema(BaseModel):
+    # title: str = Field(..., description="북마크 제목")
+    # idtype: str = Field(..., description="로그인 타입")
+    # idcode: str = Field(..., description="id")
+    # mapx: float = Field(..., description="longitude")
+    # mapy: float = Field(..., description="latitude")
 
 class BookmarkCreationSchema(BaseModel):
     idtype: str = Field(..., description="로그인 타입")
@@ -40,7 +40,7 @@ class BookmarkUpdateSchema(BaseModel):
     bookmark_nickname: str = Field(..., description="북마크 닉네임")
 
 class RequestBookmarkSchema(BaseModel):
-    ContentsList: BookmarkListSchema = Field(..., description="북마크 정보")
+    # ContentsList: BookmarkListSchema = Field(..., description="북마크 정보")
     BookmarkCreation: BookmarkCreationSchema = Field(..., description="북마크 등록")
     BookmarkCheck: BookmarkCheckSchema = Field(..., description="북마크 여부 체크")
     BookmarkDelete: BookmarkDeleteSchema = Field(..., description="북마크 삭제")

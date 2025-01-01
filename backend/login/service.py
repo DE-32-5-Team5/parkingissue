@@ -196,7 +196,7 @@ async def check_user_service(request: Request):
         if user_id is None or user_type is None:
             return 0 # Not User
 
-        return user_type
+        return user_type, user_id
 
     except jwt_module.ExpiredSignatureError:
         return 6 # Expired Token

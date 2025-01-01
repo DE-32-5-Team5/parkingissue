@@ -9,12 +9,12 @@
         <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
         <script src="https://kit.fontawesome.com/eb9b7241dc.js" crossorigin="anonymous"></script>
     </head>
-    
+
     <body>
         <div class="container">
             <!-- Heading -->
             <h1>주차잇슈</h1>
-    
+
             <!-- Links -->
             <ul class="links">
                 <li>
@@ -27,7 +27,7 @@
                     <a href="./membership/personal/index.html" id="reset">회원가입</a>
                 </li>
             </ul>
-    
+
             <!-- Form -->
             <form  action="" method="post">
             <!-- id input -->
@@ -43,25 +43,41 @@
                 </button>
             </form>
         <script>
+            async function checkAuth() {
+                const response = await fetch('/api/login/isuser', {
+                method: 'POST',
+                credentials: 'include',
+                redirect: 'manual',
+                });
+
+                if (response.ok) {
+                    window.location.href = 'https://parkingissue.online/main';
+                }
+            }
+            document.addEventListener("DOMContentLoaded", () => {
+                checkAuth();
+            });
+        </script>
+        <script>
             // 모든 링크를 선택
             const links = document.querySelectorAll('.links li a');
             const resetLink = document.getElementById('reset');
-    
+
             // 현재 활성 상태를 추적하는 변수
             let activeType = 'personal'; // 기본값은 'personal'
-    
+
             // 링크 클릭 이벤트 처리
             links.forEach(link => {
                 link.addEventListener('click', () => {
                     // 모든 링크에서 active 클래스 제거
                     links.forEach(link => link.classList.remove('active'));
-    
+
                     // 현재 클릭된 링크에 active 클래스 추가
                     link.classList.add('active');
-    
+
                     // 활성 상태 업데이트
                     activeType = link.id === 'enterprise' ? 'enterprise' : 'personal';
-    
+
                     // placeholder 및 회원가입 링크 업데이트
                     const idInput = document.getElementById('id');
                     if (activeType === 'personal') {
@@ -73,23 +89,23 @@
                     }
                 });
             });
-    
+
             // 로그인 폼 제출 이벤트 처리
             const loginForm = document.querySelector('form');
             loginForm.addEventListener('submit', (event) => {
                 event.preventDefault(); // 기본 폼 제출 동작 방지
-    
+
                 const id = document.getElementById('id').value;
                 const password = document.getElementById('password').value;
-    
+
                 // 엔드포인트를 활성 상태에 따라 동적으로 설정
                 const endpoint = `/api/login/common/${activeType}`;
-    
+
                 // 전송할 데이터 구성
                 const loginData = activeType === 'personal'
                     ? { user_id: id, user_pw: password } // 개인회원 데이터
                     : { manager_id: id, manager_pw: password }; // 기업회원 데이터
-    
+
                 fetch(endpoint, { // 동적 엔드포인트로 요청 전송
                     method: 'POST',
                     headers: {
@@ -114,7 +130,7 @@
                     alert('로그인 실패');
                 });
             });
-    
+
         </script>
             <!-- separator -->
             <div class="separator">
@@ -130,7 +146,7 @@
                 </button>
             </div>
         </div>
-    
+
         <footer>
             <p>
             SAMDULSHOP : FINAL PROJECT
@@ -155,7 +171,7 @@
             <a href="https://www.behance.net/geek30">
                 <i class="fa fa-behance"></i>
             </a> -->
-    
+
                 <i class="fa fa-github"></i>
             </a>
             </p>

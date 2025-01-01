@@ -299,11 +299,27 @@ async def info(id: str):
 
 # 북마크 페이지 > 리스트 조회
 @app.post("/api/bookmark/list")
-async def select_bookmark_info(ContentsList :RequestBookmarkSchema):
+async def select_bookmark_info(location :Location, request :Request):
     from bookmark.modules.bookmark import select_bookmarks
-    if ContentsList:
-        return select_bookmarks(ContentsList.idtype, ContentsList.idcode, ContentsList.mapx, ContentsList.mapy)
-    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+    from login.service import check_user_service
+    token = request.cookies.get("jwt_token")
+    if not request or not location:
+        return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+    try:
+        result = await check_user_service(request)
+        idtype = "mid"
+        if isinstance(result[1], int):
+            return JSONResponse(content={"status": result, "detail": "Invalid or expired token"}, status_code=401)
+        idcode = result[1]
+        if result[0] == 2:
+            idtype = "mid"
+        mapx = str(location.longitude)
+        mapy = str(location.latitude)
+        bookmarks = select_bookmarks(idtype,idcode, mapx, mapy)
+        return JSONResponse(content={"status": 200, "bookmarks": bookmarks}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"status": 500, "detail": str(e)}, status_code=500)
+    
 # 핫플 게시글 > 북마크 하기
 @app.post("/api/bookmark/creation")
 async def create_bookmark_info(BookmarkCreation :RequestBookmarkSchema):
