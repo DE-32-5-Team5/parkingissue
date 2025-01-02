@@ -59,12 +59,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             // 카드 삭제 버튼 이벤트 추가
             const closeButton = card.querySelector('.close-btn');
-            closeButton.addEventListener('click', function () {
-                card.remove();
+            closeButton.addEventListener('click', async function () {
+                const cancelResponse = await cancelBookmark(bookmark.id);
+                if (cancelResponse && cancelResponse.delete === true) {
+                    card.remove();
+                } else {
+                    alert('북마크 삭제에 실패했습니다.');
+                }
             });
 
             bookmarkCardsContainer.appendChild(card);
         });
+    }
+
+    // 북마크 취소 API 호출 함수
+    async function cancelBookmark(bookmarkId) {
+        try {
+            const response = await fetch('/api/bookmark/delete', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ bookmarkid: bookmarkId }) // 필요 시 추가 데이터
+            });
+            if (!response.ok) {
+                throw new Error('Failed to cancel bookmark');
+            }
+            return await response.json(); // { "delete": true } 예상
+        } catch (error) {
+            console.error("Error cancelling bookmark:", error);
+            return null;
+        }
     }
 
     // 현재 위치를 가져오는 함수

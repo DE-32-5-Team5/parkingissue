@@ -349,11 +349,24 @@ async def create_bookmark_info(BookmarkCreation :RequestBookmarkSchema, request 
     
 # 북마크 페이지 > 북마크 제거, 핫플 게시글 > 북마크 제거
 @app.post("/api/bookmark/delete")
-async def delete_bookmarks_info(BookmarkDelete:RequestBookmarkSchema):
+async def delete_bookmarks_info(BookmarkDelete:RequestBookmarkSchema, request :Request):
     from bookmark.modules.bookmark import delete_bookmarks
-    if BookmarkDelete:
-        return delete_bookmarks(BookmarkDelete.idtype, BookmarkDelete.idcode, BookmarkDelete.contentid)
-    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+    from login.service import check_user_service
+    if not request:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
+    try:
+        result = await check_user_service(request)
+        print(result)
+        idtype="uid"
+        if isinstance(result[1], int):
+            return JSONResponse(content={"status": result, "detail": "Invalid or expired token"}, status_code=401)
+        idcode=result[1]
+        if result[0] == 2:
+            idtype = "mid"
+        delete = delete_bookmarks(idtype, idcode, BookmarkDelete.contentid)
+        return JSONResponse(content={"status": 200, "delete": delete}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
 # 북마크 여부 > 핫플 게시글
 @app.post("/api/bookmark/check")
 async def check_bookmarks_info(bookmarkcheck :RequestBookmarkSchema, request :Request):

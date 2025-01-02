@@ -44,14 +44,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         bookmarkButton.addEventListener("click", async () => {
           try {
+            // API 호출로 북마크 상태 확인 및 업데이트
             const response = await bookmarkCheck(contentId);
-
+        
+            // 이미지의 src 속성을 즉시 업데이트
             img2.src = response.creation === "true"
               ? "images/free-icon-favorite-2550357.png"
               : "images/free-icon-star-5708819.png";
-
+        
           } catch (error) {
             console.error("Error updating bookmark:", error);
+            alert("즐겨찾기 업데이트에 실패했습니다.");
           }
         });
 

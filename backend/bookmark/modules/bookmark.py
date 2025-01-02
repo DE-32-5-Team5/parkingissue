@@ -86,16 +86,23 @@ def insert_bookmarks(idtype, idcode, contentid):
             return True
 
 def delete_bookmarks(idtype, idcode, contentid):
-    # 테이블 이름 설정
-    tableNm = "user_bookmarks" if idtype == "uid" else "manager_bookmarks"
-
-    # 유효한 idtype 값인지 확인
     if idtype not in ["uid", "mid"]:
         raise ValueError("Invalid idtype. Must be 'uid' or 'mid'.")
+    # 테이블 이름 설정
+    tableNm = "user_bookmarks" if idtype == "uid" else "manager_bookmarks"
+    tableNm2 = "user_info" if idtype == "uid" else "manager_info"
+    colNm = "user_id" if idtype == "uid" else "manager_id"
 
     connection = connect_db()
     with connection:
         with connection.cursor() as cursor:
+            # idcode 확인
+            cursor.execute(
+                f"SELECT {idtype} FROM {tableNm2} WHERE {colNm} = %s", (idcode,)
+            )
+            idcode_row = cursor.fetchone()
+            idcode = idcode_row[f'{idtype}']
+
             # SQL 쿼리 작성
             sql = f"""
             DELETE FROM {tableNm}
