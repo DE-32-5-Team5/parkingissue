@@ -205,8 +205,8 @@ async def verify_user_service(request: Request):
 
 @app.post("/api/login/refreshtoken")
 async def refresh_token_service(user_login_token: str):
-    from login.service import update_token_service
-    user_login_token = request.headers.get('Authorization')  # Authorization 헤더에서 토큰 가 져오기
+    from login.service import check_user_service
+    user_login_token = Request.headers.get('Authorization')  # Authorization 헤더에서 토큰 가 져오기
     if not user_login_token:
         raise HTTPException(status_code=401, detail="Token missing")
     result = await check_user_service(user_login_token)  # 토큰을 사용하여 인증 상태 확인
@@ -216,6 +216,12 @@ async def refresh_token_service(user_login_token: str):
 async def decode_infomation_service(user_login_token: str):
     from login.service import decode_user_information_service
     return await decode_user_information_service(user_login_token)
+
+@app.post("/api/logout")
+async def logout_service(response: Response = None, request: Request = None):
+    from jwt_module import delete_jwt_token
+    token = request.cookies.get("jwt_token")
+    return delete_jwt_token(token, response)
 
 @app.exception_handler(HTTPException)
 async def auth_exception_handler(request: Request, exc: HTTPException):
