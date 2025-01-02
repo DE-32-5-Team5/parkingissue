@@ -15,8 +15,6 @@
             <div class="profile-card">
                 <img src="images/profile.png" alt="프로필 사진" class="profile-image">
                 <h2 class="profile-name">홍길동</h2>
-                <!-- <p class="profile-email">example@email.com</p> -->
-                <!-- <button class="edit-profile-btn">Edit Profile</button> -->
             </div>
         </section>
         
@@ -41,13 +39,16 @@
             </div>
         </section>
         
-        <!-- 하단 섹션: 로그아웃 및 기타 -->
+
         <section class="logout-section">
             <button class="logout-btn">Log Out</button>
-            <!-- <div class="activity-summary">
-                <p>최근 검색: 강남구 주차장</p>
-                <p>예약한 주차장: 장소명 A</p>
-            </div> -->
+            <script>
+                const logoutButton = document.querySelector('.logout-btn');
+                logoutButton.addEventListener('click', () => {
+                    document.cookie = 'jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = '/main';
+                });
+            </script>
             <button id="openModal">회원 탈퇴</button>
 
             <!-- 회원 탈퇴 모달 -->
