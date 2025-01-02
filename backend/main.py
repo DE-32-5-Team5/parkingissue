@@ -373,10 +373,3 @@ async def check_bookmarks_info(bookmarkcheck :RequestBookmarkSchema, request :Re
         return JSONResponse(content={"status": 200, "isitbookmarked": is_it_bookmarked}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
-# 북마크 수정
-@app.post("/api/bookmark/update")
-async def update_bookmarks_info(BookmarkUpdate:RequestBookmarkSchema):
-    from bookmark.modules.bookmark import update_bookmarks
-    if BookmarkUpdate:
-        return update_bookmarks(BookmarkUpdate.idtype, BookmarkUpdate.idcode, BookmarkUpdate.contentid, BookmarkUpdate.bookmark_nickname)
-    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)

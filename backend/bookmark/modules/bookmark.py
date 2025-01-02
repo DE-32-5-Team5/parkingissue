@@ -121,11 +121,6 @@ def check_bookmarks(idtype, idcode, contentid):
         raise ValueError("Invalid idtype. Must be 'uid' or 'mid'.")
 
     connection = connect_db()
-    print("#"*100)
-    print(idtype)
-    print(idcode)
-    print(contentid)
-    print("#"*100)
 
     with connection:
         with connection.cursor() as cursor:
@@ -137,16 +132,12 @@ def check_bookmarks(idtype, idcode, contentid):
             if not fid_row:
                 raise ValueError("No matching fid found for the provided contentid.")
             fid = fid_row['fid']
-            print(fid)
-            print("#"*100)
             # idcode 확인
             cursor.execute(
                 f"SELECT {idtype} FROM {tableNm2} WHERE {colNm} = %s", (idcode,)
             )
             idcode_row = cursor.fetchone()
             idcode = idcode_row[f'{idtype}']
-            print(idcode)
-            print("#"*100)
             if not idcode_row:
                 raise ValueError("No matching idcode found for the provided idtype.")
 
@@ -162,11 +153,6 @@ def check_bookmarks(idtype, idcode, contentid):
             """
             cursor.execute(sql, (idcode, contentid))
             result = cursor.fetchone() # 북마크했으면 True, 북마크 안했으면 False
-            print("#"*100)
-            print(colNm)
-            print(contentid)
-            print(result)
-            print("#"*100)
 
             return bool(result)
 
