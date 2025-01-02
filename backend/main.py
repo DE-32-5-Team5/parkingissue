@@ -184,9 +184,9 @@ async def personal_user_login_service(user_infomation: PersonalLogin, response: 
     return await login_personal_service(user_infomation, response)
 
 @app.post("/api/login/common/enterprise")
-async def enterprise_user_login_service(enterprise_information: EnterpriseLogin):
+async def enterprise_user_login_service(enterprise_information: EnterpriseLogin, response: Response = None):
     from login.service import login_enterprise_service
-    return await login_enterprise_service(enterprise_information)
+    return await login_enterprise_service(enterprise_information, response)
 
 @app.post("/api/login/simple/naver")
 async def personal_user_naver_login_service(user_naver_information: NaverLogin):
