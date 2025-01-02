@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 </div>
                 <h3>${bookmark.title}</h3>
                 <p>${bookmark.address}</p>
-                <p>현재 위치에서 ${bookmark.distance}km</p>
+                <p>현재 위치에서 ${bookmark.distance.toFixed(3)}km</p>
                 <div class="close-btn">
                     <i class="fas fa-times"></i> <!-- X 아이콘 -->
                 </div>
