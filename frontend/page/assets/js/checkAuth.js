@@ -16,6 +16,7 @@ async function checkAuth() {
         // 응답 데이터가 배열 형식인지 확인
         if (Array.isArray(data) && data.length > 0) {
             const userType = data[0]; // 0번 인덱스의 값
+            alert(userType);
             const mypageLink = document.getElementById('mypage'); // mypage ID를 가진 a 태그 선택
 
             // userType에 따라 href 경로 설정
