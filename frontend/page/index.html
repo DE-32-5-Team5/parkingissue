@@ -76,8 +76,9 @@
                     link.classList.add('active');
 
                     // 활성 상태 업데이트
-                    activeType = link.id === 'enterprise' ? 'enterprise' : 'personal';
-
+                    if (link.id !== 'reset') {
+                        activeType = link.id === 'enterprise' ? 'enterprise' : 'personal';
+                    }
                     // placeholder 및 회원가입 링크 업데이트
                     const idInput = document.getElementById('id');
                     if (activeType === 'personal') {
