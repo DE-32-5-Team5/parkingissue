@@ -92,3 +92,20 @@ def decode_jwt_token(token: str, secret_key: str, algorithm: str = "HS256"):
     except jwt.InvalidTokenError:
         # 유효하지 않은 토큰인 경우에도 None을 반환합니다.
         return None
+    
+def delete_jwt_token(token: str, response=None):
+    if response is None:
+        raise ValueError("response must be provided")
+
+    response.set_cookie(
+        key="jwt_token",
+        value=token,
+        expires=0,  # 즉시 만료
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        path="/",
+        domain="parkingissue.online"
+    )
+
+    return {"message": "Logout successful"}

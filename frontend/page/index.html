@@ -64,7 +64,7 @@
             const resetLink = document.getElementById('reset');
 
             // 현재 활성 상태를 추적하는 변수
-            let activeType = 'personal'; // 기본값은 'personal'
+            let activeType;
 
             // 링크 클릭 이벤트 처리
             links.forEach(link => {
@@ -76,8 +76,9 @@
                     link.classList.add('active');
 
                     // 활성 상태 업데이트
-                    activeType = link.id === 'enterprise' ? 'enterprise' : 'personal';
-
+                    if (link.id !== 'reset') {
+                        activeType = link.id === 'enterprise' ? 'enterprise' : 'personal';
+                    }
                     // placeholder 및 회원가입 링크 업데이트
                     const idInput = document.getElementById('id');
                     if (activeType === 'personal') {
@@ -132,18 +133,6 @@
             });
 
         </script>
-            <!-- separator -->
-            <!-- <div class="separator">
-            <p>OR</p>
-            </div>
-            <div class="button-container">
-                <button class="kakao__btn">
-                    <i class="fa fa-kakao"></i>
-                </button>
-                <button class="naver__btn">
-                    <i class="fa fa-naver"></i>
-                </button>
-            </div> -->
         </div>
 
         <footer>
@@ -155,22 +144,6 @@
             </p>
             <p>
                 인생한방 :
-            <!-- <a href="https://www.facebook.com/chouaib45" >
-                <i class="fa fa-facebook"></i>
-            </a>
-            <a href="http://twitter.com/chouaibblgn45">
-                <i class="fa fa-twitter"></i>
-            </a>
-            <a href="http://instagram.com/chouaib_blgn">
-                <i class="fa fa-instagram"></i>
-            </a>
-            <a href="http://linkedin.com/in/chouaibblgn/">
-                <i class="fa fa-linkedin"></i>
-            </a>
-            <a href="https://www.behance.net/geek30">
-                <i class="fa fa-behance"></i>
-            </a> -->
-
                 <i class="fa fa-github"></i>
             </a>
             </p>

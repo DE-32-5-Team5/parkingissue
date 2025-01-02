@@ -45,8 +45,6 @@ async def login_personal_service(personal_login: PersonalLogin, response: Respon
 
             # 2. JWT 토큰 생성
             access_token = create_jwt_token(user['user_id'], 1, secret_key, response=response)  # JWT secret key 설정
-            print("토큰 발행")
-            print(access_token)
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
@@ -56,7 +54,7 @@ async def login_personal_service(personal_login: PersonalLogin, response: Respon
     finally:
         conn.close()
 
-async def login_enterprise_service(enterprise_login: EnterpriseLogin):
+async def login_enterprise_service(enterprise_login: EnterpriseLogin, response: Response):
     """
         기업회원 id, pw 기반 로그인 시도시 작동하는 서비스
     """
@@ -83,8 +81,7 @@ async def login_enterprise_service(enterprise_login: EnterpriseLogin):
                 )
 
             # 2. JWT 토큰 생성
-            access_token = create_jwt_token(user['manager_id'], 2, secret_key)  # JWT secret key 설정
-
+            access_token = create_jwt_token(user['manager_id'], 2, secret_key, response=response)  # JWT secret key 설정
             return {"access_token": access_token, "token_type": "bearer"}
 
     except Exception as e:
@@ -166,7 +163,7 @@ async def check_user_service(request: Request):
     """
         토큰을 기반으로 유저 정보를 확인하는 API
         Args:
-            Token(str) : JWT 로그인 정보 토큰큰
+            Token(str) : JWT 로그인 정보 토큰
 
         Return:
             Integer Code
