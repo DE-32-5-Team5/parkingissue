@@ -310,9 +310,11 @@
             // 주차장 주차 가능 면 수
             // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
             if (!parkInfo.park_total) {
-                document.querySelector('.availability-text').innerText = `총 면수: 정보 제공 ❌`;
+                document.querySelector('.availability-text').innerText = `실시간 면수: 정보 제공 ❌`;
             } else {
-                document.querySelector('.availability-text').innerText = `총 면수: ${parkInfo.park_total}면`;
+                const availabilityPercent = (parkInfo.park_available / parkInfo.park_total) * 100;
+                document.querySelector('.availability-fill').style.width = `${availabilityPercent}%`;
+                document.querySelector('.availability-text').innerText = `실시간 면수: ${parkInfo.park_available} / ${parkInfo.park_total}면`;
             }
             // 운영시간 파트
             const spans = document.querySelectorAll('.reservation-item span');

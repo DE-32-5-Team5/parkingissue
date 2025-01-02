@@ -43,6 +43,7 @@ def select_park_info(park_id):
                 o.hol_orn_st AS hol_orn_st,
                 o.hol_orn_et AS hol_orn_et,
                 r.park_total AS park_total,
+                r.park_available AS park_available,
                 TIME_TO_SEC(TIMEDIFF(o.wee_orn_et, o.wee_orn_st)) AS weekly,
                 TIME_TO_SEC(TIMEDIFF(o.wk_orn_et, o.wk_orn_st)) AS weekend,
                 TIME_TO_SEC(TIMEDIFF(o.hol_orn_et, o.hol_orn_st)) AS holiday
