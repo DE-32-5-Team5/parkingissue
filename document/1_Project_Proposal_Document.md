@@ -72,18 +72,16 @@ EL (Entertainment Leader) : 배주영
     - Git, GitHub, Notion
 2. 데이터베이스 
     - MySQL 
-3. CI/CD 
-    - Jenkins 
-4. DA 
+3. DA 
     - Kafka, Airflow 
-    - EDA : Python(Numpy, Pandas, Matplotlib or Plotly, Folium), Apache Spark 
-    - AI : Python(konlpy) 
-5. BE 
+    - EDA : Python(Numpy, Pandas, leaflet.js, pyspark), Apache Spark
+4. BE 
     - FastAPI 
-6. FE 
+5. FE 
     - HTML 
     - CSS 
     - JS
-7. ETC 
-    - Docker, Linux Ubuntu 22.04 Server LTS, k8s
+6. ETC 
+    - Docker, Linux Ubuntu 22.04 Server LTS
+    - AWS(EC2, S3)
 

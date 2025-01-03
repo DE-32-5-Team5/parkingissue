@@ -195,6 +195,12 @@
     6. 'daily_fee' : 1일권 요금
     7. 'monthly_fee' : 1달정액권 요금
 
+- 테이블 'parkingarea_realtime'은 아래와 같이 정의한다.
+    1. 'park_id' : 외래키로 parkingarea_info의 park_id를 가져온다.
+        - FK, PK 동시속성으로 설정한다.
+    2. 'park_total' : 총 주차구획 수
+    3. 'park_available' : 주차 가능한 구획 수
+
 - 테이블 'festival_info'는 아래와 같이 정의한다.
     1. 'fid' : index. 삽입시 자동증가되도록 설정한다.
         - Primary Key로 설정한다.

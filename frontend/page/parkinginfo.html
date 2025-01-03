@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나이스파크 서초 민강남 클리닉 주차장</title>
+    <link rel="stylesheet" href="assets/css/parkinginfo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
+    <!-- 지도 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+
+
+<body>
+    <div class="parking-info-container">
+        <button class="go-back"></button>
+        <div class="map-section" style="position: relative;">
+            <!-- 지도 leafletjs로 수정해야함 해당 주차장 위치에 아이콘 찍힌 느낌으로 -->
+            <div id="map" style="position: relative; width: 100%; height: 40vh;"></div>
+        </div>
+        <div class="info-section">
+            <!-- 주차장 이름 DB에서 주차장 ID 통해서 조회 -->
+            <h2 class="parking-title"><i class="fas fa-map-marker-alt" style="color: #ff0000; margin-right: 10px;"></i>나이스파크 서초 민강남 클리닉 주차장</h2>
+            <!-- <h2 class="parking-title">나이스파크 서초 민강남 클리닉 주차장</h2> -->
+            <ul class="details-list">
+                <!-- 여기도 전부 DB에서 가져와야함 -->
+                <li><strong>운영 시간</strong>: 00:00 ~ 24:00</li>
+                <li><strong>현재 요금</strong>: 1시간 기준 7,000원</li>
+                <li><strong>주소</strong>: 서울특별시 서초구 혹려로 410</li>
+            </ul>
+        </div>
+        <div class="availability-bar">
+            <!-- width 값이 바 채움 정도 -->
+            <div class="availability-fill" style="width: 100%;"></div>
+            <div style="margin-bottom: 5px;"></div>
+            <i class="fas fa-car" style="color: #28a745; font-size: 1.5em;"></i> <span class="availability-text">정보 없음</span>
+        </div>
+
+        <div style="margin-bottom: 40px;"></div>
+        <div class="reservation-section">
+            <div class="reservation-item">
+                <!-- 여기도 주차장 운영 시간 DB 조회 -->
+                 <!-- 안에 내용 지워지면 알아서 페이지 줄어듬 -->
+                <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-clock" style="margin-right: 7px;"></i><strong>운영 시간</strong></div><br>
+                <span>평일 09:00 ~ 18:00 </span><br>
+                <span>주말 09:00 ~ 18:00 </span><br>
+                <span>공휴일 09:00 ~ 18:00 </span><br>
+            </div>
+            </div>
+        </div>
+        <div class="reservation-section">
+            <div class="reservation-item">
+                <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-wallet" style="margin-right: 5px;"></i><strong>요금</strong></div><br>
+                <!-- 여기도 DB에서 조회해서 값 넣어야 함 -->
+                <span>기본 무료 시간</span><br>
+                <span>추가 단위 시간(요금)</span><br>
+                <span>1일 요금</span><br>
+                <span>정액제</span><br>
+
+                </div>
+            </div>
+        </div>
+        <div class="reservation-section">
+            <div class="reservation-item">
+                <strong>시간 별 혼잡도</strong><br>
+                <canvas id="congestionChart" width="400" height="200"></canvas>
+            </div>
+    </div>
+</body> 
+
+<div class="footer">
+    <div class="footer-info">
+        <p>주식회사 인생한방</p>
+        <p>대표자명: 김원준</p>
+        <p>사업자 번호: 02-123-1234</p>
+        <p><a href="#">이용약관</a> | <a href="#">개인정보처리방침</a> | <a href="#">위치정보 이용약관</a> | <a href="#">고객센터</a></p>
+        <p>&copy; 주차잇슈</p>
+    </div>
+</div>
+<script src="assets/js/checkAuth.js"></script>
+<!-- 뒤로가기 script -->
+<script>
+    // 상세정보 외부 공간 클릭 시 뒤로
+    document.addEventListener('DOMContentLoaded', function () {
+        // 클릭 이벤트 리스너 등록
+        document.addEventListener('click', function (event) {
+            // 클릭한 대상이 parking-info-container 내부가 아닌 경우
+            const container = document.querySelector('.parking-info-container');
+            if (!container.contains(event.target)) {
+                // 뒤로가기 동작 실행
+                window.history.back();
+            }
+        });
+    });
+    // X 누르면 뒤로
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('.go-back').addEventListener('click', function () {
+            window.history.back();
+        });
+    });
+</script>
+
+<!-- 혼잡도 차트 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const urlParam = new URLSearchParams(window.location.search);
+    const park = urlParam.get('parkid');
+
+    async function getGraphinfo(park) {
+        const url = `https://parkingissue.online/api/infoSearch?id=${encodeURIComponent(park)}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                cache: 'no-store',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP 오류! 상태: ${response.status}`);
+            }
+
+            const parkInfo = await response.json();
+            console.log('그래프용 데이터:', parkInfo)
+
+            // 최상위 키(예: 0)로 접근
+            const innerData = parkInfo[0]; // parkInfo의 첫 번째 요소 접근
+            if (!innerData) {
+                throw new Error('내부 데이터가 없습니다.');
+            }
+
+            // 내부 데이터에서 키와 값 분리
+            const keys = Object.keys(innerData); // ['21']
+            const values = Object.values(innerData); // [40]
+
+            return { keys, values }; // 키와 값을 분리해서 반환
+        } catch (error) {
+            console.error('그래프 정보 가져오기 실패:', error);
+            return null; // 에러 발생 시 null 반환
+        }
+    }
+
+        // Chart.js 그래프 생성 함수
+    async function createCongestionChart(park) {
+        const graphData = await getGraphinfo(park);
+
+        if (graphData) {
+            const { keys, values } = graphData;
+
+            // 그래프 컨텍스트 가져오기
+            const ctx = document.getElementById('congestionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: keys, // x축 라벨에 key 값
+                    datasets: [{
+                        label: '혼잡도 (%)',
+                        data: values, // y축 데이터에 value 값
+                        backgroundColor: values.map(value =>
+                            value > 70 ? 'rgba(255, 99, 132, 0.6)' : 'rgba(54, 162, 235, 0.6)'
+                        ),
+                        borderColor: values.map(value =>
+                            value > 70 ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)'
+                        ),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#333',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            },
+                            title: {
+                                display: true,
+                                text: "시간",
+                                color: '#333',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                            },
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 페이지 로드 후 그래프 생성
+    document.addEventListener('DOMContentLoaded', () => {
+        if (park) {
+            createCongestionChart(park);
+        } else {
+            console.error('parkid가 URL에 포함되지 않았습니다.');
+        }
+    });
+</script>
+<!-- url에서 값 가져오기 -->
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    // 위경도
+    const parkla = parseFloat(urlParams.get('lat'));
+    const parklo = parseFloat(urlParams.get('lon'));
+    // id 이름 주소
+    const parkId = urlParams.get('parkid');
+    const parkNm = urlParams.get('parknm');
+    const parkAddr = urlParams.get('parkaddr');
+
+    console.log(parkla, parklo, parkId, parkNm, parkAddr); // 전달된 값 확인
+
+    // 받아온 값으로 fastapi get 요청을 통해서 해당 주차장에 대한 info 조회해오기
+    async function getParkInfo(parkId) {
+        const url = `https://parkingissue.online/api/getParkInfo?parkid=${encodeURIComponent(parkId)}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                cache: 'no-store',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP 오류! 상태: ${response.status}`);
+            }
+
+            const parkInfo = await response.json();
+            return parkInfo; // 데이터를 반환
+        } catch (error) {
+            console.error('주차장 정보 가져오기 실패:', error);
+            return null; // 에러 발생 시 null 반환
+        }
+    }
+    // 초 단위 시간 형식으로 변경
+    function formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);  // 시간을 구함
+        const minutes = Math.floor((seconds % 3600) / 60);  // 분을 구함
+        return `${hours}:${minutes.toString().padStart(2, '0')}`;  // 2자리로 맞춰서 출력
+    }
+
+        // HTML 요소 업데이트 함수
+    function updateHTMLWithParkInfo(parkInfo) {
+        if (parkInfo) {
+            // 주차장 이름
+            if (parkNm) { // 주차장 이름이 있는 경우
+                document.title = parkNm;
+                document.querySelector('.parking-title').innerText = parkNm;
+            } else { // 주차장 이름이 없는 경우
+                document.title = "주차잇슈 주차장";
+                document.querySelector('.parking-title').innerText = "주차잇슈 주차장";
+            }
+            // 주차장 상세
+            if (parkInfo.weekly==0 && parkInfo.weekend==0 && parkInfo.holiday==0){
+                document.querySelector('.details-list').innerHTML = `
+                <li><strong>운영 시간</strong>: 연중무휴</li>
+                <li><strong>기본 요금 시간</strong>: ${parkInfo.basic_time}분 <strong>${parkInfo.basic_charge}원</strong></li>
+                <li><strong>추가 요금</strong>: ${parkInfo.additional_time}분 당 <strong>${parkInfo.additional_charge}원</strong></li>
+                <li><strong>주소</strong>: ${parkAddr}</li>
+            `;
+            } else {
+                const startTime = formatTime(parkInfo.wee_orn_st);
+                const endTime = formatTime(parkInfo.wee_orn_et); 
+                document.querySelector('.details-list').innerHTML = `
+                <li><strong>운영 시간</strong>: ${startTime} ~ ${endTime}</li>
+                <li><strong>기본 요금</strong>: ${parkInfo.basic_time}분 <strong>${parkInfo.basic_charge}원</strong></li>
+                <li><strong>추가 요금</strong>: ${parkInfo.additional_time}분 당 <strong>${parkInfo.additional_charge}원</strong></li>
+                <li><strong>주소</strong>: ${parkAddr}</li>
+            `;
+            }
+
+            // 주차장 주차 가능 면 수
+            // document.querySelector('.availability-fill').style.width = `${parkInfo.availabilityPercent}%`;
+            if (!parkInfo.park_total) {
+                document.querySelector('.availability-text').innerText = `실시간 면수: 정보 제공 ❌`;
+            } else {
+                const availabilityPercent = (parkInfo.park_available / parkInfo.park_total) * 100;
+                document.querySelector('.availability-fill').style.width = `${availabilityPercent}%`;
+                document.querySelector('.availability-text').innerText = `실시간 면수: ${parkInfo.park_available} / ${parkInfo.park_total}면`;
+            }
+            // 운영시간 파트
+            const spans = document.querySelectorAll('.reservation-item span');
+            // 평일 운영 시간 업데이트
+            const weekdayStart = formatTime(parkInfo.wee_orn_st);
+            const weekdayEnd = parkInfo.wee_orn_et == 0 ? "24:00" : formatTime(parkInfo.wee_orn_et);
+            spans[0].textContent = `평일 ${weekdayStart} ~ ${weekdayEnd}`;
+            
+            // 주말 운영 시간 업데이트
+            const weekendStart = formatTime(parkInfo.wk_orn_st);
+            const weekendEnd = parkInfo.wk_orn_et == 0 ? "24:00" : formatTime(parkInfo.wk_orn_et);
+            spans[1].textContent = `주말 ${weekendStart} ~ ${weekendEnd}`;
+            
+            // 공휴일 운영 시간 업데이트
+            const holidayStart = formatTime(parkInfo.hol_orn_st);
+            const holidayEnd = parkInfo.hol_orn_et == 0 ? "24:00" : formatTime(parkInfo.hol_orn_et);
+            spans[2].textContent = `공휴일 ${holidayStart} ~ ${holidayEnd}`;
+
+            // 요금파트 시작
+            spans[3].textContent = `회차 시간 : ${parkInfo.free_time}분`
+            spans[4].textContent = `추가 요금 : ${parkInfo.basic_time}분 이후 ${parkInfo.additional_time}분 당 ${parkInfo.additional_charge}원`
+            spans[5].textContent = `일일권 : ${parkInfo.daily_charge}원`
+            spans[6].textContent = `월정기권 : ${parkInfo.monthly_charge}원`
+
+        } else {
+            console.error("주차장 정보를 불러오지 못했습니다.");
+        }
+    }
+
+        // 페이지 로드 시 주차장 정보 가져오기
+    async function loadParkInfo() {
+        if (parkId) {
+            const parkInfo = await getParkInfo(parkId);
+            updateHTMLWithParkInfo(parkInfo);
+        } else {
+            console.error("parkId가 존재하지 않습니다.");
+        }
+    }
+
+    loadParkInfo();
+</script>
+<!-- 지도 스크립트 -->
+<script>
+    var parkIcon = L.icon({
+                    iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+
+    var map = L.map('map').setView([parkla, parklo], 16);
+
+    L.tileLayer('https://xdworld.vworld.kr/2d/Base/202002/{z}/{x}/{y}.png', {
+        maxZoom: 21,
+        attribution: '© VWorld'
+    }).addTo(map);
+
+    var marker = L.marker([parkla, parklo], { icon: parkIcon }).addTo(map);
+</script>
+</body>
+</html>
