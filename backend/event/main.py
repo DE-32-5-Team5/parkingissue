@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, File, UploadFile, HTTPException, Query
+from fastapi import FastAPI, Form, File, UploadFile, HTTPException, Query, Request
 import os
 import json
 import uuid
@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # 업로드 디렉토리 설정
-UPLOAD_DIR = os.path.abspath("./uploads")  # 현재 디렉토리 기준으로 업로드 디렉토리 생성
+UPLOAD_DIR = os.path.abspath("./uploads")  # 현재 디렉토리 기준으로 업로드  디렉토리 생성
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
@@ -49,7 +49,28 @@ def upload_and_get_url(file: UploadFile, file_key: str):
     except Exception as e:
         print(f"Failed to upload {file_key}: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to upload {file_key}: {e}")
-
+@app.post("/api2/name")
+async def find_name(request :Request):
+    from service import check_user_service
+    from event_db import select_name
+    if not request:
+        return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+    try:
+        result = await check_user_service(request)
+        print("#"*100)
+        print(result)
+        idtype = "uid"
+        if isinstance(result[1], int):
+            return JSONResponse(content={"status": result, "detail": "Invalid or expired token"}, status_code=401)
+        idcode = result[1]
+        if result[0] == 2:
+            idtype = "mid"
+        name = select_name(idtype,idcode)
+        print("$"*100)
+        print(name)
+        return JSONResponse(content={"status": 200, "name": name}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"status": 500, "detail": str(e)}, status_code=500)
 
 # 이벤트 등록 엔드포인트
 @app.post("/api2/event-registration")
@@ -89,7 +110,7 @@ async def register_event(
             status_code=200
         )
 
-    return JSONResponse(content={"status": 404, "detail": "행사 등록에 실패했습니다."}, status_code=404)
+    return JSONResponse(content={"status": 404, "detail": "행사 등록에 실패 했습니다."}, status_code=404)
 
 @app.get("/api2/events")
 async def get_event(ID: Optional[str] = Query(None)):
