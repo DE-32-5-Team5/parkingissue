@@ -16,7 +16,34 @@ def get_xy(region):
     res = requests.get(url, params = params, headers = headers).json()
 
     return res
-
+def select_name(idtype,idcode):
+    if idtype not in ["uid", "mid"]:
+        raise ValueError("Invalid idtype. Must be 'uid' or 'mid'.")
+    tableNm2 = "user_info" if idtype == "uid" else "manager_info"
+    colNm = "user_id" if idtype == "uid" else "manager_id"
+    colNm2 = "user_name" if idtype == "uid" else "manager_name"
+    colNm3 = "user_name" if idtype == "uid" else "manager_company"
+    connection = uploader_db()
+    #print("$"*100)
+    #print(idtype)
+    #print(idcode)
+    with connection:
+        with connection.cursor() as cursor:
+            # SQL 쿼리 작성
+            sql = f"""
+            SELECT {colNm2}, {colNm3} FROM {tableNm2}
+            WHERE
+                {colNm} = '{idcode}'
+            """
+            print(sql)
+            print("$"*100)
+            # 쿼리 실행
+            result = cursor.execute(sql)
+            print(colNm3)
+            print(result)
+            name_row = cursor.fetchall()
+            print(name_row)
+            return name_row
 
 def generate_unique_id(c_ID, cursor):
     """데이터베이스에서 중복되지 않는 ID 생성"""
@@ -32,8 +59,8 @@ def insert_event_info(c_ID, title, address, contact, start_date, end_date, main_
     # 주소 위경도 변환
     result = get_xy(address)
     add_xy = result['documents']
-    print("****")
-    print(add_xy)
+    #print("****")
+    #print(add_xy)
     #x = add_xy[0]['address']['x']
     #y = add_xy[0]['address']['y']
     x = add_xy[0]['x']

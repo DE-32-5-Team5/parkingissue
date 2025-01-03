@@ -14,7 +14,7 @@
         <section class="profile-section">
             <div class="profile-card">
                 <img src="images/profile.png" alt="프로필 사진" class="profile-image">
-                <h2 class="profile-name">(재)서울관광재단</h2>
+                <h2 id="profile-name" class="profile-name">(재)서울관광재단</h2>
             </div>
         </section>
 
@@ -23,11 +23,11 @@
             <h3>내 정보</h3>
             <div class="information-card">
                 <p class="information-title">이름</p>
-                <p class="information-value" style="margin-right: 20px;">(재)서울관광재단</p>
+                <p id="namespace" class="information-value" style="margin-right: 20px;"></p>
             </div>
             <div class="information-card">
                 <p class="information-title">아이디</p>
-                <p class="information-value" id="ID" style="margin-right: 20px;">tmpid</p>
+                <p class="information-value" id="ID" style="margin-right: 20px;"></p>
             </div>
             <div class="information-card">
                 <p class="information-title">비밀번호</p>
@@ -88,12 +88,13 @@
                     <!-- 즐겨찾기 페이지 이동 -->
                     <li><a href="favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
                     <!-- 개인 프로필 페이지 이동 -->
-                    <li><a href="enterprise_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                    <li><a id="mypage" href="enterprise_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
                 </ul>
             </nav>
         </div>
     </div>
     <script src="assets/js/checkAuth.js"></script>
+    <script src="assets/js/selectName.js"></script>
     <script>
         // 회원 탈퇴 모달 열기/닫기
         const modal = document.getElementById('unsubscribeModal');
@@ -171,15 +172,33 @@
         });
 
         // 이벤트 목록 가져오기
-        document.addEventListener("DOMContentLoaded", async () => {
-            const ID = document.getElementById("ID").innerText.trim();
-            console.log("^^^^^^^^^^^^^^^^^^^")
-            console.log(ID)
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new MutationObserver((mutations, observer) => {
+                const IDElement = document.getElementById("ID");
+                if (IDElement && IDElement.innerText.trim()) {
+                    const ID = IDElement.innerText.trim();
+                    console.log("^^^^^^^^^^^^^^^^^^^");
+                    console.log(ID);
 
+                    // 이후 로직 실행
+                    fetchEventData(ID);
+
+                    // ID가 확인되면 관찰 중지
+                    observer.disconnect();
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+            });
+        });
+
+        async function fetchEventData(ID) {
             try {
                 const response = await fetch(`https://parkingissue.online/api2/events?ID=${ID}`);
                 const event = await response.json();
-                console.log(event)
+                console.log(event);
 
                 if (event.events) {
                     event.events.forEach(e => {
@@ -201,7 +220,8 @@
             } catch (error) {
                 console.error("이벤트 데이터를 가져오는 중 오류 발생:", error);
             }
-        });
+        }
+
     </script>
 </body>
 </html>

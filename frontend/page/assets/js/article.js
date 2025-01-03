@@ -44,29 +44,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         bookmarkButton.addEventListener("click", async () => {
           try {
-            const currentSrc = img2.src;
-            if (currentSrc.includes("free-icon-star-5708819.png")) {
-              img2.src = "images/free-icon-favorite-2550357.png";
-            } else {
-              img2.src = "images/free-icon-star-5708819.png";
-            }
-
-            const response = await fetch("/api/bookmark/creation", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ contentid: contentId }),
-            });
-
-            if (!response.ok) {
-              throw new Error(`Bookmark API request failed: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log("Bookmark API success:", result);
+            // API 호출로 북마크 상태 확인 및 업데이트
+            const response = await bookmarkCheck(contentId);
+        
+            // 이미지의 src 속성을 즉시 업데이트
+            img2.src = response.creation === "true"
+              ? "images/free-icon-favorite-2550357.png"
+              : "images/free-icon-star-5708819.png";
+        
           } catch (error) {
             console.error("Error updating bookmark:", error);
+            alert("즐겨찾기 업데이트에 실패했습니다.");
           }
         });
 
@@ -140,33 +128,60 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  const apiEndpoint = `https://parkingissue.online/api/hotplace/content?contentid=${contentId}`;
-
-  items = await fetchData(apiEndpoint);
-
-  let checkResult = { isitbookmarked: false };
-  try {
-    const checkResponse = await fetch("/api/bookmark/check", {
-        method: "POST",
+  async function bookmarkCheck(contentId) {
+    try {
+      const response = await fetch('/api/bookmark/creation', {
+        method: 'POST',
         credentials: 'include',
         redirect: 'manual',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-        contentid: urlParams.get('contentid')
-      })
-    });
+          contentid: contentId
+        }),
+      });
 
-    if (!checkResponse.ok) {
-      throw new Error(`Bookmark check API request failed: ${checkResponse.status}`);
+      if (!response.ok) {
+        throw new Error('Not authenticated');
+      }
+
+      return await response.json();
+    } catch (error) {
+      alert("즐겨찾기에 실패하였습니다.");
+      throw error;
     }
-
-    checkResult = await checkResponse.json();
-  } catch (error) {
-    console.error("Error fetching bookmark check API:", error);
   }
 
+  const apiEndpoint = `https://parkingissue.online/api/hotplace/content?contentid=${contentId}`;
+
+  async function checkResponse(contentId) {
+  try {
+    const response = await fetch('/api/bookmark/check', {
+      method: 'POST',
+      credentials: 'include',
+      redirect: 'manual',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contentid: contentId
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Not authenticated');
+    }
+
+    return await response.json();
+   } catch (error) {
+    alert("즐겨찾기에 실패하였습니다.");
+    throw error;
+    }
+ }
+
+  items = await fetchData(apiEndpoint);
+  checkResult = await checkResponse(contentId);
   renderContents(items, checkResult);
 
   const style = document.createElement("style");
