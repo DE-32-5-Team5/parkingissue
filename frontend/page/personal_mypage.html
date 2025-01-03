@@ -14,7 +14,7 @@
         <section class="profile-section">
             <div class="profile-card">
                 <img src="images/profile.png" alt="프로필 사진" class="profile-image">
-                <h2 class="profile-name">홍길동</h2>
+                <h2 id="profile-name" class="profile-name"></h2>
             </div>
             <script>
                 function getCookie(name) {
@@ -61,12 +61,12 @@
             <h3>내 정보</h3>
             <div class="information-card">
                 <p class="information-title">이름</p>
-                <p class="information-value" style="margin-right: 20px;"></p>
+                <p id="namespace" class="information-value" style="margin-right: 20px;"></p>
                 <!-- <button class="delete-btn">Delete</button> -->
             </div>
             <div class="information-card">
                 <p class="information-title">아이디</p>
-                <p class="information-value" style="margin-right: 20px;"></p>
+                <p class="information-value" id="ID" style="margin-right: 20px;"></p>
                 <!-- <button class="delete-btn">Delete</button> -->
             </div>
             <div class="information-card">
@@ -139,11 +139,12 @@
                     <!-- 즐겨찾기 페이지 이동 -->
                     <li><a href="favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
                     <!-- 개인 프로필 페이지 이동 -->
-                    <li><a href="personal_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                    <li><a id="mypage" href="personal_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
                 </ul>
             </nav>
         </div>
     </div>
     <script src="assets/js/checkAuth.js"></script>
+    <script src="assets/js/selectName.js"></script>
 </body>
 </html>

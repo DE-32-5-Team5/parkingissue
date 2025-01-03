@@ -14,7 +14,7 @@
         <section class="profile-section">
             <div class="profile-card">
                 <img src="images/profile.png" alt="프로필 사진" class="profile-image">
-                <h2 class="profile-name">(재)서울관광재단</h2>
+                <h2 id="profile-name" class="profile-name">(재)서울관광재단</h2>
             </div>
         </section>
 
@@ -23,11 +23,11 @@
             <h3>내 정보</h3>
             <div class="information-card">
                 <p class="information-title">이름</p>
-                <p class="information-value" style="margin-right: 20px;">(재)서울관광재단</p>
+                <p id="namespace" class="information-value" style="margin-right: 20px;"></p>
             </div>
             <div class="information-card">
                 <p class="information-title">아이디</p>
-                <p class="information-value" id="ID" style="margin-right: 20px;">tmpid</p>
+                <p class="information-value" id="ID" style="margin-right: 20px;"></p>
             </div>
             <div class="information-card">
                 <p class="information-title">비밀번호</p>
@@ -88,12 +88,13 @@
                     <!-- 즐겨찾기 페이지 이동 -->
                     <li><a href="favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
                     <!-- 개인 프로필 페이지 이동 -->
-                    <li><a href="enterprise_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                    <li><a id="mypage" href="enterprise_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
                 </ul>
             </nav>
         </div>
     </div>
     <script src="assets/js/checkAuth.js"></script>
+    <script src="assets/js/selectName.js"></script>
     <script>
         // 회원 탈퇴 모달 열기/닫기
         const modal = document.getElementById('unsubscribeModal');

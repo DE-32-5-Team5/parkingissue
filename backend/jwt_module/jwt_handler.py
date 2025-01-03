@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Response
 from datetime import datetime, timedelta
 
-def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60, response=None):
+def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 1440, response=None):
     """
     JWT 토큰 생성하는 함수
 
@@ -45,7 +45,7 @@ def create_jwt_token(user_id: int, user_type: int, secret_key: str, algorithm: s
 
     return {"message": "Login successful"}
 
-def refresh_jwt_token(token: str, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 60):
+def refresh_jwt_token(token: str, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 1440):
     """
     JWT 토큰을 갱신하는 함수
 

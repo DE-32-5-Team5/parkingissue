@@ -8,3 +8,5 @@ python-multipart
 boto3
 requests
 pandas
+PyJWT
+cryptography

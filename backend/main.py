@@ -184,9 +184,9 @@ async def personal_user_login_service(user_infomation: PersonalLogin, response: 
     return await login_personal_service(user_infomation, response)
 
 @app.post("/api/login/common/enterprise")
-async def enterprise_user_login_service(enterprise_information: EnterpriseLogin):
+async def enterprise_user_login_service(enterprise_information: EnterpriseLogin, response: Response = None):
     from login.service import login_enterprise_service
-    return await login_enterprise_service(enterprise_information)
+    return await login_enterprise_service(enterprise_information, response)
 
 @app.post("/api/login/simple/naver")
 async def personal_user_naver_login_service(user_naver_information: NaverLogin):
@@ -328,21 +328,48 @@ async def select_bookmark_info(location :Location, request :Request):
     
 # 핫플 게시글 > 북마크 하기
 @app.post("/api/bookmark/creation")
-async def create_bookmark_info(BookmarkCreation :RequestBookmarkSchema):
+async def create_bookmark_info(BookmarkCreation :RequestBookmarkSchema, request :Request):
     from bookmark.modules.bookmark import insert_bookmarks
-    if BookmarkCreation:
-        return insert_bookmarks(BookmarkCreation.idtype, BookmarkCreation.idcode, BookmarkCreation.contentid, BookmarkCreation.bookmark_nickname)
-    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+    from login.service import check_user_service
+    if not request:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
+    try:
+        result = await check_user_service(request)
+        print(result)
+        idtype="uid"
+        if isinstance(result[1], int):
+            return JSONResponse(content={"status": result, "detail": "Invalid or expired token"}, status_code=401)
+        idcode=result[1]
+        if result[0] == 2:
+            idtype = "mid"
+        creation = insert_bookmarks(idtype, idcode, BookmarkCreation.contentid)
+        return JSONResponse(content={"status": 200, "creation": creation}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
+    
 # 북마크 페이지 > 북마크 제거, 핫플 게시글 > 북마크 제거
 @app.post("/api/bookmark/delete")
-async def delete_bookmarks_info(BookmarkDelete:RequestBookmarkSchema):
+async def delete_bookmarks_info(BookmarkDelete:RequestBookmarkSchema, request :Request):
     from bookmark.modules.bookmark import delete_bookmarks
-    if BookmarkDelete:
-        return delete_bookmarks(BookmarkDelete.idtype, BookmarkDelete.idcode, BookmarkDelete.contentid)
-    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
+    from login.service import check_user_service
+    if not request:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
+    try:
+        result = await check_user_service(request)
+        print(result)
+        idtype="uid"
+        if isinstance(result[1], int):
+            return JSONResponse(content={"status": result, "detail": "Invalid or expired token"}, status_code=401)
+        idcode=result[1]
+        if result[0] == 2:
+            idtype = "mid"
+        delete = delete_bookmarks(idtype, idcode, BookmarkDelete.contentid)
+        return JSONResponse(content={"status": 200, "delete": delete}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
 # 북마크 여부 > 핫플 게시글
 @app.post("/api/bookmark/check")
-async def check_bookmarks_info(bookmarkcheck :BookmarkCheckSchema, request :Request):
+async def check_bookmarks_info(bookmarkcheck :RequestBookmarkSchema, request :Request):
     from bookmark.modules.bookmark import check_bookmarks
     from login.service import check_user_service
     if not request:
@@ -359,10 +386,3 @@ async def check_bookmarks_info(bookmarkcheck :BookmarkCheckSchema, request :Requ
         return JSONResponse(content={"status": 200, "isitbookmarked": is_it_bookmarked}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"status": 404, "detail": str(e)}, status_code=404)
-# 북마크 수정
-@app.post("/api/bookmark/update")
-async def update_bookmarks_info(BookmarkUpdate:RequestBookmarkSchema):
-    from bookmark.modules.bookmark import update_bookmarks
-    if BookmarkUpdate:
-        return update_bookmarks(BookmarkUpdate.idtype, BookmarkUpdate.idcode, BookmarkUpdate.contentid, BookmarkUpdate.bookmark_nickname)
-    return JSONResponse(content={"status": 404, "detail": "company registering is failed"}, status_code=404)
