@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나이스파크 서초 민강남 클리닉 주차장</title>
+    <link rel="stylesheet" href="assets/css/parkinginfo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 지도 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+
+
+<body>
+    <div class="parking-info-container">
+        <div class="map-section" style="position: relative;">
+            <!-- 지도 leafletjs로 수정해야함 해당 주차장 위치에 아이콘 찍힌 느낌으로 -->
+            <div id="map" style="position: relative; width: 100%; height: 40vh;"></div>
+        </div>
+        <div class="info-section">
+            <!-- 주차장 이름 DB에서 주차장 ID 통해서 조회 -->
+            <h2 class="parking-title"><i class="fas fa-map-marker-alt" style="color: #ff0000; margin-right: 10px;"></i>나이스파크 서초 민강남 클리닉 주차장</h2>
+            <!-- <h2 class="parking-title">나이스파크 서초 민강남 클리닉 주차장</h2> -->
+            <ul class="details-list">
+                <!-- 여기도 전부 DB에서 가져와야함 -->
+                <li><strong>운영 시간</strong>: 00:00 ~ 24:00</li>
+                <li><strong>현재 요금</strong>: 1시간 기준 7,000원</li>
+                <li><strong>주소</strong>: 서울특별시 서초구 혹려로 410</li>
+            </ul>
+        </div>
+        <div class="availability-bar">
+            <div class="availability-fill" style="width: 50%;"></div>
+            <div style="margin-bottom: 5px;"></div>
+            <!-- 여기에서 남은 자리 계산에서 넣어야함 -->
+            <i class="fas fa-car" style="color: #28a745; font-size: 1.5em;"></i> <span class="availability-text">주차 가능: 15면</span>
+        </div>
+
+        <div style="margin-bottom: 40px;"></div>
+        <div class="reservation-section">
+            <div class="reservation-item">
+                <!-- 여기도 주차장 운영 시간 DB 조회 -->
+                <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-clock" style="margin-right: 7px;"></i><strong>운영 시간</strong></div><br>
+                <span>월요일 09:00 ~ 18:00 </span><br>
+                <span>화요일 09:00 ~ 18:00 </span><br>
+                <span>수요일 09:00 ~ 18:00 </span><br>
+                <span>목요일 09:00 ~ 18:00 </span><br>
+                <span>금요일 09:00 ~ 18:00 </span><br>
+                <span>토요일 09:00 ~ 18:00 </span><br>
+                <span>일요일 09:00 ~ 18:00 </span><br><br>
+                
+                <span>공휴일 09:00 ~ 18:00 </span><br>
+            </div>
+            </div>
+        </div>
+        <div class="reservation-section">
+            <div class="reservation-item">
+                <div class="reservation-item" style="list-style: none;"><div style="display: inline-flex; align-items: center;"><i class="fas fa-wallet" style="margin-right: 5px;"></i><strong>요금</strong></div><br>
+                <!-- 여기도 DB에서 조회해서 값 넣어야 함 -->
+                <span>기본 무료 시간</span><br>
+                <span>추가 단위 시간(요금)</span><br>
+                <span>1일 요금</span><br>
+                <span>정액제</span><br>
+
+                </div>
+            </div>
+        </div>
+        <div class="reservation-section">
+            <div class="reservation-item">
+                <!-- 아마 여기가 구현된다면 Spark로 계산 -->
+                <strong>시간 별 혼잡도</strong><br>
+                <canvas id="congestionChart" width="400" height="200"></canvas>
+            </div>
+    </div>
+</body>
+
+<div class="footer">
+    <div class="footer-info">
+        <p>주식회사 삼둘샵 ㅋㅋ</p>
+        <p>대표자명: 조수진</p>
+        <p>사업자 번호: 220-88-52570</p>
+        <p><a href="#">이용약관</a> | <a href="#">개인정보처리방침</a> | <a href="#">위치정보 이용약관</a> | <a href="#">고객센터</a></p>
+        <p>&copy; 주차잇슈에대한설명을적으세요</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 여기가 지금 혼잡도 bargraph 예시인듯
+    const ctx = document.getElementById('congestionChart').getContext('2d');
+    const congestionChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
+            datasets: [{
+                label: '혼잡도 (%)',
+                data: [30, 50, 80, 60, 70, 90, 40],
+                backgroundColor: function(context) {
+                    const value = context.dataset.data[context.dataIndex];
+                    return value > 70 ? 'rgba(255, 99, 132, 0.6)' : 'rgba(54, 162, 235, 0.6)';
+                },
+                borderColor: function(context) {
+                    const value = context.dataset.data[context.dataIndex];
+                    return value > 70 ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+                },
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#333',
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        color: '#333',
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.3)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#333',
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.3)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+<!-- url에서 값 가져오기 -->
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    // 위경도
+    const parkla = parseFloat(urlParams.get('lat'));
+    const parklo = parseFloat(urlParams.get('lon'));
+    // id 이름 주소
+    const parkId = urlParams.get('parkid');
+    const parkNm = urlParams.get('parknm');
+    const parkAddr = urlParams.get('parkaddr');
+
+    console.log(parkla, parklo, parkId, parkNm, parkAddr); // 전달된 값 확인
+</script>
+<!-- 지도 스크립트 -->
+<script>
+    var parkIcon = L.icon({
+                    iconUrl: 'images/parkingarea.png', // 사용할 이미지 파일 경로
+                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
+                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
+                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
+                });
+
+    var map = L.map('map').setView([parkla, parklo], 16);
+
+    L.tileLayer('https://xdworld.vworld.kr/2d/Base/202002/{z}/{x}/{y}.png', {
+        maxZoom: 21,
+        attribution: '© VWorld'
+    }).addTo(map);
+
+    var marker = L.marker([parkla, parklo], { icon: parkIcon }).addTo(map);
+</script>
+</body>
+</html>

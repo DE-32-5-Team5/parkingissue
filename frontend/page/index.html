@@ -1,162 +1,145 @@
-<!DOCTYPE HTML>
-<html>
 <head>
-    <title>주차잇슈</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/main.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" /> 
+    <title>Sign In Page</title>
+    <!-- CSS 파일 연결 -->
+    <link rel="stylesheet" href="login/style.css">
+    <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
+    <script src="https://kit.fontawesome.com/eb9b7241dc.js" crossorigin="anonymous"></script>
 </head>
-<body class="is-preload">
-    <!-- Wrapper -->
-    <div id="wrapper">
 
-        <!-- Header -->
-        <header id="header">
-            <div class="inner">
-                <!-- Logo and Search Bar Container -->
-                <div class="logo-container">
-                    <a href="index.html" class="logo">
-                        <span class="symbol"><img src="images/자동차.gif" alt="" /></span><span class="title">주차잇슈</span>
-                    </a>
-                    <!-- Search Bar -->
-                    <div class="search-bar-container">
-                        <img src="images/돋보기.png" alt="검색 아이콘" class="search-icon" />
-                        <input type="text" class="search-bar" placeholder="검색어를 입력하세요">
-                        <button class="voice-search-btn" title="음성 검색">
-                            <img src="images/microphone.png" alt="음성 검색 아이콘" class="voice-search-icon" />
-                        </button>
-                    </div>
-                </div>
+<body>
+    <div class="container">
+        <!-- Heading -->
+        <h1>주차잇슈</h1>
+        
+        <!-- Links -->
+        <ul class="links">
+            <li>
+                <a href="#" id="signin" class="active">개인 회원</a>
+            </li>
+            <li>
+                <a href="#" id="signup">기업회원</a>
+            </li>
+            <li>
+                <a href="./membership/personal/index.html" id="reset">회원가입</a>
+            </li>
+        </ul>
+        
+        <!-- Form -->
+        <form  action="" method="post">
+        <!-- id input -->
+            <div class="first-input input__block first-input__block">
+                <input type="email" placeholder="Id" class="input" id="id"   />
             </div>
-        </header>
-
-        <!-- Main -->
-        <div id="main">
-            <div class="inner">
-                <!-- 지도 섹션 -->
-                <div class="parking-info-container">
-                    <div class="map-section" style="position: relative;">
-                        <!-- Leaflet 지도를 표시할 div -->
-                        <div id="map" style="position: relative; width: 100vw; height: 76vh;"></div>
-                        <button id="find-me" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; padding: 0; border: none; border-radius: 8px; z-index: 1000;">
-                            <img src="images/naver.png" style="width: 100%; height: 100%; object-fit: cover;">
-                        </button>
-                    </div>
-                </div>
-                <div id="status"></div>
-                <a id="map-link" href="" target="_blank"></a>
+            <!-- password input -->
+            <div class="input__block">
+                <input type="password" placeholder="Password" class="input" id="password"    />
             </div>
-        </div>
-        <!-- 네비게이션 자리 -->
-        <div class="navi">
-            <div class="navi-section">
-                <nav class="navbar">
-                    <ul>
-                        <!-- 홈으로 새로고침 -->
-                        <li><a href="index.html"><img src="images/sweethome.png" alt="Home" /> HOME</a></li>
-                        <!-- hot place 게시판 이동 -->
-                        <li><a href="party.html"><img src="images/hotplace.png" alt="About" /> HOT PLACE</a></li>
-                        <!-- 즐겨찾기 페이지 이동 -->
-                        <li><a href="favor/favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
-                        <!-- 개인 프로필 페이지 이동 -->
-                        <li><a href="mypage/personal/index.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
-                    </ul>
-                </nav>
+            <!-- repeat password input -->
+            <div class="input__block">
+                <input type="password" placeholder="Repeat password" class="input repeat__password" id="repeat__password"    />
             </div>
-        </div>
-
-    <!-- 지도 그리는 곳 -->
-
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <!-- voice search -->
-    <script src="assets/js/voice-search.js"></script>
-    <!-- Initialize the Leaflet Map -->
+            <!-- 로그인 버튼인데 값이 주어지고 로그인에 성공하면 메인페이지로 이동하게 끔 코드 수정 예정-->
+            <button class="signin__btn">
+                Sign in
+            </button>
+        </form>
     <script>
-        // 지도 초기화 (서울 좌표 및 줌 레벨 설정)
-        var map = L.map('map').setView([37.5665, 126.9780], 13);
-
-        // vworld 타일 레이어 추가
-        L.tileLayer('http://xdworld.vworld.kr:8080/2d/Base/201802/{z}/{x}/{y}.png', {
-            maxZoom: 21,
-            attribution: '© vworld'
-        }).addTo(map);
-        // 기본 지도 쓰던 버전
-        /*
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 21,
-            attribution: '© OpenStreetMap'
-        }).addTo(map); */
-
-        // GeoFindMe 함수 - 현재 위치 찾기
-        function geoFindMe() {
-            const status = document.querySelector("#status");
-            const mapLink = document.querySelector("#map-link");
-
-            mapLink.href = "";
-
-            function success(position) {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-
-                // 상태 텍스트 초기화
-                status.textContent = "";
-                mapLink.href = `http://map.vworld.kr/map/maps.do?centerLon=${longitude}&centerLat=${latitude}&zoom=18`;
-
-                // 사용자 정의 아이콘 생성
-                var customIcon = L.icon({
-                    iconUrl: 'images/my-location.png', // 사용할 이미지 파일 경로
-                    iconSize: [42, 42], // 아이콘 크기 (픽셀)
-                    iconAnchor: [16, 32], // 아이콘의 '핀이 찍히는' 지점 (가운데 아래)
-                    popupAnchor: [0, -32] // 팝업 위치 (아이콘 위쪽)
-                });
-
-                // 지도에 커스텀 아이콘을 사용하는 마커 추가
-                // 아래처럼 marker를 변수 지정해주고
-                // 주차장 marker는 따로 parking_marker 로 변수 넣으면 될듯
-                var marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map)
+        // 모든 링크를 선택
+        const links = document.querySelectorAll('.links li a');
+        const resetLink = document.getElementById('reset');
+        // 링크 클릭 이벤트 처리
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                // 모든 링크에서 active 클래스 제거
+                links.forEach(link => link.classList.remove('active'));
                 
-                // 마커 클릭 이벤트
-                // 원하는 변수의 마커에 event 추가
-                marker.on('click', function() {
-                    // 원하는 HTML 페이지로 이동
-                    window.location.href = 'parkinginfo.html';
-                });
+                // 현재 클릭된 링크에 active 클래스 추가
+                link.classList.add('active');
+                
+                // 특정 동작 추가: placeholder 값 변경
+                const idInput = document.getElementById('id');
+                if (link.id === 'signin') {
+                    idInput.placeholder = "Id"; // 개인회원
+                    resetLink.href = "./membership/personal/index.html"; // 개인회원 가입 링크
+                } else if (link.id === 'signup') {
+                    idInput.placeholder = "기업회원 Id"; // 기업회원
+                    resetLink.href = "./membership/enterprise/index.html"; // 기업회원 가입 링크
+                }
+            });
+        });
 
-                // 지도에서 현재 위치에 마커 추가
-                // var marker = L.marker([latitude, longitude]).addTo(map);
-                // marker에 팝업 생성
-                // marker.bindPopup("<b>내 위치</b>").openPopup();
+        const loginForm = document.querySelector('form'); // form 요소 선택
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // 기본 폼 제출 동작 방지
+        const id = document.getElementById('id').value;
+        const password = document.getElementById('password').value;
 
-                // 지도 중심을 현재 위치로 이동
-                map.setView([latitude, longitude], 15);
-
-                map.invalidateSize(); // 지도 크기 갱신 (리사이징 문제 방지)
-            }
-
-            function error() {
-                status.textContent = "Unable to retrieve your location";
-            }
-
-            if (!navigator.geolocation) {
-                status.textContent = "Geolocation is not supported by your browser";
+        fetch('/api/login', { // Back-end API endpoint로 요청 전송
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id, password }),
+        })
+        .then(response => {
+            if (response.ok) {
+                // 로그인 성공 시 처리 (예: 메인 페이지로 이동)
+                window.location.href = '/main'; 
             } else {
-                status.textContent = "Locating…";
-                navigator.geolocation.getCurrentPosition(success, error);
+                // 로그인 실패 시 처리 (예: 에러 메시지 표시)
+                alert('로그인 실패');
             }
-        }
-        // 웹 시작하자마자 현재 위치로 이동!
-        window.onload = geoFindMe;
-        // "내 위치 찾기" 버튼 클릭 시 geoFindMe 함수 실행하며 지도 새로고침
-        document.querySelector("#find-me").addEventListener("click", function() {
-            // 페이지 새로고침
-            location.reload();
+            })
+            .catch(error => {
+                console.error('로그인 요청 실패:', error);
+            });
         });
     </script>
+        <!-- separator -->
+        <div class="separator">
+        <p>OR</p>
+        </div>
+        <div class="button-container">
+            <button class="kakao__btn">
+                <i class="fa fa-kakao"></i> 
+                <!-- <img src="img/kakao-logo.png" style="width: 40px; height: 40px;"> -->
+            </button>
+            <button class="naver__btn">
+                <i class="fa fa-naver"></i>
+            </button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>
+        SAMDULSHOP : FINAL PROJECT
+        <!-- <i class="fa fa-heart"></i> 
+        <i class="fa fa-heart"></i> 
+        <i class="fa fa-heart"></i>  -->
+        </p>
+        <p>
+            인생한방 :
+        <!-- <a href="https://www.facebook.com/chouaib45" >
+            <i class="fa fa-facebook"></i>
+        </a>
+        <a href="http://twitter.com/chouaibblgn45">
+            <i class="fa fa-twitter"></i> 
+        </a>
+        <a href="http://instagram.com/chouaib_blgn">
+            <i class="fa fa-instagram"></i> 
+        </a>
+        <a href="http://linkedin.com/in/chouaibblgn/">
+            <i class="fa fa-linkedin"></i>
+        </a>
+        <a href="https://www.behance.net/geek30">
+            <i class="fa fa-behance"></i>
+        </a> -->
+
+            <i class="fa fa-github"></i>
+        </a>
+        </p>
+    </footer>
 </body>
-</html>

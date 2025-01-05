@@ -1,5 +1,9 @@
 fastapi
 uvicorn
-pymysql
-sqlalchemy
-passlib
+confluent-kafka
+requests
+PyMySql
+pydantic
+passlib[bcrypt]
+aiomysql
+python-dotenv
