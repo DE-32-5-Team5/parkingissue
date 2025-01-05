@@ -4,6 +4,7 @@
     <title>주차잇슈</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=no;" /> 
     <link rel="stylesheet" href="assets/css/favor.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -30,26 +31,28 @@
         </header>
 
         <!-- 즐겨찾기 리스트 추가 -->
-        <section class="favorite-list">
-            <div class="inner">
-                <!-- <h2 class="favorite-header">나의 즐겨찾기</h2> -->
-                <div class="bookmark-cards">
-                    <!-- 즐겨찾기 카드 -->
-                    <div class="bookmark-card">
-                        <!-- <img src="image/bookmark-icon1.png" alt="즐겨찾기 1" /> -->
-                        <div class="flag-icon">
-                            <i class="fas fa-flag" style="color: white";></i>
-                        </div>
-                        <h3>티엔미미 (딤섬)</h3>
-                        <p>서울 서초구 사임당로 143 104호 </p>
-                        <p>현재 위치에서 140km </p>
-                        <div class="close-btn">
-                            <i class="fas fa-times"></i> <!-- X 아이콘 -->
+        <div id="main">
+            <section class="favorite-list">
+                <div class="inner">
+                    <!-- <h2 class="favorite-header">나의 즐겨찾기</h2> -->
+                    <div class="bookmark-cards">
+                        <!-- 즐겨찾기 카드 -->
+                        <div class="bookmark-card">
+                            <!-- <img src="image/bookmark-icon1.png" alt="즐겨찾기 1" /> -->
+                            <div class="flag-icon">
+                                <i class="fas fa-flag" style="color: white";></i>
+                            </div>
+                            <h3>티엔미미 (딤섬)</h3>
+                            <p>서울 서초구 사임당로 143 104호 </p>
+                            <p>현재 위치에서 140km </p>
+                            <div class="close-btn">
+                                <i class="fas fa-times"></i> <!-- X 아이콘 -->
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <!-- 네비게이션 -->
         <div class="navi">
