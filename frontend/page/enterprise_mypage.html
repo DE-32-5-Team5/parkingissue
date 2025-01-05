@@ -31,7 +31,7 @@
             </div>
             <div class="information-card">
                 <p class="information-title">비밀번호</p>
-                <p class="information-value" style="margin-left: 380px;">*****</p>
+                <p class="information-value" id="pwvalue" style="margin-left: 380px;">*****</p>
                 <button class="delete_btn" id="editPasswordBtn">수정</button>
             </div>
         </section>
@@ -55,11 +55,11 @@
             <!-- 회원 탈퇴 모달 -->
             <div class="modal" id="unsubscribeModal">
                 <div class="modal-content">
-                    <span class="close" id="closeModal">&times;</span>
+                    <span class="close closeModel" id="closeModal">&times;</span>
                     <h2>회원 탈퇴</h2>
                     <p>정말로 회원 탈퇴를 하시겠습니까?</p>
                     <button class="confirm">탈퇴하기</button>
-                    <button class="cancel">취소</button>
+                    <button class="cancel closeModel">취소</button>
                 </div>
             </div>
 
@@ -98,15 +98,17 @@
     <script>
         // 회원 탈퇴 모달 열기/닫기
         const modal = document.getElementById('unsubscribeModal');
-        const closeModal = document.getElementById('closeModal');
+        const closeModels = document.querySelectorAll('.closeModel');
         const openModalButton = document.getElementById('openModal');
 
         openModalButton.addEventListener('click', () => {
             modal.style.display = 'block';
         });
 
-        closeModal.addEventListener('click', () => {
-            modal.style.display = 'none';
+        closeModels.forEach(button => {
+            button.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
         });
 
         window.addEventListener('click', (event) => {
