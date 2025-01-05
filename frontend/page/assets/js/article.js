@@ -44,17 +44,55 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         bookmarkButton.addEventListener("click", async () => {
           try {
-            // API 호출로 북마크 상태 확인 및 업데이트
-            const response = await bookmarkCheck(contentId);
-        
-            // 이미지의 src 속성을 즉시 업데이트
-            img2.src = response.creation === "true"
-              ? "images/free-icon-favorite-2550357.png"
-              : "images/free-icon-star-5708819.png";
-        
+            let response;
+            let result;
+
+            if (img2.src.includes("free-icon-favorite-2550357.png")) {
+              // 현재 북마크 상태라면 삭제 API 호출
+              response = await fetch('/api/bookmark/delete', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ contentid: contentId }),
+              });
+
+              if (!response.ok) {
+                throw new Error("삭제 API 요청 실패");
+              }
+
+              result = await response.json();
+              console.log(result);
+              // 삭제 응답의 delete 키 확인
+              if (result.delete === true) {
+                img2.src = "images/free-icon-star-5708819.png";
+              }
+            } else {
+              // 현재 북마크 상태가 아니라면 생성 API 호출
+              response = await fetch('/api/bookmark/creation', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ contentid: contentId }),
+              });
+
+              if (!response.ok) {
+                throw new Error("생성 API 요청 실패");
+              }
+
+              result = await response.json();
+              console.log(result);
+              // 생성 응답의 creation 키 확인
+              if (result.creation === true) {
+                img2.src = "images/free-icon-favorite-2550357.png";
+              }
+            }
           } catch (error) {
-            console.error("Error updating bookmark:", error);
-            alert("즐겨찾기 업데이트에 실패했습니다.");
+            console.error("북마크 상태 업데이트 오류:", error);
+            alert("북마크 상태 업데이트에 실패했습니다.");
           }
         });
 

@@ -73,9 +73,9 @@ def insert_bookmarks(idtype, idcode, contentid):
                 f"SELECT {idtype} FROM {tableNm2} WHERE {colNm} = %s", (idcode,)
             )
             idcode_row = cursor.fetchone()
-            idcode = idcode_row[f'{idtype}']
             if not idcode_row:
                 raise ValueError("No matching idcode found for the provided idtype.")
+            idcode = idcode_row[f'{idtype}']
 
             # 북마크 삽입
             sql = f"INSERT INTO {tableNm} ({idtype}, fid) VALUES (%s, %s)"
@@ -96,27 +96,37 @@ def delete_bookmarks(idtype, idcode, contentid):
     connection = connect_db()
     with connection:
         with connection.cursor() as cursor:
+            # fid 조회
+            cursor.execute(
+                "SELECT fid FROM festival_info WHERE contentid = %s", (contentid,)
+            )
+            fid_row = cursor.fetchone()
+            if not fid_row:
+                raise ValueError("No matching fid found for the provided contentid.")
+            fid = fid_row['fid']
+
             # idcode 확인
             cursor.execute(
                 f"SELECT {idtype} FROM {tableNm2} WHERE {colNm} = %s", (idcode,)
             )
             idcode_row = cursor.fetchone()
+            if not idcode_row:
+                raise ValueError("No matching idcode found for the provided idtype.")
             idcode = idcode_row[f'{idtype}']
 
             # SQL 쿼리 작성
             sql = f"""
             DELETE FROM {tableNm}
             WHERE
-                fid = (
-                    SELECT fid FROM festival_info WHERE contentid = %s
-                )
+                {idtype} = %s
             AND
-                idcode = %s
+                fid = %s
             """
             # 쿼리 실행
-            result = bool(cursor.execute(sql, (contentid, idcode)))
+            cursor.execute(sql, (idcode, fid))
+            connection.commit()
             # 영향을 받은 행 수 반환
-            return result
+            return True
 
 def check_bookmarks(idtype, idcode, contentid):
     tableNm = "user_bookmarks" if idtype == "uid" else "manager_bookmarks"

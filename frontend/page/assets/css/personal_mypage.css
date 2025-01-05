@@ -42,6 +42,9 @@ body {
     color: #777;
 }
 
+#pwvalue {
+    margin-left: 380px;
+}
 .edit-profile-btn {
     background-color: #40e0d0;
     color: white;
@@ -262,5 +265,9 @@ body {
         width: 18px; /* 아이콘 크기 축소 */
         height: 18px;
         margin-right: 5px; /* 아이콘과 텍스트 간격 축소 */
+    }
+
+    #pwvalue {
+        margin-left: 110px;
     }
 }

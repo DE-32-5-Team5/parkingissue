@@ -421,6 +421,18 @@ body {
         height: 18px;
         margin-right: 5px; /* 아이콘과 텍스트 간격 축소 */
     }
+
+    #pwvalue {
+        margin-left: 120px;
+    }
+
+    .event-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .event-card img {
+        height: 100px;
+    }
 }
 
 /* 기본 스타일 */

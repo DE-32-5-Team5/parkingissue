@@ -16,44 +16,6 @@
                 <img src="images/profile.png" alt="프로필 사진" class="profile-image">
                 <h2 id="profile-name" class="profile-name"></h2>
             </div>
-            <script>
-                function getCookie(name) {
-                    const value = `; ${document.cookie}`;
-                    const parts = value.split(`; ${name}=`);
-                    if (parts.length === 2) return parts.pop().split(';').shift();
-                }
-                const jwtToken = getCookie('jwt_token');
-
-                fetch("https://parkingissue.online/api/login/decodeinfo", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json' 
-                    },
-                    body: JSON.stringify({ user_login_token: jwtToken })
-                })
-                .then(response => response.json())
-                .then(userData => {
-                    document.querySelector('.profile-name').textContent = userData.user_name; // userData에서 name 추출
-                    document.querySelector('.information-value:nth-child(2)').textContent = userData.user_name;
-                    document.querySelector('.information-value:nth-child(4)').textContent = userData.user_id; // userData에서 id 추출
-
-                    const nameElement = document.querySelector('.information-section .information-value:nth-child(2)');
-                    const idElement = document.querySelector('.information-section .information-value:nth-child(4)');
-                    if (nameElement) {
-                        nameElement.textContent = userData.user_name;
-                    }
-
-                    if (idElement) {
-                        idElement.textContent = userData.user_id;
-                    }
-                })  
-                .catch(error => {
-                    console.error('사용자 정보를 가져오는 중 오류 발생:', error);
-                    document.cookie = 'jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    window.location.href = '/index';
-                    throw new Error('토큰 검증 실패');
-                })
-            </script>
         </section>
         
         <!-- 중단 섹션: 내 정보 -->
@@ -71,7 +33,7 @@
             </div>
             <div class="information-card">
                 <p class="information-title">비밀번호</p>
-                <p class="information-value" style="margin-left: 380px;">*****</p>
+                <p class="information-value" id="pwvalue">*****</p>
                 <button class="delete-btn" >수정</button>
                  
             </div>
