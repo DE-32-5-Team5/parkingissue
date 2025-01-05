@@ -2,7 +2,7 @@ import pymysql.cursors
 import random
 import os
 import requests
-from db import uploader_db
+from db import uploader_db, login_db
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -22,8 +22,8 @@ def select_name(idtype,idcode):
     tableNm2 = "user_info" if idtype == "uid" else "manager_info"
     colNm = "user_id" if idtype == "uid" else "manager_id"
     colNm2 = "user_name" if idtype == "uid" else "manager_name"
-    colNm3 = "user_name" if idtype == "uid" else "manager_company"
-    connection = uploader_db()
+    colNm3 = "user_nick" if idtype == "uid" else "manager_company"
+    connection = login_db()
     #print("$"*100)
     #print(idtype)
     #print(idcode)
