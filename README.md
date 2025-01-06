@@ -53,9 +53,9 @@ Final Project : Parkingissue
 
 <img src="https://img.shields.io/badge/ubuntu-E95420?style=platic&logo=ubuntu&logoColor=white"/><img src="https://img.shields.io/badge/linux-FCC624?style=platic&logo=linux&logoColor=white"/>
 
-
+https://www.youtube.com/watch?v=bPoEmiyI4vI
 # ☸️ Usage
-- <iframe width="640" height="480" src="https://www.youtube.com/embed/bPoEmiyI4vI?si=4HIvBFG_0880T7zd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+- [![Video Label](http://img.youtube.com/vi/'bPoEmiyI4vI'/0.jpg)](https://youtu.be/bPoEmiyI4vI)
 - [parkingissue](https://parkingissue.online)
 
 # 📕 References
