@@ -53,7 +53,7 @@ Final Project : Parkingissue
 
 <img src="https://img.shields.io/badge/ubuntu-E95420?style=platic&logo=ubuntu&logoColor=white"/><img src="https://img.shields.io/badge/linux-FCC624?style=platic&logo=linux&logoColor=white"/>
 
-https://www.youtube.com/watch?v=bPoEmiyI4vI
+
 # ☸️ Usage
 - [![Video Label](http://img.youtube.com/vi/'bPoEmiyI4vI'/0.jpg)](https://youtu.be/bPoEmiyI4vI)
 - [parkingissue](https://parkingissue.online)
