@@ -1,0 +1,13 @@
+services:
+  db:
+    build:
+      context: ./database
+      dockerfile: Dockerfile  # Dockerfile 이름
+    image: parkingissue/parkingissue-db:1.2.5  # 빌드될 이미지 이름
+    container_name: db
+    environment:
+      - MYSQL_DATABASE=parkingissue
+    env_file:
+      - .env
+    ports:
+      - "6033:3306"  # 호스트 포트:컨테이너 포트

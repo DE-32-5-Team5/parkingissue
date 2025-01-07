@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/personal_mypage.css">
+    <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
+    <title>My Page</title>
+</head>
+<body>
+    <div class="container">
+        <!-- 상단 섹션: 프로필 정보 -->
+        <section class="profile-section">
+            <div class="profile-card">
+                <img src="images/profile.png" alt="프로필 사진" class="profile-image">
+                <h2 id="profile-name" class="profile-name"></h2>
+            </div>
+            <script>
+                function getCookie(name) {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                }
+                const jwtToken = getCookie('jwt_token');
+
+                fetch("https://parkingissue.online/api/login/decodeinfo", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ user_login_token: jwtToken })
+                })
+                .then(response => response.json())
+                .then(userData => {
+                    document.querySelector('.profile-name').textContent = userData.user_name; // userData에서 name 추출
+                    document.querySelector('.information-value:nth-child(2)').textContent = userData.user_name;
+                    document.querySelector('.information-value:nth-child(4)').textContent = userData.user_id; // userData에서 id 추출
+
+                    const nameElement = document.querySelector('.information-section .information-value:nth-child(2)');
+                    const idElement = document.querySelector('.information-section .information-value:nth-child(4)');
+                    if (nameElement) {
+                        nameElement.textContent = userData.user_name;
+                    }
+
+                    if (idElement) {
+                        idElement.textContent = userData.user_id;
+                    }
+                })  
+                .catch(error => {
+                    console.error('사용자 정보를 가져오는 중 오류 발생:', error);
+                    document.cookie = 'jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = '/index';
+                    throw new Error('토큰 검증 실패');
+                })
+            </script>
+        </section>
+        
+        <!-- 중단 섹션: 내 정보 -->
+        <section class="information-section">
+            <h3>내 정보</h3>
+            <div class="information-card">
+                <p class="information-title">이름</p>
+                <p id="namespace" class="information-value" style="margin-right: 20px;"></p>
+                <!-- <button class="delete-btn">Delete</button> -->
+            </div>
+            <div class="information-card">
+                <p class="information-title">아이디</p>
+                <p class="information-value" id="ID" style="margin-right: 20px;"></p>
+                <!-- <button class="delete-btn">Delete</button> -->
+            </div>
+            <div class="information-card">
+                <p class="information-title">비밀번호</p>
+                <p class="information-value" style="margin-left: 380px;">*****</p>
+                <button class="delete-btn" >수정</button>
+                 
+            </div>
+        </section>
+        
+
+        <section class="logout-section">
+            <button class="logout-btn">Log Out</button>
+            <script>
+                const logoutButton = document.querySelector('.logout-btn');
+                logoutButton.addEventListener('click', () => {
+                    fetch('https://parkingissue.online/api/logout', {
+                        method: 'POST'
+                    })
+                    .then( response => {
+                        window.location.href = '/main';
+                    })    
+                });
+            </script>
+            <button id="openModal">회원 탈퇴</button>
+
+            <!-- 회원 탈퇴 모달 -->
+            <div class="modal" id="unsubscribeModal">
+                <div class="modal-content">
+                    <span class="close" id="closeModal">&times;</span>
+                    <h2>회원 탈퇴</h2>
+                    <p>정말로 회원 탈퇴를 하시겠습니까?</p>
+                    <button class="confirm">탈퇴하기</button>
+                    <button class="cancel">취소</button>
+                </div>
+            </div>
+            
+            <script>
+                const modal = document.getElementById('unsubscribeModal');
+                const closeModal = document.getElementById('closeModal');
+                const openModalButton = document.getElementById('openModal');
+        
+                // 모달 열기
+                openModalButton.addEventListener('click', () => {
+                    modal.style.display = 'block';  // 모달 표시
+                });
+        
+                // 모달 닫기
+                closeModal.addEventListener('click', () => {
+                    modal.style.display = 'none';  // 모달 숨기기
+                });
+        
+                // 배경 클릭 시 모달 닫기
+                window.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';  // 모달 숨기기
+                    }
+                });
+            </script>
+        </section>
+    </div>
+    <div class="navi">
+        <div class="navi-section">
+            <nav class="navbar">
+                <ul>
+                    <!-- 홈으로 새로고침 -->
+                    <li><a href="mainpage.html"><img src="images/sweethome.png" alt="Home" /> HOME</a></li>
+                    <!-- hot place 게시판 이동 -->
+                    <li><a href="party.html"><img src="images/hotplace.png" alt="About" /> HOT PLACE</a></li>
+                    <!-- 즐겨찾기 페이지 이동 -->
+                    <li><a href="favor.html"><img src="images/bookmark.png" alt="Services" /> BOOKMARKS</a></li>
+                    <!-- 개인 프로필 페이지 이동 -->
+                    <li><a id="mypage" href="personal_mypage.html"><img src="images/mypage.png" alt="Contact" /> MY PAGE</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <script src="assets/js/checkAuth.js"></script>
+    <script src="assets/js/selectName.js"></script>
+</body>
+</html>

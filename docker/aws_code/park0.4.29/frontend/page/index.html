@@ -1,0 +1,152 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+        <title>Sign In Page</title>
+        <!-- CSS 파일 연결 -->
+        <link rel="stylesheet" href="assets/css/login.css">
+        <link rel="icon" href="images/parkingissue-favicon-16x16.png"/>
+        <link rel="apple-touch-icon" href="images/parkingissue-apple-icon.png"/>
+        <script src="https://kit.fontawesome.com/eb9b7241dc.js" crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <div class="container">
+            <!-- Heading -->
+            <h1>주차잇슈</h1>
+
+            <!-- Links -->
+            <ul class="links">
+                <li>
+                    <a href="#" id="personal" class="active">개인 회원</a>
+                </li>
+                <li>
+                    <a href="#" id="enterprise">기업회원</a>
+                </li>
+                <li>
+                    <a href="./membership/personal/index.html" id="reset">회원가입</a>
+                </li>
+            </ul>
+
+            <!-- Form -->
+            <form  action="" method="post">
+            <!-- id input -->
+                <div class="first-input input__block first-input__block">
+                    <input type="id" placeholder="Id" class="input" id="id"   />
+                </div>
+                <!-- password input -->
+                <div class="input__block">
+                    <input type="password" placeholder="Password" class="input" id="password"    />
+                </div>
+                <button class="login__btn">
+                    Log in
+                </button>
+            </form>
+        <script>
+            async function checkAuth() {
+                const response = await fetch('/api/login/isuser', {
+                method: 'POST',
+                credentials: 'include',
+                redirect: 'manual',
+                });
+
+                if (response.ok) {
+                    window.location.href = 'https://parkingissue.online/main';
+                }
+            }
+            document.addEventListener("DOMContentLoaded", () => {
+                checkAuth();
+            });
+        </script>
+        <script>
+            // 모든 링크를 선택
+            const links = document.querySelectorAll('.links li a');
+            const resetLink = document.getElementById('reset');
+
+            // 현재 활성 상태를 추적하는 변수
+            let activeType;
+
+            // 링크 클릭 이벤트 처리
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    // 모든 링크에서 active 클래스 제거
+                    links.forEach(link => link.classList.remove('active'));
+
+                    // 현재 클릭된 링크에 active 클래스 추가
+                    link.classList.add('active');
+
+                    // 활성 상태 업데이트
+                    if (link.id !== 'reset') {
+                        activeType = link.id === 'enterprise' ? 'enterprise' : 'personal';
+                    }
+                    // placeholder 및 회원가입 링크 업데이트
+                    const idInput = document.getElementById('id');
+                    if (activeType === 'personal') {
+                        idInput.placeholder = "Id"; // 개인회원
+                        resetLink.href = "./membership/personal/index.html"; // 개인회원 가입 링크
+                    } else if (activeType === 'enterprise') {
+                        idInput.placeholder = "기업회원 Id"; // 기업회원
+                        resetLink.href = "./membership/enterprise/index.html"; // 기업회원 가입 링크
+                    }
+                });
+            });
+
+            // 로그인 폼 제출 이벤트 처리
+            const loginForm = document.querySelector('form');
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // 기본 폼 제출 동작 방지
+
+                const id = document.getElementById('id').value;
+                const password = document.getElementById('password').value;
+
+                // 엔드포인트를 활성 상태에 따라 동적으로 설정
+                const endpoint = `/api/login/common/${activeType}`;
+
+                // 전송할 데이터 구성
+                const loginData = activeType === 'personal'
+                    ? { user_id: id, user_pw: password } // 개인회원 데이터
+                    : { manager_id: id, manager_pw: password }; // 기업회원 데이터
+
+                fetch(endpoint, { // 동적 엔드포인트로 요청 전송
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(loginData), // 활성 상태에 따라 동적 데이터 전송
+                    credentials: 'include', // 쿠키를 요청에 포함
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('로그인 실패');
+                    }
+                })
+                .then(data => {
+                    // 서버가 HttpOnly 쿠키를 설정하므로 클라이언트에서 쿠키 설정은 생략
+                    window.location.href = '/main'; // 로그인 성공 시 메인 페이지로 이동
+                })
+                .catch(error => {
+                    console.error('로그인 요청 실패:', error);
+                    alert('로그인 실패');
+                });
+            });
+
+        </script>
+        </div>
+
+        <footer>
+            <p>
+            SAMDULSHOP : FINAL PROJECT
+            <!-- <i class="fa fa-heart"></i>
+            <i class="fa fa-heart"></i>
+            <i class="fa fa-heart"></i>  -->
+            </p>
+            <p>
+                인생한방 :
+                <i class="fa fa-github"></i>
+            </a>
+            </p>
+        </footer>
+    </body>
+</html>

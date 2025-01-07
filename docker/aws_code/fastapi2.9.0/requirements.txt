@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+confluent-kafka
+requests
+PyMySql
+pydantic
+passlib[bcrypt]
+aiomysql
+python-dotenv
+boto3
+pandas
+cryptography
+PyJWT

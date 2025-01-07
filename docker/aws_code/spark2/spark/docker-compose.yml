@@ -1,0 +1,43 @@
+name: spark
+services:
+  master:
+    build:
+      context: ./docker/spark/master-spark
+      dockerfile: Dockerfile
+    container_name: spark-master
+    image: spark-master-image:latest
+    volumes:
+      - .aws:/app/.aws
+      - ./docker/spark/rank.py:/app/rank.py
+      - ./docker/spark/realtime.py:/app/realtime.py
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_CORES=2
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+      - "4040:4040"
+    networks:
+      - sparknet
+
+  worker:
+    build:
+      context: ./docker/spark/worker-spark
+      dockerfile: Dockerfile
+    image: spark-batch-worker:latest
+    container_name: spark-batch-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+    volumes:
+      - .aws:/app/.aws
+      - ./docker/spark/rank.py:/app/rank.py
+      - ./docker/spark/realtime.py:/app/realtime.py
+    depends_on:
+      - master
+    networks:
+      - sparknet
+
+networks:
+  sparknet:
+    driver: bridge

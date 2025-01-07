@@ -1,0 +1,46 @@
+name: spark
+services:
+  master:
+    build:
+      context: ./docker/spark/master-spark
+      dockerfile: Dockerfile
+    container_name: spark-master
+    image: spark-master-image:latest
+    volumes:
+      - ./docker/spark/sample.py:/app/sample.py
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+      - "4040:4040"
+    networks:
+      - sparknet
+
+  streaming-worker:
+    build:
+      context: ./docker/spark/worker-spark
+      dockerfile: Dockerfile
+    image: spark-streaming-worker:latest
+    container_name: spark-streaming-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+    volumes:
+      - ./docker/spark/sample.py:/app/sample.py
+    command: >
+      spark-submit \
+        --conf spark.sql.warehouse.dir=/tmp/spark-warehouse \
+        --master spark://spark-master:7077 \
+        --total-executor-cores 1 \
+        --executor-memory 1g \
+        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1 \
+        /app/sample.py
+    depends_on:
+      - master
+    networks:
+      - sparknet
+networks:
+  sparknet:
+    driver: bridge
+
