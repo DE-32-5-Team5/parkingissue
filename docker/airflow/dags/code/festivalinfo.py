@@ -11,8 +11,7 @@ from urllib3.util.retry import Retry
 session = requests.Session()
 
 def call(apiname,nor, pn, listyn, typeid, contentid='' ):
-    #API_KEY = os.getenv('API_KEY')
-    API_KEY="Hzx0WsxvEWGO7C0eU5x03SIGP5Pa0Tdlgw0wg9pLiFxmoBLUKnz/1FJDgqEF6gQI2MjDywJePna39kfR8SI+Yg=="
+    API_KEY = os.getenv('API_KEY')
     attempt = 0  # 시도 횟수
 
     if apiname.startswith('r-'):
