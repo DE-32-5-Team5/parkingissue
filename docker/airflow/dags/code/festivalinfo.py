@@ -12,6 +12,7 @@ session = requests.Session()
 
 def call(apiname,nor, pn, listyn, typeid, contentid='' ):
     API_KEY = os.getenv('API_KEY')
+
     attempt = 0  # 시도 횟수
 
     if apiname.startswith('r-'):
